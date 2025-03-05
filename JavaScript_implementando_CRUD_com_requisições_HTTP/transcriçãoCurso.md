@@ -1984,4 +1984,697 @@ Espero você na próxima aula!
 
 ## Aula 3 - Requisição PUT
 
-### Aula 2 -  - Vídeo 8
+### Aula 3 - Alterando dados com o PUT - Vídeo 1
+
+Transcrição  
+Colocamos a mão na massa e implementamos o botão "cancelar", que está funcionando como esperado, podemos prosseguir!
+
+Digitamos dados aleatórios no pensamento e na autoria, clicamos em cancelar e os dados foram resetados, aparecendo apenas o placeholder. Parabéns para você que conseguiu fazer. Se ainda não fez, volte e tente novamente!
+
+Próximo passo  
+Já conseguimos buscar e cadastrar pensamentos, mas imagine que você cadastre um novo pensamento e, na pressa, digite algo errado, percebendo o erro apenas depois de salvar.
+
+Seria interessante ter uma forma de editar essas informações. É isso que vamos começar a fazer neste vídeo!
+
+Vamos buscar esse pensamento, alterar as informações e enviá-las de volta para o servidor para atualizar esse pensamento.
+
+Para fazer isso, vamos utilizar mais um método HTTP: PUT.
+
+Verificando a estrutura do card no Figma, temos as aspas, conteúdo, autoria, que já implementamos, e temos também um ícone no formato de lápis para editar e um ícone no formato de lixeira para excluir, que faremos mais para frente.
+
+Precisamos adicionar o ícone de edição no card para clicarmos nele e conseguirmos alterar as informações.
+
+Outra coisa que precisamos considerar é a alteração dessas informações. Será que é interessante digitar tudo novamente? Digitar o pensamento correto, a autoria correta e enviar. Será que não existe uma forma mais prática de fazer isso?
+
+No nosso formulário temos apenas dois campos, mas imagine um formulário de cadastro onde você colocou seu endereço, telefone, informações de cartão de crédito. Imagine ter que preencher tudo isso novamente para corrigir apenas um campo que você errou. Não é prático, nem uma experiência agradável.
+
+O ideal é que, quando clicamos no botão "Editar", esse formulário já seja preenchido automaticamente com as informações do card. Assim, alteramos o que precisa ser alterado e enviamos novamente para o servidor. Vamos lá. Depois desse raciocínio lógico, vamos para o código para começar a implementar isso.
+
+Implementando o botão de editar
+Vamos acessar o VS Code. Já estamos com o arquivo api.js aberto porque podemos começar pelas requisições.
+
+Para conseguirmos alterar um pensamento, precisamos ter esse pensamento. Só conseguimos alterar algo que já buscamos, algo que já temos. Por conta disso, vamos precisar de duas requisições.
+
+Queremos buscar um pensamento específico para conseguir alterá-lo. Então, por conta disso, essa função vai ser também um GET. Quando usamos o fetch para fazer um GET, ele já faz por padrão, não precisamos especificar.
+
+Vamos copiar da linha 2 até a linha 11, e utilizar essa função de base. Colaremos na linha 30. Adicionaremos uma vírgula na linha 28 para corrigir o erro. Pronto. Vamos mudar o nome da função. Agora, precisamos buscar um pensamento, mas não no plural. É apenas um. E como vamos conseguir buscar esse pensamento? No db.json, temos id, conteúdo e autoria. Podemos criar um pensamento que tenha o mesmo conteúdo, exatamente o mesmo conteúdo e exatamente a mesma autoria. Então, essas duas propriedades não servirão para identificar um pensamento.
+
+O que pode servir para ser um identificador único? O id. O id é o identificador único. Esse id é criado aleatoriamente pelo jsonServer e ele não se repete. Então, podemos utilizar essa informação para buscar, de forma específica, um pensamento.
+
+Vamos fechar o db.json e podemos até adicionar no nome da função, buscarPensamentoPorId, porque assim fica bem específico o que estamos fazendo.
+
+Para buscar um pensamento por id, vamos ter que enviar esse id para o servidor nos retornar esse pensamento específico. Então, vamos passar como parâmetro dessa função o id.
+
+O restante da estrutura vai ficar igual. O try/catch, a response, vamos fazer um fetch para essa url base. Mas precisamos passar, se passarmos essa url da forma como está, o servidor vai nos trazer todos os pensamentos. Precisamos adicionar o id nessa url, para que a API consiga nos retornar.
+
+```JavaScript
+  async buscarPensamentoPorId(id) {
+    try {
+      const response = await fetch(`http://localhost:3000/pensamentos/${id}`)
+      return await response.json()
+    }
+    catch {
+      alert('Erro ao buscar pensamento')
+      throw error
+    }
+  },
+
+  async editarPensamento(pensamento) {
+    try {
+      const response = await fetch(`http://localhost:3000/pensamentos/${pensamento.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(pensamento)
+      })
+      return await response.json()
+    }
+    catch {
+      alert('Erro ao editar pensamento')
+      throw error
+    }
+  },
+}
+```
+
+Com relação à API, as duas requisições estão prontas. Precisamos fazer a primeira requisição, um GET para buscar o pensamento específico e, depois, com esse pensamento retornado, fazer a edição. Mas, se formos na aplicação, ainda não conseguiremos editar esse pensamento, porque ainda não ajustamos a interface.
+
+Precisamos adicionar o ícone do lápis para conseguir clicar, fazer a manipulação desse clique e é isso que vamos ver como fazer nos próximos vídeos!
+
+### Aula 3 - Ajustando a interface para realizar a edição dos pensamentos - Vídeo 2
+
+Transcrição  
+Criamos as requisições na API para editar o pensamento. O próximo passo é adicionar o ícone de edição e o botão no card de pensamento. Quando clicarmos nesse botão, o formulário será preenchido automaticamente com os dados específicos desse pensamento.
+
+Entenderemos como fazer isso agora.
+
+Acessamos o VSCode e abrimos o arquivo ui.js para criar a interatividade. Na linha 5, criamos uma função para preencher o formulário digitando async preencherFormulario().
+
+Para preencher o formulário com as informações específicas, passamos o parâmetro pensamentoId, que é o identificador do pensamento. Abrimos o bloco de código com as chaves:
+
+ui.js
+
+```JavaScript
+// código omitido
+async preencherFormulario(pensamentoId) {
+
+}
+// código omitido
+```
+
+Precisamos acessar a requisição da API que busca um pensamento por id. Criamos uma constante chamada pensamento para armazenar o resultado dessa chamada à API. Em seguida, utilizamos await antes da chamada à api. O VSCode facilita a visualização dos métodos e funções disponíveis.
+
+Desejamos buscar o pensamento por id (buscarPensamentoPorId), passando o parâmetro pensamentoId. Para resolver um aviso do VSCode, adicionamos uma vírgula na linha 7.
+
+```JavaScript
+// código omitido
+async preencherFormulario(pensamentoId) {
+    const pensamento = await api.buscarPensamentoPorId(pensamentoId)
+},
+// código omitido
+```
+
+Agora, a constante pensamento contém o resultado do pensamento específico que foi selecionado ao clicar no botão de editar.
+
+Precisamos acessar três propriedades no HTML. No menu lateral esquerdo, no arquivo index.html, localizamos um input que armazena o id do pensamento. Também encontramos um textarea para o pensamento-conteudo e um input para o pensamento-autoria.
+
+index.html
+
+```HTML
+<!-- código omitido -->
+<section id="form-container">
+    <form id="pensamento-form">
+        <input type="hidden" id="pensamento-id" />
+        <label for="pensamento-conteudo">Pensamento</label>
+        <textarea id="pensamento-conteudo" placeholder="Digite seu pensamento" required></textarea>
+        <label for="pensamento-autoria">Autoria ou Fonte</label>
+        <input >
+
+<!-- código omitido -->
+```
+
+Precisamos acessar esses três elementos e atribuir os dados recebidos do pensamento a eles.
+
+No arquivo ui.js, utilizamos document.getElementById() para isso. Passamos, entre parênteses e aspas duplas, o id do elemento, por exemplo, pensamento-id. Em seguida, usamos .value para definir o valor do elemento com a propriedade pensamento.id.
+
+ui.js
+
+```JavaScript
+// código omitido
+async preencherFormulario(pensamentoId) {
+    const pensamento = await api.buscarPensamentoPorId(pensamentoId)
+    document.getElementById("pensamento-id").value = pensamento.id
+},
+// código omitido
+```
+
+Faremos o mesmo para os outros elementos. Colocamos o cursor no final da linha, usamos "Alt + Shift" e pressionamos a seta para baixo duas vezes. Depois, modificamos o id do elemento conforme necessário.
+
+Na linha 8, selecionamos id e usamos "Ctrl + D" para selecionar todas as ocorrências de id e substituímos por conteudo. Na linha 9, fazemos o mesmo para a próxima ocorrência de id, substituindo por autoria.
+
+```JavaScript
+// código omitido
+async preencherFormulario(pensamentoId) {
+    const pensamento = await api.buscarPensamentoPorId(pensamentoId)
+    document.getElementById("pensamento-id").value = pensamento.id
+    document.getElementById("pensamento-conteudo").value = pensamento.conteudo
+    document.getElementById("pensamento-autoria").value = pensamento.autoria
+},
+// código omitido
+```
+
+Com essas alterações, a função estará pronta. Com isso, conseguiremos preencher o formulário, buscar um pensamento e atribuir as propriedades do pensamento aos elementos.
+
+**Adicionando o ícone de lápis**  
+
+Precisamos adicionar um ícone de lápis ao card para permitir a edição. Para isso, vamos rolar o código para baixo. Estamos criando o card de forma dinâmica e já incluímos o conteúdo e a autoria. Abaixo da autoria, começaremos a adicionar o botão de editar (após o pensamentoAutoria.classList.add("pensamento-autoria")).
+
+Para isso, copiamos as linhas 43 a 45 usando "Ctrl + C" e colamos com "Ctrl + V".
+
+Linhas copiadas:
+
+```JavaScript
+const pensamentoAutoria = document.createElement("div")
+pensamentoAutoria.textContent = pensamento.autoria
+pensamentoAutoria.classList.add("pensamento-autoria")
+```
+
+Apagamos a parte do textContent que não será utilizada. A nova constante a ser criada se chamará botaoEditar. Criamos um elemento do tipo button e o atribuímos à constante botaoEditar. Em seguida, adicionamos uma classe chamada botao-editar na linha 48.
+
+ui.js
+
+```JavaScript
+// código omitido
+const botaoEditar = document.createElement("button")
+botaoEditar.classList.add("botao-editar")
+// código omitido
+```
+
+Após criar o botão, é necessário adicionar comportamento a ele. Na linha 49, pegamos o botaoEditar e adicionamos um evento onclick. Quando clicamos no botão, o formulário deve ser preenchido com os dados do pensamento. Para isso, criamos uma função de seta (arrow function) e chamamos a função ui.preencherFormulario(), passando pensamento.id como parâmetro.
+
+```JavaScript
+// código omitido
+const botaoEditar = document.createElement("button")
+botaoEditar.classList.add("botao-editar")
+botaoEditar.onclick = () => ui.preencherFormulario(pensamento.id)
+// código omitido
+```
+
+Após criar o botão, adicionamos o ícone com a imagem.
+
+Adicionando o ícone com a imagem  
+Criamos uma constante na linha 51 chamada iconeEditar e utilizamos document.createElement("") para criar um elemento de imagem ("img"). Para esse ícone, definimos os atributos src e alt. Na linha 52, configuramos iconeEditar.src com o caminho da imagem, que é assets/imagens/icone-editar.png. Definimos o atributo alt do iconeEditar como "Editar".
+
+Todas essas classes já estão criadas no arquivo CSS.
+
+Agora, com o src e o alt definidos, anexamos o ícone ao botão. Usamos botaoEditar.appendChild() para adicionar o iconeEditar ao botão. Neste caso, não precisamos de aspas adicionais.
+
+```JavaScript
+// código omitido
+const iconeEditar = document.createElement("img")
+iconeEditar.src = "assets/imagens/icone-editar.png"
+iconeEditar.alt = "Editar"
+botaoEditar.appendChild(iconeEditar)
+// código omitido
+```
+
+Criamos o botão, adicionamos o ícone ao botão e, agora, vamos criar uma div para conter tanto o botão de editar quanto o botão de excluir, que será criado mais adiante.
+
+Criamos uma constante chamada icones usando document.createElement(""), desta vez para criar uma div. Adicionamos a classe icones com icones.classList.add(""), passando icones. Logo após, anexamos o botão de editar à div.
+
+Utilizamos icones.appendChild() para adicionar o botaoEditar à div. Na lista, anexamos o ícone, o conteúdo e a autoria. Além disso, na linha 63, usamos appendChild para adicionar a div chamada icones, que contém os botões, à lista.
+
+```JavaScript
+// código omitido
+     const icones = document.createElement("div")
+     icones.classList.add("icones")
+     icones.appendChild(botaoEditar)
+
+    li.appendChild(iconeAspas)
+    li.appendChild(pensamentoConteudo)
+    li.appendChild(pensamentoAutoria)
+    li.appendChild(icones)
+    listaPensamentos.appendChild(li)
+  }
+}
+```
+
+Com isso, finalizamos. Vamos verificar a aplicação! O ícone de editar já está visível na parte inferior direita do card.
+
+Próximo passo  
+No próximo vídeo, verificaremos o que acontece ao clicar nele, se o formulário é preenchido corretamente e como editar efetivamente um pensamento. Até mais!
+
+### Aula 3 - Ajustando o arquivo main.js - Vídeo 3
+
+Transcrição  
+No vídeo anterior, criamos o botão de edição e a função para preencher o formulário, mas não realizamos testes.
+
+Agora, com a aplicação Memoteca aberta no endereço 127.0.0.1:5500, testaremos o clique e a edição do pensamento para verificar se tudo está funcionando corretamente.
+
+Atualmente, o formulário "Adicione um pensamento novo" está vazio e os cards têm um botão de edição. Escolheremos um card para editar, especificamente o pensamento "Você não é todo mundo!", de autoria da mãe.
+
+Ao clicar no botão de edição no ícone de lápis na parte inferior direita, o pensamento e a autoria serão preenchidos corretamente nos campos do formulário, confirmando que a função está operando como esperado.
+
+Adicione um pensamento novo
+
+Pensamento: Você não é todo mundo!
+Autoria ou Fonte: Mãe
+Agora, alteramos o pensamento, mantendo a mesma autoria:
+
+Adicione um pensamento novo
+
+Pensamento: Na volta a gente compra!
+Autoria ou Fonte: Mãe
+Ao clicar em "Adicionar" na parte inferior para salvar, notamos que o card escolhido para edição, com o pensamento "Você não é todo mundo", ainda está no mural, o que parece estranho.
+
+Abaixo, vemos que o último pensamento criado foi o que adicionamos durante a edição, "Na volta a gente compra". Isso indica que, em vez de editar o card, um novo pensamento é criado com as informações fornecidas.
+
+Vamos analisar o código para entender o que está acontecendo.
+
+No arquivo index.html, alteraremos o texto do botão de "Adicionar" para "Salvar" na linha 45.
+
+index.html
+
+```HTML
+<!-- código omitido -->
+<div class="form-botoes">
+    <button 
+        type="submit" 
+        id="botao-salvar">
+        Salvar
+    </button>
+    
+<!-- código omitido -->
+```
+
+Em seguida, abriremos o main.js para verificar o que ocorre quando o formulário é submetido.
+
+main.js
+
+```JavaScript
+// código omitido
+  try{ 
+    await api.salvarPensamento({ conteudo, autoria })
+    ui.renderizarPensamentos()
+  }
+  catch {
+    alert("Erro ao salvar pensamento")
+  }
+}
+//código omitido
+```
+
+Na linha 20, temos um try catch que chama a função salvarPensamento quando o formulário é submetido. Essa função, localizada no api.js, realiza uma requisição POST para criar um novo pensamento.
+
+api.js
+
+```JavaScript
+// código omitido
+  async salvarPensamento(pensamento) {
+    try {
+      const response = await fetch('http://localhost:3000/pensamentos', {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(pensamento)
+      })
+      return await response.json()
+    }
+    catch {
+      alert('Erro ao buscar pensamentos')
+      throw error
+    }
+  },
+
+// código omitido
+
+  async editarPensamento(pensamento) {
+    try {
+      const response = await fetch(`http://localhost:3000/pensamentos/${pensamento.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(pensamento)
+      })
+      return await response.json()
+    }
+    catch {
+      alert('Erro ao editar pensamento')
+      throw error
+    }
+  },
+  
+}
+export default api
+```
+
+No entanto, para edição, deveríamos usar o método PUT, que já foi definido, mas não está sendo chamado. Precisamos ajustar o código para utilizar o método PUT para edições.
+
+Voltamos ao main.js.
+
+Não é necessário criar uma função separada apenas para edição. Podemos utilizar a mesma função, adicionando uma condicional.
+
+Dentro do try, na linha 21, inseriremos um if() que verifica a existência de um id. Se o id estiver presente, isso indica que o pensamento já foi criado e deve ser editado. Caso o id não exista, significa que estamos criando um novo pensamento.
+
+Se houver um id, chamaremos await api.editarPensamento(), passando o id, o conteudo e a autoria. O id não é passado para salvarPensamento porque o JSON Server cria esse id automaticamente de forma aleatória, então não precisamos fornecê-lo. Assim, se houver um id desejamos alterar o pensamento.
+
+Se não houver um id, adicionaremos um else na linha 23 e moveremos a chamada para salvarPensamento para cima com "Alt + Seta para cima". Após editar ou salvar, renderizaremos os pensamentos atualizados.
+
+main.js
+
+```JavaScript
+// código omitido
+  try { 
+    if(id) {
+      await api.editarPensamento({ id, conteudo, autoria })
+    } else {
+      await api.salvarPensamento({ conteudo, autoria })
+    }
+    ui.renderizarPensamentos()
+  }
+  catch {
+    alert("Erro ao salvar pensamento")
+  }
+}
+//código omitido
+```
+
+Com essa alteração, tudo deve funcionar corretamente.
+
+Testando a edição do card  
+Vamos testar a edição novamente para verificar se conseguimos modificar o pensamento que acabamos de criar, "Na volta a gente compra!".
+
+Ao clicar no ícone de edição, as informações devem ser preenchidas corretamente. Vamos alterar o pensamento para "Na volta a gente compra! Mas não comprou!" e salvar.
+
+Adicione um pensamento novo
+
+Pensamento: Na volta a gente compra! Mas não comprou!  
+Autoria ou Fonte: Mãe
+
+Agora, o pensamento foi atualizado corretamente. Ao descermos a página, o card com o novo pensamento foi adicionado.
+
+Próximo passo  
+Adicionamos esse comportamento e implementamos mais uma funcionalidade do CRUD. Nos próximos passos, vamos adicionar o botão para excluir o pensamento e realizar melhorias no código!
+
+### Aula 3 - Atualizando dados via API
+
+Você continua trabalhando para o Serenatto - Café & Bistrô, que decidiu inovar ao criar um mural digital de pensamentos compartilhados pelos clientes.
+
+Utilizando JavaScript e requisições HTTP, você já implementou as funcionalidades de listar (GET) e cadastrar novos pensamentos (POST). Um desafio surgiu! Agora, você precisa permitir que as pessoas editem seus pensamentos após publicá-los, caso queiram corrigir um erro ou simplesmente mudar o que foi dito.
+
+Para criar essa funcionalidade, você quer enviar dados para API com um método chamado editarPensamento.
+
+Como você pode escrever o código desse método?
+
+Alternativa correta:
+
+```JavaScript
+async editarPensamento(pensamento) {
+  try {
+    const response = await fetch(`${URL_BASE}/pensamentos/${pensamento.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(pensamento),
+    });
+    return await response.json();
+  } catch (error) {
+    alert(`Erro: ${error.message}`);
+    throw error;
+  }
+},
+```
+
+> Este código está correto porque utiliza o método "PUT" para atualizar um pensamento existente. Ele envia os dados atualizados do pensamento no corpo da requisição, no formato JSON, e define o cabeçalho "Content-Type" como "application/json", conforme necessário para a comunicação com a API.
+
+### Aula 3 - Faça como eu fiz: obtendo dados para a edição
+
+Nesta aula, fizemos uma requisição PUT para editar os pensamentos no mural do Memoteca.
+
+Agora é sua vez!
+
+Caso ainda não tenha implementado, coloque em prática o conhecimento adquirido durante a aula. Assim, seu aprendizado será eficaz.
+
+O resultado final esperado é que, ao testar a aplicação, você consiga editar os pensamentos já existentes no projeto Memoteca.
+
+Vamos lá?
+
+Opinião do instrutor
+
+Para ver detalhes do código implementado, acesse o repositório no GitHub.
+
+Para implementar o que foi visto na aula, siga este passo a passo:
+
+Nesta aula, foram adicionados novos métodos à classe api para buscar um pensamento por ID e editar um pensamento existente. Além disso, foram implementadas mensagens de alerta em caso de erro ao buscar, salvar ou editar um pensamento.
+
+No arquivo “js/api.js”:
+
+- Adicione um novo método assíncrono chamado buscarPensamentoPorId(id) que recebe um parâmetro id;
+- Implemente o bloco try dentro do método para fazer uma requisição fetch para buscar um pensamento pelo ID fornecido;
+- Retorne o resultado da requisição convertido para JSON;
+- No bloco catch, exiba um alerta com a mensagem 'Erro ao buscar pensamento' e lance o erro.
+- Adicione um novo método assíncrono chamado editarPensamento(pensamento) que recebe um objeto pensamento;
+- Implemente o bloco try dentro do método para fazer uma requisição fetch com o método "PUT" para atualizar o pensamento com o ID fornecido;
+- Defina os cabeçalhos da requisição com o tipo de conteúdo "application/json" e o corpo da requisição como o objeto pensamento convertido para JSON;
+- Retorne o resultado da requisição convertido para JSON;
+- No bloco catch, exiba um alerta com a mensagem 'Erro ao editar pensamento' e lance o erro.
+- Também foi adicionado um novo método chamado preencherFormulario no objeto ui, que preenche um formulário com os dados de um pensamento.
+
+Além disso, foi criado um botão de edição dentro de cada item da lista de pensamentos, que ao ser clicado, preenche o formulário com os dados do pensamento correspondente.
+
+No arquivo “js/ui.js”:
+
+- Crie um novo método chamado preencherFormulario no objeto ui;
+- Dentro desse método, utilize document.getElementById para selecionar os campos do formulário e atribuir a eles os valores do pensamento recebido como parâmetro;
+- Adicione um botão de edição dentro do método adicionarPensamentoNaLista que chama o método preencherFormulario ao ser clicado;
+- Utilize document.createElement para criar o botão de edição e a imagem do ícone de edição;
+- Atribua classes e atributos necessários aos elementos criados;
+- Adicione o botão de edição dentro de um container e insira esse container no item da lista de pensamentos.
+
+Além disso, foi feita uma alteração no botão de adicionar pensamento para exibir a palavra "Salvar" em vez de "Adicionar" e também foram adicionadas funções para manipular o clique no botão de editar um pensamento.
+
+No arquivo "index.html":
+
+Altere o texto do botão de adicionar para "Salvar".
+No arquivo "js/ui.js":
+
+- Altere a propriedade onClick para onclick no botão de edição;
+- Crie um botão de edição com a classe "botao-editar";
+- Adicione um ícone de edição ao botão de edição.
+
+Por fim, foi feita uma alteração no arquivo "backend/db.json" para adicionar um novo pensamento com autoria da "Mãe".
+
+No arquivo “backend/db.json”:
+
+Adicione um novo pensamento com o conteúdo "Na volta a gente compra! Mas nunca compra" e autoria "Mãe".
+No arquivo “js/main.js”:
+
+- Verifique se há um ID do pensamento ao clicar no botão de edição;
+- Se houver um ID, chame a função api.editarPensamento com os parâmetros id, conteudo e autoria;
+- Caso contrário, chame a função api.salvarPensamento com os parâmetros conteudo e autoria;
+- Renderize os pensamentos novamente após a edição ou salvamento.
+
+Ufa! Com esses passos feitos, o Memoteca será capaz de receber as edições de dados.
+
+### Aula 3 - Lista de exercícios
+
+Vamos para mais uma rodada de exercícios?
+
+Continue com o projeto Adopet, escrevendo no editor de código da sua preferência.
+
+1) Implementando uma função para buscar um pet específico  
+Imagine que alguém queira editar algum dado de um pet. Ainda não temos essa funcionalidade no Adopet.
+
+Nesse caso, temos uma lógica mais completa.
+
+Logo, sua primeira missão é: escreva o código de uma função (cujo nome poderia ser buscarPetPorId(id)) que fará uma requisição para obter os dados de um pet específico. Faça essa implementação no arquivo api.js, combinado?
+
+2) Implementando função para editar um pet  
+Continuando o exercício anterior, queremos imagine que queremos criar uma funcionalidade em que um usuário pode editar os dados de um pet.
+
+Depois de obter os dados do pet, precisamos ser capazes de enviar as atualizações para a API. Isso permitirá que possamos modificar as informações de um pet já existente.
+
+Agora a sua tarefa é: implemente o código da função editarPet(pet) no arquivo api.js, que fará uma requisição para enviar os dados atualizados de um pet.
+
+3) Integrando o formulário de edição na interface  
+Para que possamos editar um pet, precisamos ajustar a interface para permitir que a pessoa usuária selecione um pet para edição e que o formulário seja preenchido com os dados já existentes do pet.
+
+Sua tarefa é ajustar a interface para preencher o formulário com os dados do pet selecionado para edição.
+
+Faça uma implementação simples; a ideia não é preocupar-se com o layout, pois o objetivo é exercitar as requisições HTTP.
+
+Vamos lá?
+
+Opinião do instrutor
+
+Agora que você concluiu os exercícios, é hora de ver o "gabarito" com as respostas!
+
+Lembre-se de que seu código pode variar um pouco. O importante é que ele funcione e siga boas práticas de programação!
+
+1) Implementando uma função para buscar um pet específico
+Vamos à solução?
+
+Abra o arquivo api.js;
+
+Adicione a função buscarPetPorId(id) (ou o nome que você tiver escolhido) conforme mostrado abaixo:
+
+```JavaScript
+  async buscarPetPorId(id) {
+    try {
+      const response = await fetch(`http://localhost:3000/pets/${id}`);
+      return await response.json();
+    } catch (error) {
+      alert(`Erro: ${error.message}`);
+      throw error;
+    }
+  }
+```
+
+E aí, você chegou no mesmo resultado?
+
+Este código define uma função assíncrona chamada buscarPetPorId, que recebe um parâmetro id.
+
+Dentro da função, há um bloco try que tenta executar a operação de busca. A expressão await fetch(http://localhost:3000/pets/${id}`)` envia uma requisição GET para a URL especificada, onde id é interpolado na string, formando a URL completa para buscar os dados do pet específico no servidor local rodando na porta 3000. A função await pausa a execução até que a fetch complete a operação e retorne uma resposta.
+
+Após receber a resposta da fetch, a linha return await response.json() converte a resposta em formato JSON para um objeto JavaScript e o retorna. Isso também utiliza await para garantir que a conversão só seja feita após a resposta completa ser recebida.
+
+Caso ocorra algum erro durante a execução da requisição ou a conversão do JSON, o bloco catch captura a exceção. Dentro deste bloco, há um alerta exibindo a mensagem de erro ao usuário, utilizando alert(Erro: ${error.message}). Em seguida, a função lança novamente o erro com throw error, permitindo que o erro seja tratado em outro lugar no código que chamou a função buscarPetPorId.
+
+Portanto, a função buscarPetPorId faz uma requisição assíncrona para buscar informações de um pet específico a partir de um servidor, manipula a resposta em formato JSON, e trata possíveis erros, alertando o usuário em caso de falha.
+
+2) Implementando função para editar um pet  
+No arquivo api.js, adicione a função editarPet(pet) (não tem problema se você escolheu outro nome; o importante é entender a lógica do código) conforme mostrado abaixo:
+
+```JavaScript
+async editarPet(pet) {
+    try {
+      const response = await fetch(`http://localhost:3000/pets/${pet.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(pet),
+      });
+      return await response.json();
+    } catch (error) {
+      alert(`Erro: ${error.message}`);
+      throw error;
+    }
+  }
+```
+
+Este código define uma função assíncrona chamada editarPet, que recebe um objeto pet como parâmetro. A função tem o propósito de atualizar as informações de um pet específico no servidor. Para isso, ela utiliza a fetch API, que permite fazer requisições HTTP.
+
+Dentro da função, há um bloco try que tenta executar a operação de atualização. A expressão `await fetch(http://localhost:3000/pets/${pet.id}, { ... })` envia uma requisição HTTP PUT para a URL especificada, ondepet.idé interpolado na string, formando a URL completa para editar os dados do pet específico no servidor local rodando na porta 3000. O segundo argumento defetché um objeto de configuração que define o método HTTP como "PUT", configura os cabeçalhos da requisição para indicar que o corpo da requisição está em formato JSON, e converte o objetopetem uma string JSON comJSON.stringify(pet)` para enviar no corpo da requisição.
+
+Após receber a resposta da fetch, a linha return await response.json() converte a resposta em formato JSON para um objeto JavaScript e o retorna. Isso também utiliza await para garantir que a conversão só seja feita após a resposta completa ser recebida.
+
+Caso ocorra algum erro durante a execução da requisição ou a conversão do JSON, o bloco catch captura a exceção. Dentro deste bloco, há um alerta exibindo a mensagem de erro ao usuário, utilizando alert(Erro: ${error.message}). Em seguida, a função lança novamente o erro com throw error, permitindo que o erro seja tratado em outro lugar no código que chamou a função editarPet.
+
+Logo, a função editarPet faz uma requisição assíncrona para atualizar as informações de um pet específico no servidor, configurando corretamente o método HTTP, os cabeçalhos e o corpo da requisição, manipula a resposta em formato JSON, e trata possíveis erros, alertando o usuário em caso de falha.
+
+3) Integrando o formulário de edição na interface  
+No arquivo ui.js, adicione a função preencherFormulario para preencher o formulário com os dados do pet e adicione também o botão para editar um pet:
+
+```JavaScript
+import api from "./api.js"
+const ui = {
+async preencherFormulario(petId) {
+    const pet = await api.buscarPetPorId(petId)
+    document.getElementById("pet-id").value = pet.id;
+    document.getElementById("pet-nome").value = pet.nome;
+    document.getElementById("pet-especie").value = pet.especie;
+    document.getElementById("pet-raca").value = pet.raca;
+  },
+
+async renderizarPets() {
+// código omitido
+}
+adicionarPetNaLista(pet) {
+//código omitido
+const botaoEditar = document.createElement("button");
+botaoEditar.classList.add("botao-editar");
+botaoEditar.textContent = "Editar";
+botaoEditar.onclick = () => ui.preencherFormulario(pet.id);
+
+li.appendChild(nomePet);
+ li.appendChild(especiePet);
+ li.appendChild(racaPet);
+ li.appendChild(botaoEditar);
+ listaPets.appendChild(li);
+    },
+};
+export default ui;
+```
+
+No arquivo main.js, adicione a lógica para manipular a submissão do formulário e o clique no botão de edição.
+
+Como usamos um único botão para cadastrar e editar um pet, precisamos utilizar um if antes de realizar a submissão. Essa condicional verifica se o campo ID está preenchido. Se estiver, chama a função editarPet para atualizar os dados do pet existente. Se não estiver, chama a função salvarPet do módulo “api” para criar um novo pet com os dados fornecidos.
+
+```JavaScript
+//arquivo main.js completo atualizado
+import ui from "./ui.js"
+import api from "./api.js"
+
+document.addEventListener("DOMContentLoaded", () => {
+  ui.renderizarPets();
+
+  const formularioPet = document.getElementById("pet-form");
+  formularioPet.addEventListener("submit", manipularSubmissaoFormulario);
+});
+
+async function manipularSubmissaoFormulario(event) {
+  event.preventDefault();
+  const id = document.getElementById("pet-id").value;
+  const nome = document.getElementById("pet-nome").value;
+  const especie = document.getElementById("pet-especie").value;
+  const raca = document.getElementById("pet-raca").value;
+
+  try {
+    if (id) {
+      await api.editarPet({ id, nome, especie, raca });
+    } else {
+      await api.salvarPet({ nome, especie, raca });
+    }
+    ui.renderizarPets();
+  } catch (error) {
+    console.error("Erro ao salvar pet:", error);
+    alert("Erro ao salvar pet. Tente novamente mais tarde.");
+  }
+}
+```
+
+O código no main.js integra a lógica da aplicação para editar os dados dos pets. Ele configura event listeners para manipular a submissão do formulário e cliques nos botões de edição. A função manipularSubmissaoFormulario gerencia tanto a criação quanto a edição de pets, enquanto a função preencherFormulario preenche o formulário com os dados do pet quando o botão de edição é clicado, preparando a interface para a edição dos dados.
+
+Agora, teste o fluxo completo de edição: selecione um pet para edição, modifique seus dados no formulário e envie a atualização. Verifique se os dados do pet foram atualizados corretamente na API e na interface.
+
+Parabéns por concluir essa lista!
+
+### Aula 3 - O que aprendemos?
+
+Nesta aula, você aprendeu a:
+
+- Utilizar o método HTTP PUT para alterar dados no servidor;
+- Buscar um pensamento específico por ID utilizando uma requisição HTTP GET;
+- Preencher o formulário de edição com dados existentes para facilitar a atualização;
+- Adicionar dinamicamente botões de edição à interface para cada item da lista de pensamentos;
+- Integrar as funções de busca e edição de pensamentos no código principal da aplicação;
+- Manipular evento de submissão do formulário para atualizar dados na API;
+- Tratar erros nas requisições HTTP para melhorar a experiência de uso da aplicação.
+
+Vejo você na próxima aula!
+
+## Aula 4 - 
+
+### Aula 4 -  - Vídeo 1
+### Aula 4 -  - Vídeo 2
+### Aula 4 -  - Vídeo 3
+### Aula 4 -  - Vídeo 4
+### Aula 4 -  - Vídeo 5
+### Aula 4 -  - Vídeo 6
+### Aula 4 -  - Vídeo 7
+### Aula 4 -  - Vídeo 8
