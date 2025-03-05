@@ -66,54 +66,19 @@
       "autoria": "Mãe"
     },
     {
-      "id": "f3d5",
-      "conteudo": "Teste",
-      "autoria": "eumemo"
-    },
-    {
       "id": "c02b",
       "conteudo": "Um dia de cada vez          ",
       "autoria": "eu"
     },
     {
       "id": "1e6b",
-      "conteudo": "Mais um pensamento sem pensar",
+      "conteudo": "Mais um pensamento sem pensar!",
       "autoria": "Eu"
-    },
-    {
-      "id": "d91c",
-      "conteudo": "testando novamente",
-      "autoria": "Eu"
-    },
-    {
-      "id": "5b4b",
-      "conteudo": "Apenas mais um....",
-      "autoria": "eu"
-    },
-    {
-      "id": "39e7",
-      "conteudo": "Test",
-      "autoria": "memo"
-    },
-    {
-      "id": "fb2c",
-      "conteudo": "Da vida reclama, mas sem ela não vive",
-      "autoria": "Mestre Yoda"
     },
     {
       "id": "0bde",
       "conteudo": "Na minha máquina funciona! Na Minha NÂO! mas agora foi",
       "autoria": "Dev"
-    },
-    {
-      "id": "838a",
-      "conteudo": "será",
-      "autoria": "D"
-    },
-    {
-      "id": "99bb",
-      "conteudo": "Vai",
-      "autoria": "edfsdf"
     }
   ]
 }

@@ -1,9 +1,10 @@
 'use strict';
+const URL_BASE = "http://localhost:3001/";
 
 const api = {
     async buscarPensamentos() {
         try {
-            const response = await fetch('http://localhost:3001/pensamentos/');
+            const response = await fetch(`${URL_BASE}pensamentos/`);
             return await response.json();
         } catch (error) {
             console.log('api.js: Erro ao buscar pensamentos na APILocal', error);
@@ -14,7 +15,7 @@ const api = {
     //============================================================================
     async buscaPensamentoPorId(id) {
         try {
-            const response = await fetch(`http://localhost:3001/pensamentos/${id}`);
+            const response = await fetch(`${URL_BASE}pensamentos/${id}`);
             return await response.json();
         } catch (error) {
             console.log('api.js: Erro ao buscar o pensamento na APILocal', error);
@@ -25,7 +26,7 @@ const api = {
     //============================================================================
     async salvarPensamento(pensamento) {
         try {
-            const response = await fetch('http://localhost:3001/pensamentos/', {
+            const response = await fetch(`${URL_BASE}pensamentos/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -43,7 +44,7 @@ const api = {
     
     async editarPensamento(pensamento) {
         try {
-            const response = await fetch(`http://localhost:3001/pensamentos/${pensamento.id}`, {
+            const response = await fetch(`${URL_BASE}pensamentos/${pensamento.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -54,6 +55,19 @@ const api = {
         } catch (error) {
             console.log('api.js: Erro ao Editar pensamentos na APILocal', error);
             alert('api.js: Erro ao Editar pensamentos na APILocal');
+            throw error;
+        };
+    },
+    //============================================================================
+    
+    async excluirPensamento(id) {
+        try {
+            const response = await fetch(`${URL_BASE}pensamentos/${id}`, {
+                method: 'DELETE'
+            });
+        } catch (error) {
+            console.log('api.js: Erro ao Excluir pensamento na APILocal', error);
+            alert('api.js: Erro ao Excluir pensamentos na APILocal');
             throw error;
         };
     }

@@ -47,6 +47,10 @@ const ui = {
             divAutoria.textContent = `${pensamento.autoria}`; // Adiciona a autoria do pensamento
             liPensamento.appendChild(divAutoria);
 
+            const divIcones = document.createElement('div');
+            divIcones.classList.add('icones');
+            liPensamento.appendChild(divIcones);
+
             const btnEditar = document.createElement('button');
             btnEditar.classList.add('botao-editar');
             btnEditar.onclick = () => { ui.preencherFormulario(pensamento.id) };
@@ -54,7 +58,28 @@ const ui = {
             imgEdit.setAttribute('src', 'assets/imagens/icone-editar.png');
             imgEdit.setAttribute('alt', 'Editar pensamento');
             btnEditar.appendChild(imgEdit);
-            liPensamento.appendChild(btnEditar);
+            divIcones.appendChild(btnEditar);
+
+            const btnExcluir = document.createElement('button');
+            btnExcluir.classList.add('botao-excluir');
+            btnExcluir.onclick = async () => {
+                if (confirm('Tem certeza de que deseja excluir este pensamento?')) {
+                    try {
+                        await api.excluirPensamento(pensamento.id);
+                        ui.renderizarPensamentos();
+                        // liPensamento.remove();
+                    } catch (error) {
+                        console.log('ui.js: Erro ao excluir pensamento', error);
+                        alert('ui.js: Erro ao excluir pensamento');
+                        throw error;
+                    };
+                };
+            };
+            const imgExcluir = document.createElement('img');
+            imgExcluir.setAttribute('src', 'assets/imagens/icone-excluir.png');
+            imgExcluir.setAttribute('alt', 'Excluir pensamento');
+            btnExcluir.appendChild(imgExcluir);
+            divIcones.appendChild(btnExcluir);
 
             ulListaPensamentos.appendChild(liPensamento);
         } catch (error) {
@@ -66,11 +91,20 @@ const ui = {
     //===================================================================================================
 
     async renderizarPensamentos() {
+        const listaPensamentos = document.getElementById("lista-pensamentos");//não sei pra que a Professora fez essa linha
+        const mensagemVazia = document.getElementById("mensagem-vazia");//não sei pra que a Professora fez essa linha
+        listaPensamentos.innerHTML = "";
         try {
             const pensamentos = await api.buscarPensamentos();
             // pensamentos.forEach(ui.adicionarPensamentoNaLista);//Professora fez essa linha
             pensamentos.forEach(this.adicionarPensamentoNaLista);
             //Usar this.adicionarPensamentoNaLista no forEach, mantein o contexto correto do objeto ui (VSC Copilot)
+            if (pensamentos.length === 0) {
+                mensagemVazia.style.display = "block";
+            } else {
+                mensagemVazia.style.display = "none";
+                pensamentos.forEach(ui.adicionarPensamentoNaLista)
+            };
         } catch (error) {
             console.log('ui.js: Erro ao buscar pensamentos na APILocal', error);
             alert('ui.js: Erro ao buscar pensamentos na APILocal');

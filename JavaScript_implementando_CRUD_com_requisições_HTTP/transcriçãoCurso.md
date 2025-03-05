@@ -2668,13 +2668,626 @@ Nesta aula, você aprendeu a:
 
 Vejo você na próxima aula!
 
-## Aula 4 - 
+## Aula 4 - Requisição DELETE
 
-### Aula 4 -  - Vídeo 1
-### Aula 4 -  - Vídeo 2
-### Aula 4 -  - Vídeo 3
-### Aula 4 -  - Vídeo 4
-### Aula 4 -  - Vídeo 5
-### Aula 4 -  - Vídeo 6
-### Aula 4 -  - Vídeo 7
-### Aula 4 -  - Vídeo 8
+### Aula 4 - Deletando dados com o DELETE - Vídeo 1
+
+Transcrição  
+Estamos nos aproximando do final do CRUD, e a última funcionalidade é a exclusão de um pensamento. Vamos começar pela requisição no arquivo api.js.
+
+**Criando a função para excluir um pensamento**  
+Para excluir um pensamento, vamos aproveitar a estrutura da função editarPensamento, copiando-a e colando-a logo abaixo para editá-la. A nova função será chamada excluirPensamento e receberá o id do pensamento como parâmetro.
+
+A resposta (response) continuará a mesma, mas passaremos o id que estamos recebendo como parâmetro na função. O método para excluir um pensamento é o DELETE, e não precisamos passar as informações de headers e body, pois estamos excluindo o pensamento. Portanto, vamos remover essas informações.
+
+Também não precisamos do retorno (return) e podemos exclui-lo. Não precisaríamos da constante response para atribuir esse resultado, mas vamos mantê-la. No catch, podemos ajustar a mensagem para "Erro ao excluir um pensamento", caso ocorra algum problema.
+
+```JavaScript
+  async excluirPensamento(id) {
+    try {
+      const response = await fetch(`http://localhost:3000/pensamentos/${id}`, {
+        method: "DELETE"
+      })
+    }
+    catch {
+      alert('Erro ao excluir um pensamento')
+      throw error
+    }
+  }
+```
+
+Criando um botão para excluir o pensamento  
+Com a nossa requisição pronta, precisamos adicionar o ícone de exclusão e definir o comportamento desejado quando clicarmos nesse ícone. No arquivo ui.js, abaixo de onde criamos o botão de edição, vamos adicionar o botão de exclusão.
+
+Vamos aproveitar a estrutura do botão de edição, pois será bem parecida. O novo botão será chamado botaoExcluir e a classe será botao-excluir com "e" minúsculo.
+
+Queremos que, ao clicar nesse botão, a função excluirPensamento seja chamada para que o card desapareça da lista. Portanto, vamos adicionar botaoExcluir.onclick. Vamos utilizar async porque vamos chamar diretamente essa requisição da API.
+
+Criaremos uma arrow function e dentro dela utilizaremos a estrutura do try-catch. Para o try, vamos passar a chamada await api.excluirPensamento, passando pensamento.id e, após a exclusão do pensamento, queremos renderizar os pensamentos novamente.
+
+Portanto, vamos digitar ui.renderizarPensamentos. Se houver algum erro, podemos mostrar um alerta para a pessoa com a mensagem "Erro ao excluir pensamento".
+
+```JavaScript
+    const botaoExcluir = document.createElement("button")
+    botaoExcluir.classList.add("botao-excluir")
+    botaoExcluir.onclick = async () => {
+      try {
+        await api.excluirPensamento(pensamento.id)
+        ui.renderizarPensamentos()
+      } catch (error) {
+        alert("Erro ao excluir pensamnto")
+      }
+    }
+```
+
+Criando o ícone do botão  
+Com o botão criado e a interatividade adicionada, vamos criar o ícone para adicionar a esse botão. Vamos aproveitar a estrutura do ícone de edição.
+
+O novo ícone será chamado iconeExcluir e será uma imagem ("img"). O src será ajustado para icone-excluir com "e" minúsculo. Faremos um append desse ícone no botaoExcluir. Da mesma forma que fizemos o append do botaoEditar para a div dos ícones, vamos fazer icones.appendChild para o botaoExcluir.
+
+```JavaScript
+    const iconeExcluir = document.createElement("img")
+    iconeExcluir.src = "assets/imagens/icone-excluir.png"
+    iconeExcluir.alt = "Excluir"
+    botaoExcluir.appendChild(iconeExcluir)
+
+    const icones = document.createElement("div")
+    icones.classList.add("icones")
+    icones.appendChild(botaoEditar)
+    icones.appendChild(botaoExcluir)
+```
+
+Como estamos chamando a função renderizarPensamentos após a exclusão, podemos fazer um ajuste nessa função. Vamos definir que listaPensamentos.innerHTML será igual a uma lista vazia, para evitar problemas de renderização ou atualização.
+
+```JavaScript
+ async renderizarPensamentos() {
+    const listaPensamentos = document.getElementById("lista-pensamentos")
+    const mensagemVazia = document.getElementById("mensagem-vazia")
+    listaPensamentos.innerHTML = ""
+```
+
+Agora, podemos testar. Na aplicação, vamos escolher o último pensamento para excluir. Ao clicar na lixeira, o pensamento será excluído e o mural será atualizado.
+
+Você pode testar e excluir mais alguns pensamentos. Se tudo ocorrer sem erros, conseguimos finalizar o CRUD com essa última funcionalidade. Mas não saia ainda, vamos ver algumas formas de melhorar o código.
+
+### Aula 4 - Excluindo pensamentos musicais
+
+Imagine que você está participando do CodeChella, um festival de música cultural onde, além de curtir as apresentações, os participantes podem compartilhar seus pensamentos e experiências em um mural digital.
+
+Após curtir uma apresentação incrível, você compartilhou um pensamento no mural. No entanto, percebeu que gostaria de excluí-lo para postar outro mais detalhado.
+
+Assim, você percebeu que poderia contribuir para o projeto, implementando uma função para excluir um pensamento sobre uma apresentação no CodeChella e atualizar a interface.
+
+Como você pode escrever o código dessa função?
+
+```JavaScript
+async function deletarPensamento(id) {
+  const response = await fetch(`http://codechella/pensamentos/${id}`, {
+    method: "DELETE",
+  });
+  ui.atualizarMural();
+}
+```
+
+> Esta é a forma correta de implementar a função de exclusão. Primeiro, a função envia uma requisição DELETE para a API, utilizando o ID do pensamento. Após a exclusão bem-sucedida, a função ui.renderizarPensamentos() é chamada para atualizar a lista de pensamentos na interface, refletindo a mudança na tela.
+
+### Aula 4 - Compreendendo o CRUD - Vídeo 2
+
+Transcrição  
+Estamos muito felizes, porque agora a nossa aplicação está completa. Conseguimos cadastrar o novo pensamento, buscar os pensamentos, editar e também excluir. Queremos te dar os parabéns por ter realizado um CRUD.
+
+Como assim, um CRUD? Você já pode ter ouvido falar nesse termo, mas o que isso significa?
+
+Lembra da nossa analogia no restaurante? Você pode chamar o garçom para fazer um novo pedido, para alterar o seu pedido, ou até mesmo para excluir algo que você tenha pedido e não queira mais.
+
+Essas chamadas, como vimos, são como as requisições ao servidor. Fizemos várias requisições na aplicação e cada uma delas significa uma coisa diferente. Temos uma ação diferente que queremos realizar.
+
+**O que é CRUD?**  
+CRUD é um acrônimo e cada letra desse acrônimo significa uma ação diferente. O "C" é de Create (Criar), onde podemos cadastrar novas informações. Para cadastrar as informações, utilizamos o verbo HTTP POST.
+
+O "R" é de Read (Ler), ou seja, listar os dados. Conseguimos listar os dados quando utilizamos o GET junto com o FETCH.
+
+O "U" é de Update (Atualizar). Significa aquela parte de editar os pensamentos, de alterar as informações. Fizemos isso utilizando o método PUT.
+
+E a última letra do CRUD é o "D", de Delete (Excluir). Que serve para excluir informações, deletar dados. Fizemos isso utilizando o verbo HTTP DELETE.
+
+Esse é um termo muito utilizado em programação e ocorre em diversos sites. Você consegue ver essa temática de criar, ler, alterar e deletar dados. Portanto, é muito comum e você acabou de realizar um CRUD em JavaScript.
+
+Um CRUD é um conjunto de operações com dados e possui utilidades e funções variadas.
+
+Você pode ter uma aplicação que tem só uma ou outra aplicação que tem várias dessas funcionalidades.
+
+Existem mais verbos HTTP ainda e vamos deixar um "Para Saber Mais" para você entender um pouco mais sobre isso. Mas essas quatro operações conseguimos fazer e a nossa aplicação está completa.
+
+E já que conseguimos terminar a implementação do CRUD, que tal agora partir para algumas melhorias no código? Nos vemos no próximo vídeo.
+
+### Aula 4 - Para saber mais: CRUD em desenvolvimento de software
+
+1. O que é CRUD?
+
+CRUD é um acrônimo para as operações básicas de manipulação de dados em sistemas de informação: Create (Criar), Read (Ler), Update (Atualizar) e Delete (Deletar). Essas operações são fundamentais para qualquer aplicação que precise gerenciar dados persistentes.
+
+2. Quais são as operações CRUD*?
+
+- Create (Criar): Responsável por criar novos registros ou recursos no sistema. Na prática, isso envolve inserir novos dados na base de dados, como adicionar um novo contato em uma lista de contatos. No caso do nosso projeto, foi a operação que fizemos de adicionar um novo pensamento no mural do Memoteca.
+
+- Read (Ler): Realiza a leitura ou recuperação de informações existentes da base de dados. É usado para consultar e visualizar dados, como listar todos os contatos salvos em um sistema. No caso do nosso projeto, foi a operação GET que fizemos para recuperar a lista de pensamentos da API fake.
+
+- Update (Atualizar): Atualiza registros existentes na base de dados com novas informações. Por exemplo, modificar o número de telefone de um contato já existente. No memoteca, o update corresponde a editar um pensamento do mural.
+
+- Delete (Deletar): Remove registros ou recursos existentes da base de dados. Isso implica na exclusão permanente dos dados, como remover um contato da lista. Como vimos nesta aula, é a operação que deleta um pensamento com o método DELETE.
+
+3. Qual a importância do CRUD?
+
+- O CRUD é amplamente utilizado para lidar com dados em diversas operações. Veja três motivos de sua importância:
+
+- Organização de dados: o CRUD define uma estrutura clara e consistente para manipular dados, garantindo que as operações sejam realizadas com segurança e eficiência;
+
+- Interação com a pessoa usuária: permite que as pessoas usuárias interajam de maneira intuitiva com a aplicação, realizando operações básicas de forma direta e compreensível;
+
+- Compatibilidade com APIs e bases de dados: a padronização das operações CRUD facilita a integração com diferentes sistemas e o uso de APIs que seguem esses princípios.
+
+Qual a ligação entre o protocolo HTTP e métodos CRUD?  
+
+- POST: Utilizado para criar novos recursos no servidor, correspondendo à operação de create;
+
+- GET: Usado para buscar informações ou recursos do servidor, equivalente à operação de read;
+
+- PUT: Atualiza informações de um recurso específico no servidor, correspondendo à operação de update;
+
+- DELETE: Remove um recurso específico do servidor, equivalente à operação de delete.
+
+São habilidades básicas de qualquer pessoa desenvolvedora a compreensão e aplicação das operações CRUD. Os conceitos e suas técnicas envolvem a manipulação de dados e seu uso pode ser generalizado e ampliado para qualquer linguagem de programação, embora cada uma implemente o CRUD de uma forma diferente.
+
+É graças ao CRUD que podemos receber, enviar, salvar e remover informações em aplicações.
+
+### Aula 4 - Melhorando o código com constante para URL - Vídeo 3
+
+Transcrição  
+Agora que conseguimos terminar a implementação do CRUD em Javascript, que tal dar uma olhada no código e ver o que podemos melhorar? Vamos abrir o Visual Studio Code (VS Code) e dar uma passada pelos arquivos para entender o que podemos adicionar de melhorias.
+
+Criando uma constante para a URL base  
+Por exemplo, vamos pegar o arquivo api.js. Ele ficou responsável por lidar com as requisições HTTP que fizemos para a nossa API. Temos algumas requisições nesse arquivo. Em todas elas, perceba que estamos fazendo um fetch e passando uma URL.
+
+Então, temos essa repetição de código em todas as funções. E vamos precisar fazer isso em todas as requisições novas que formos criar.
+
+Mas imagine uma situação onde, no seu trabalho, esse endpoint muda. E aí, você vai precisar procurar todas as requisições e fazer essa alteração manualmente em todo o seu código.
+
+Então, imagine um código muito maior do que esse, com centenas de requisições. Imagine ter que ir buscar em todas essas requisições e fazer essa alteração.
+
+Além disso, essa abordagem de passar essa URL manualmente é muito mais propensa a erros. Você pode digitar algo errado e acabar mandando a sua requisição para o local errado.
+
+É uma boa prática criar uma constante para guardar a URL base.
+
+Então, é isso que vamos fazer. Na linha 1, vamos criar uma constante que vamos chamar de URL_BASE. Essa constante vai guardar a nossa URL base, como o próprio nome já diz. Então, vamos selecionar o http://localhost:3000. Vamos copiar esse trecho e passar para a constante entre aspas duplas.
+
+> const URL_BASE = "http://localhost:3000"
+
+Perceba que não passamos o endpoint (pensamentos). Se abrirmos o terminal onde está rodando o back-end, perceba que temos essa URL base, que termina em 3000, e o endpoint de pensamentos. Então, por isso que deixamos só até 3000. E os parâmetros que vamos adicionando nessa URL, vamos fazendo isso de forma dinâmica.
+
+Após criar essa constante, precisamos ajustar o código para utilizar, não mais como está agora, mas utilizando a URL base. Então, vamos copiar o nome da constante para modificar no código.
+
+Na primeira função, a de buscar pensamentos, vamos, ao invés de passar com aspas simples, utilizar a template string, então vamos passar entre crases.
+
+Vamos apagar o início da URL (http://localhost:3000). Vamos colocar cifrão ($) entre chaves e a URL_BASE. Então, passamos a constante /pensamentos. Agora, se precisássemos mudar essa URL, mudaríamos só em um único lugar.
+
+```JavaScript
+const api = {
+  async buscarPensamentos() {
+    try {
+      const response = await fetch(`${URL_BASE}/pensamentos`)
+      return await response.json()
+    }
+    catch {
+      alert('Erro ao buscar pensamentos')
+      throw error
+    }
+  },
+```
+
+Vamos continuar fazendo a refatoração nos outros. A próxima, que é o salvarPensamento, tem o mesmo endpoint. Então, vamos copiar da linha 6, com Ctrl + C, e colar na linha 17.
+
+```JavaScript
+  async salvarPensamento(pensamento) {
+    try {
+      const response = await fetch(`${URL_BASE}/pensamentos`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(pensamento)
+      })
+      return await response.json()
+    }
+    catch {
+      alert('Erro ao salvar pensamento')
+      throw error
+    }
+  },
+```
+
+Vamos substituir a URL em buscarPensamentoPorId também.
+
+```JavaScript
+  async buscarPensamentoPorId(id) {
+    try {
+      const response = await fetch(`${URL_BASE}/pensamentos/${id}`)
+      return await response.json()
+    }
+    catch {
+      alert('Erro ao buscar pensamento')
+      throw error
+    }
+  },
+```
+
+Essa forma de concatenar utilizando a template string é muito melhor, porque não precisamos ficar concatenando com mais. Passamos o conteúdo, as constantes, junto com as strings.
+
+Agora vamos para a função de editar pensamento. Vamos copiar da anterior. Vamos colar na linha 45.
+
+```JavaScript
+  async editarPensamento(pensamento) {
+    try {
+      const response = await fetch(`${URL_BASE}/pensamentos/${pensamento.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+// Trecho de código suprimido
+```
+
+E a última, que é a de excluir pensamento, também.
+
+```JavaScript
+  async excluirPensamento(id) {
+    try {
+      const response = await fetch(`${URL_BASE}/pensamentos/${id}`, {
+        method: "DELETE"
+      })
+    }
+// Trecho de código suprimido
+```
+
+O que fizemos agora foi seguir uma boa prática de programação, que é chamada de Don't Repeat Yourself (Não crie código repetitivo). Sempre que possível, utilize uma abordagem de um código mais limpo. E acabamos de fazer isso.
+
+Acrescentando uma imagem à página vazia  
+Outra melhoria que você pode fazer no código é adicionar uma mensagem e uma imagem quando não tivermos nenhum pensamento cadastrado. Então, você pode acessar o Figma e temos no Figma uma mensagem: "Nada por aqui ainda, que tal compartilhar alguma ideia?".
+
+Você pode colocar outra frase também e uma imagem. Para que, quando não tenha nenhum pensamento, não fique só o vazio lá e a pessoa usuária talvez ache que deu algum bug na aplicação.
+
+Então, a mensagem deixa bem claro para a pessoa usuária que está tudo ok, mas só não tem nenhum pensamento cadastrado ainda. Então, vamos deixar esse desafio e essa prática para você fazer.
+
+### Aula 4 - Mão na massa: implementando a mensagem para lista vazia
+
+Agora é a sua vez de adicionar uma melhoria no projeto!
+
+Implemente uma mensagem e uma imagem que deverão aparecer quando não houver pensamentos no mural.
+
+![alt text](image-2.png)
+
+IA imagem mostra uma tela de mural com a mensagem "Meu Mural" no topo, seguida pelo texto "Nada por aqui ainda, que tal compartilhar alguma ideia?" e um ícone de uma caixa de entrada com uma abelha sobrevoando, sugerindo que ainda não há conteúdos adicionados ao mural.
+
+[Acesse o Figma](https://www.figma.com/design/Sz1gmmemxqcB3amInL4Ndp/Rebrand-Memoteca-%7C-Curso-CRUD?node-id=148-26&t=FpdmfbiM1i1s6REQ-0) e coloque a mão na massa!
+
+Vamos lá?
+
+**Opinião do instrutor**  
+
+Para implementar a melhoria, é necessário adicionar estilos e funcionalidades a uma mensagem de aviso quando a lista de pensamentos estiver vazia.
+
+No arquivo CSS, adicionaremos a estilização para a classe .mensagem-vazia. No arquivo HTML, devemos inserir o elemento <div> com a classe mensagem-vazia contendo uma imagem e um parágrafo. E, no arquivo JS, a ideia é implementar a lógica para exibir a mensagem quando a lista de pensamentos estiver vazia.
+
+No arquivo “css/styles.css”:
+
+- Adicione a classe .mensagem-vazia com as propriedades de estilo necessárias;
+- Defina o estilo para a imagem dentro da classe .mensagem-vazia;
+- Estilize o parágrafo dentro da classe .mensagem-vazia.
+
+```CSS
+.mensagem-vazia {
+  display: none;
+  text-align: center;
+  color: var(--Azul-Dark, #041832);
+  margin-top: 40px;
+}
+
+.mensagem-vazia img {
+  max-width: 200px;
+  margin-bottom: 20px;
+}
+
+.mensagem-vazia p {
+  font-family: "Poppins", sans-serif;
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 33px;
+  text-align: center;
+}
+```
+
+No arquivo “index.html”:
+
+- Insira o elemento <div> com a classe mensagem-vazia;
+- Adicione uma imagem e um parágrafo dentro do elemento <div> para exibir a mensagem de aviso.
+
+```HTML
+//código anterior omitido
+<section id="lista-pensamentos-container">
+        <h3>Meu Mural</h3>
+        <div id="mensagem-vazia" class="mensagem-vazia">
+          <img src="assets/imagens/lista-vazia.png" alt="Nenhum pensamento disponível">
+          <p>Nada por aqui ainda, que tal compartilhar alguma ideia?</p>
+        </div>
+        <ul id="lista-pensamentos"></ul>
+      </section>
+//código restante omitido
+```
+
+No arquivo “js/ui.js”:
+
+- Acesse o elemento da mensagem vazia no JavaScript;
+- Verifique se a lista de pensamentos está vazia;
+- Se estiver vazia, exiba a mensagem de aviso;
+- Caso contrário, esconda a mensagem de aviso e adicione os pensamentos à lista.
+
+```JavaScript
+//código anterior omitido
+async renderizarPensamentos() {
+    const listaPensamentos = document.getElementById("lista-pensamentos")
+    const mensagemVazia = document.getElementById("mensagem-vazia");
+    listaPensamentos.innerHTML = ""
+    try {
+      const pensamentos = await api.buscarPensamentos()
+      pensamentos.forEach(ui.adicionarPensamentoNaLista)
+      if (pensamentos.length === 0) {
+        mensagemVazia.style.display = "block";
+      } else {
+        mensagemVazia.style.display = "none";
+        pensamentos.forEach(ui.adicionarPensamentoNaLista)
+      }  
+    }
+    catch {
+      alert('Erro ao renderizar pensamentos')
+    }
+  },
+//código restante omitido
+```
+
+Você também pode acessar as alterações [feitas no commit](https://github.com/alura-cursos/3781-javascript/commit/07509f77fa71a9190790a9dbc9d37cd23607bb7f).
+
+### Aula 4 - Para saber mais: Princípio DRY - Reduzindo a duplicação de código
+
+1. O que é o princípio DRY?  
+O princípio DRY ("Don't Repeat Yourself) é um conceito fundamental no desenvolvimento de software que incentiva a redução da duplicação de código, incentivando a reutilização e a centralização de lógicas repetitivas.
+
+Ao aplicar o DRY, as pessoas desenvolvedoras buscam evitar a repetição de lógica ou informações idênticas em múltiplos lugares do código-fonte. Isso não se limita apenas a trechos de código, mas também abrange configurações, estruturas de dados, regras de negócio e outros aspectos do desenvolvimento de software.
+
+2. Quais os benefícios do princípio DRY?  
+Podemos citar cinco benefícios que você ganha ao aplicar esse princípio:
+
+- 2.1. Manutenção simplificada: com menos duplicação de código, é mais fácil realizar alterações e correções em uma aplicação, pois as mudanças precisam ser feitas em um único lugar;
+- 2.2. Redução de erros: a duplicação de código pode levar a inconsistências e erros difíceis de rastrear. Ao centralizar a lógica, reduz-se a chance de bugs introduzidos por inconsistências entre partes do código;
+- 2.3. Legibilidade aprimorada: um código sem duplicações é mais claro e mais fácil de entender. Isso facilita a colaboração entre times e melhora a manutenção contínua da aplicação;
+- 2.4. Eficiência no desenvolvimento: a reutilização de código promovida pelo DRY economiza tempo e esforço no desenvolvimento inicial e em futuras expansões do software;
+- 2.5. Escalabilidade: à medida que a aplicação cresce, o DRY facilita a adição de novos recursos e funcionalidades, mantendo o código base organizado e coeso.
+
+Portanto, o princípio DRY deixa o seu código brilhante, organizado, estruturado. Os ganhos são muitos! O software construído será mais robusto, confiável e fácil de atualizar e modificar em longo prazo. Se você minimiza o código duplicado, poderá se concentrar em implementar inovações e na eficiência. Todo mundo agradece um sistema mais estável!
+
+### Aula 4 - Faça como eu fiz: exclua dados com o método HTTP DELETE
+
+Nesta aula, avançamos com o projeto Memoteca. Descobrimos como fazer uma requisição DELETE para excluir dados de uma API-fake, simulando o contexto real de trabalho.
+
+Agora é sua vez!
+
+Caso ainda não tenha implementado, coloque em prática o conhecimento adquirido durante a aula. Assim, seu aprendizado será eficaz.
+
+O resultado final esperado é que, ao testar a aplicação, você consiga excluir pensamentos no projeto Memoteca.
+
+Vamos lá?
+
+**Opinião do instrutor**  
+
+Para ver detalhes do código implementado, acesse o [repositório no GitHub](https://github.com/alura-cursos/3781-javascript/tree/aula-4).
+
+Para implementar o que foi visto na aula, siga este passo a passo:
+
+Nesta aula, foi feita uma atualização nos arquivos js/api.js e js/ui.js: no arquivo js/api.js foi adicionado um método assíncrono para excluir um pensamento da API; já no arquivo js/ui.js foi adicionado um botão de exclusão de pensamento na interface do usuário.
+
+No arquivo “js/api.js”:
+
+- Adicione um novo método assíncrono chamado excluirPensamento que recebe o id do pensamento a ser excluído;
+- Utilize a função fetch para fazer uma requisição DELETE para http://localhost:3000/pensamentos/${id};
+- Em caso de sucesso, não é necessário retornar nada;
+- Em caso de erro, exiba um alerta com a mensagem "Erro ao excluir pensamento" e lance o erro.
+
+No arquivo “js/ui.js”:
+
+- Limpe o conteúdo da lista de pensamentos antes de renderizá-la;
+- Adicione um botão de exclusão de pensamento em cada item da lista;
+- Ao clicar no botão de exclusão, chame o método excluirPensamento da API passando o id do pensamento e, em seguida, renderize novamente os pensamentos;
+- Em caso de erro ao excluir o pensamento, exiba um alerta com a mensagem "Erro ao excluir pensamento".
+- Além disso, foi feita uma refatoração no arquivo api.js para utilizar uma constante URL_BASE que armazena o endereço base da API. Isso foi feito para facilitar a manutenção do código e evitar repetições desnecessárias do endereço da API em cada requisição.
+
+No arquivo “arquivo”:
+
+- Crie uma constante URL_BASE e atribua o valor "http://localhost:3000";
+- Substitua todas as ocorrências de 'http://localhost:3000' por ${URL_BASE} concatenado com o caminho específico de cada requisição, utilizando template strings;
+- Utilize o método fetch para fazer requisições para a API, passando a URL completa com ${URL_BASE} e o caminho específico de cada requisição;
+- Mantenha a estrutura das funções async e await para lidar com requisições assíncronas e o tratamento de erros com try/catch.
+
+### Aula 4 - Lista de exercícios
+
+Vamos consolidar aprendizados com mais uma lista de exercícios?
+
+O Adopet ainda precisa de sua ajuda!
+
+1) Implementando a função de exclusão  
+Após a adoção do pet, é importante conseguir excluir o registro dele do site (o que é ótimo, pois significa que ele conseguiu um lar). Vamos implementar essa funcionalidade?
+
+Sua tarefa é: escreva o código de uma função que envia uma requisição para API e exclui um pet específico pelo ID.
+
+Faça-a no arquivo “api.js” (ou conforme você o tiver nomeado). O título da função pode ser algo como deletarPet.
+
+2) Adicionando botão de exclusão na interface  
+Vamos prosseguir direto do exercício anterior.
+
+Com a função de exclusão pronta na API, vamos ajustar a interface para permitir a exclusão de pets diretamente da lista.
+
+Para cumprir isso, atualize a interface e adicione um botão de exclusão para cada pet listado e implemente a lógica para excluir o pet quando o botão for clicado.
+
+3) Melhorando o código com uma constante para a URL base  
+Agora que todas as funcionalidades do CRUD foram implementadas, sua missão é melhorar o código para evitar a repetição da URL base em várias funções, criando uma constante que poderá ser reutilizada.
+
+Vamos lá?
+
+Opinião do instrutor
+
+Agora que você concluiu os exercícios, é hora de ver o "gabarito" com as respostas!
+
+Lembre-se de que seu código pode variar um pouco. O importante é que ele funcione e siga boas práticas de programação!
+
+1) Implementando a função de exclusão  
+Para implementar essa função, usaremos o método HTTP DELETE e passaremos o parâmetro id para excluir o pet específico que queremos. Também vamos tratar possíveis erros e alertar a pessoa usuária caso algo dê errado. Veja uma sugestão de resolução no exercício abaixo: js/api.js
+
+```JavaScript
+async deletarPet(id) {
+    try {
+      const response = await fetch(`http://localhost:3000/pets/${id}`, {
+        method: "DELETE",
+      })
+    } catch (error) {
+      alert(`Erro: ${error.message}`);
+      throw error;
+    }
+  }
+```
+
+2) Adicionando botão de exclusão na interface  
+Para adicionar o botão de exclusão, atualize o arquivo ui.js (ou conforme você o tiver nomeado), criando o elemento e associando um event listener ao botão para chamar a função deletarPet e atualizar a lista de pets após a exclusão.
+
+```JavaScript
+import api from "./api.js"
+const ui = {
+// código omitido
+adicionarPetNaLista(pet) {
+//código omitido
+    const botaoExcluir = document.createElement("button");
+    botaoExcluir.classList.add("botao-excluir");
+    botaoExcluir.textContent = "Excluir";
+    botaoExcluir.onclick = async () => {
+      try {
+        await api.deletarPet(pet.id);
+        ui.renderizarPets();
+      } catch (error) {
+        console.error("Erro ao excluir pet:", error);
+        alert("Erro ao excluir pet. Tente novamente mais tarde.");
+      }
+    };
+
+    li.appendChild(nomePet);
+    li.appendChild(especiePet);
+    li.appendChild(racaPet);
+    li.appendChild(botaoEditar);
+    li.appendChild(botaoExcluir);
+    listaPets.appendChild(li);
+  },  
+};
+export default ui;
+```
+
+Abaixo, veja como fica o resultado no navegador (bastante simples, sem layout). Caso queira, você pode estilizá-lo.
+
+3) Melhorando o código com uma constante para a URL base  
+Para adicionar essa melhoria, vamos definir uma constante URL_BASE no arquivo api.js e utilizar essa constante em todas as funções que fazem requisições para a API.
+
+Veja abaixo como ficam os códigos das requisições refatorados com a constante:
+
+```JavaScript
+const URL_BASE = "http://localhost:3000/pets";
+const api = {
+  async buscarInformacoesPets() {
+    try {
+      const response = await fetch(`${URL_BASE}`);
+      return await response.json();
+    } catch (error) {
+      alert('Erro ao buscar dados');
+      throw error;
+    }
+  },
+  async salvarPet(pet) {
+    try {
+      const response = await fetch(`${URL_BASE}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(pet),
+      });
+      return await response.json();
+    } catch (error) {
+      alert(`Erro: ${error.message}`);
+      throw error;
+    }
+  },
+  async buscarPetPorId(id) {
+    try {
+      const response = await fetch(`${URL_BASE}/${id}`);
+      return await response.json();
+    } catch (error) {
+      alert(`Erro: ${error.message}`);
+      throw error;
+    }
+  },
+  async editarPet(pet) {
+    try {
+      const response = await fetch(`${URL_BASE}/${pet.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(pet),
+      });
+      return await response.json();
+    } catch (error) {
+      alert(`Erro: ${error.message}`);
+      throw error;
+    }
+  },
+  async deletarPet(id) {
+    try {
+      const response = await fetch(`${URL_BASE}/${id}`, {
+        method: "DELETE",
+      })
+    } catch (error) {
+      alert(`Erro: ${error.message}`);
+      throw error;
+    }
+  }
+};
+export default api;
+```
+
+Parabéns por concluir essa lista!
+
+### Aula 4 - O que aprendemos?
+
+Nesta aula, você aprendeu a:
+
+- Utilizar o método HTTP DELETE para remover dados do servidor;
+- Buscar um pensamento específico por ID para exclusão utilizando uma requisição HTTP;
+- Implementar uma função de exclusão no arquivo “api.js” para enviar a requisição de remoção à API;
+- Adicionar dinamicamente botões de exclusão à interface para cada item da lista de pensamentos;
+- Integrar a função de exclusão de pensamentos no código principal da aplicação;
+- Manipular eventos de clique no botão de exclusão e atualizar a interface após a remoção de dados na API;
+- Compreender o conceito de CRUD (Create, Read, Update, Delete) e aplicá-lo em um contexto prático;
+- Melhorar o código para torná-lo mais eficiente e fácil de manter, utilizando constantes para evitar repetição de URL.
+
+### Aula 5 - 
+
+### Aula 5 -  - Vídeo 1
+### Aula 5 -  - Vídeo 2
+### Aula 5 -  - Vídeo 3
+### Aula 5 -  - Vídeo 4
+### Aula 5 -  - Vídeo 5
+### Aula 5 -  - Vídeo 6
+### Aula 5 -  - Vídeo 7

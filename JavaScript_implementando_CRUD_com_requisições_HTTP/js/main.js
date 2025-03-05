@@ -32,15 +32,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             await ui.adicionarPensamentoNaLista(novoPensamento);
 
             // alert('Pensamentos Salvo e Adicionado!');
+            
             // Adiciona um pequeno atraso antes de rolar até o elemento
-            setTimeout(() => {
+            // setTimeout(() => {
                 const elementoPensamento = document.querySelector(`[data-id='${novoPensamento.id}']`);
                 if (elementoPensamento) {
                     elementoPensamento.scrollIntoView({ behavior: 'smooth' });
                 } else {
                     console.log('Elemento não encontrado no DOM!');
                 }
-            }, 100); // Atraso de 100ms
+            // }, 100); // Atraso de 100ms
             // Rola até o final da página
             // window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
             ui.limpaFormulario();
