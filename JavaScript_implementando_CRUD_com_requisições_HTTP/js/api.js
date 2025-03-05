@@ -6,8 +6,24 @@ const api = {
             const response = await fetch('http://localhost:3001/pensamentos/');
             return await response.json();
         } catch (error) {
-            console.log('Erro ao buscar pensamentos na APILocal', error);
-            alert('Erro ao buscar pensamentos na APILocal');
+            console.log('api.js: Erro ao buscar pensamentos na APILocal', error);
+            alert('api.js: Erro ao buscar pensamentos na APILocal');
+            throw error;
+        };
+    },
+    async salvarPensamento(pensamento) {
+        try {
+            const response = await fetch('http://localhost:3001/pensamentos/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(pensamento)
+            });
+            return await response.json();
+        } catch (error) {
+            console.log('api.js: Erro ao buscar pensamentos na APILocal', error);
+            alert('api.js: Erro ao buscar pensamentos na APILocal');
             throw error;
         };
     }

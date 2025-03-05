@@ -1005,13 +1005,983 @@ Nesta aula, você aprendeu a:
 
 Espero você na próxima aula!
 
-## Aula 2 - 
+## Aula 2 - Requisições GET e POST
 
-### Aula 2 -  - Vídeo 1
-### Aula 2 -  - Vídeo 2
-### Aula 2 -  - Vídeo 3
-### Aula 2 -  - Vídeo 4
-### Aula 2 -  - Vídeo 5
-### Aula 2 -  - Vídeo 6
-### Aula 2 -  - Vídeo 7
+### Aula 2 - Adicionando dados com o POST - Vídeo 1
+
+Transcrição  
+Conseguimos buscar os pensamentos da API e renderizá-los na tela. Agora, vamos continuar adicionando mais funcionalidades na aplicação.
+
+O que queremos fazer agora é cadastrar um novo pensamento. Portanto, além de buscar, queremos preencher na aplicação o pensamento e a autoria, e enviar esses dados para a API. Vamos começar a fazer isso.
+
+Enviando um pensamento à API
+Com o VS Code aberto no arquivo api.js, dentro da pasta "js", podemos começar pela lógica da API.
+
+Entre as chaves de const api, após a chave que encerra o bloco buscarPensamentos(), adicionaremos uma vírgula, pularemos uma linha e criaremos uma nova requisição. Como a estrutura é parecida, copiaremos o bloco buscarPensamentos(), que ocupa dez linhas.
+
+Para duplicar esse código, basta selecionar todo o bloco e teclar "Alt + Shift + Seta para baixo". Em seguida, realizaremos as modificações necessárias.
+
+Ao invés de buscar pensamentos, queremos salvar um pensamento. Portanto, mudaremos o nome buscarPensamentos() para salvarPensamento(), apagando o "s".
+
+Na função de buscar pensamentos, estamos apenas recolhendo informações. Contudo, na função de salvamento, precisamos enviar uma informação. Por isso, entre os parênteses, informaremos um pensamento como parâmetro dessa função.
+
+Também faremos um try-catch, criando essa responsabilidade e fazendo um fetch para a API. Portanto, manteremos esse trecho copiado.
+
+api.js:
+
+```JavaScript
+const api = {
+    async buscarPensamentos() {
+        try {
+            const response = await fetch('http://localhost:3000/pensamentos')
+            return await response.json()
+        }
+        catch {
+            alert('Erro ao buscar pensamentos')
+            throw error
+        }
+    },
+    
+    async salvarPensamento(pensamento) {
+        try {
+            const response = await fetch('http://localhost:3000/pensamentos')
+            return await response.json()
+        }
+        catch {
+            alert('Erro ao buscar pensamentos')
+            throw error
+        }
+    }
+}
+```
+
+Notaremos que a estrutura de ambas as funções são muito parecidas. Como a API entenderá que queremos buscar dados na função antiga e cadastrar um pensamento na função nova? Será que isso acontece de forma automática internamente?
+
+A resposta é não. Precisaremos enviar mais algumas informações para essa requisição, explicitando para a API o que queremos fazer.
+
+Dentro da função salvarPensamento(), na linha const response = await fetch('http://localhost:3000/pensamentos'), adicionaremos, dentro dos parênteses e depois da URL, uma vírgula e um bloco de chaves.
+
+Entre elas, adicionaremos algumas informações. A primeira se chama method (método) - ou seja, a ação que queremos fazer com essa requisição.
+
+Escreveremos method, dois pontos, e passaremos, entre aspas duplas, o nome POST.
+
+```JavaScript
+async salvarPensamento(pensamento) {
+    try {
+        const response = await fetch('http://localhost:3000/pensamentos', {
+            method: "POST"
+        })
+        return await response.json()
+    }
+    catch {
+        alert('Erro ao buscar pensamentos')
+        throw error
+    }
+}
+```
+
+O POST significa que queremos enviar uma informação. Não especificamos nenhum método ao buscar pensamentos, porque o fetch realiza um GET por padrão, que é a informação de buscar.
+
+Como se trata do padrão, não precisamos explicitar. Já para cadastrar uma informação, precisamos usar o método POST.
+
+Além do método que representa a ação, que outras informações precisamos passar Digitaremos uma vírgula após o POST, desceremos uma linha e adicionaremos a propriedade headers, com dois pontos, e um bloco de chaves.
+
+Entre as chavesm, para essa propriedade, informaremos um Content-Type entre aspas duplas. Fora das aspas, adicionaremos dois pontos e um application/json entre aspas duplas.
+
+```JavaScript
+async salvarPensamento(pensamento) {
+    try {
+        const response = await fetch('http://localhost:3000/pensamentos', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+        })
+        return await response.json()
+    }
+    catch {
+        alert('Erro ao buscar pensamentos')
+        throw error
+    }
+}
+```
+
+O Content-Type, com iniciais maiúsculas, informa o tipo de conteúdo que estamos enviando nessa requisição. Nesse caso, informamos que será um conteúdo em JSON.
+
+Lembrando que queremos criar um pensamento como um objeto JavaScript, mas estamos informando nesse bloco que ele será um JSON. Portanto, precisaremos fazer essa conversão na hora do envio.
+
+Após a chave que encerra o bloco headers, digitaremos uma vírgula e, na linha seguinte, adicionaremos mais uma propriedade: o body (corpo) da requisição, seguido de dois pontos.
+
+Para o corpo da requisição, precisamos fazer a conversão do pensamento. Para isso, utilizaremos a função JSON.stringify(), passando como parâmetro o pensamento entre parênteses.
+
+Essa função do JSON converterá o pensamento, que era um objeto JavaScript, para o formato de string JSON (formato que a API entende).
+
+```JavaScript
+async salvarPensamento(pensamento) {
+    try {
+        const response = await fetch('http://localhost:3000/pensamentos', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(pensamento)
+        })
+        return await response.json()
+    }
+    catch {
+        alert('Erro ao buscar pensamentos')
+        throw error
+    }
+}
+```
+
+Vamos imaginar que estamos enviando um e-mail para uma pessoa colega de trabalho. Esse e-mail possui diversas informações.
+
+Esse e-mail é como a nossa requisição e possui diversas informações. O cabeçalho da requisição, no bloco headers que comentamos, representaria o cabeçalho do e-mail, no qual podemos adicionar informações como o assunto, destinatários e pessoas em cópia.
+
+Nós passamos a mesma estrutura no tipo de conteúdo, onde usamos o "Content-Type": "application/json".
+
+Já o body (corpo) da requisição equivale ao conteúdo enviado no e-mail - ou seja, a mensagem em si. No código, essa etapa ocorre quando passamos o pensamento em um objeto JavaScript e o convertemos para JSON, o formato que a API entende.
+
+Próximos passos  
+Esperamos que essa analogia tenha tornado claro o que fizemos nessa nova requisição. Ela é o primeiro passo para conseguir enviar essas informações para a API.
+
+A seguir, continuaremos trabalhando nessa tarefa.
+
+### Aula 2 - Implementando a lógica na interface - Vídeo 2
+
+Transcrição  
+Criamos a requisição API com o método POST para enviar um pensamento para a API. Agora, precisamos fazer isso de forma dinâmica, criando cada um dos cartões que representam um item da lista. Assim, quando clicamos no botão de adicionar do formulário, esse novo pensamento é adicionado no mural.
+
+Vamos voltar no VS Code para fazer isso.
+
+**Adicionando pensamentos na lista**  
+Dentro da pasta "js", acessaremos o arquivo ui.js, que tem a responsabilidade de lidar com a interface da pessoa usuária. Em seu interior, no bloco da função de renderizarPensamentos(), estamos criando de forma dinâmica os itens da lista diretamente.
+
+No entanto, também é interessante dividir essas responsabilidades das funções, tendo uma função específica para a criação desse pensamento. Afinal, precisaremos criar a imagem das aspas, conteúdo, autoria e futuramente os ícones de edição e exclusão.
+
+Neste vídeo, vamos fazer essa separação. Passaremos a lógica que está dentro da função de renderizar os pensamentos para a função de adicionar um pensamento na lista.
+
+Vamos digitar uma vírgula após a chave que encerra o bloco da função renderizarPensamentos(), por volta da linha 22, e pular uma linha para criar uma nova função. Vamos chamá-la de adicionarPensamentoNaLista(), porque é exatamente o que ela vai fazer.
+
+ui.js:
+
+```JavaScript
+const ui = {
+    async renderizarPensamentos() {
+        const listaPensamentos = document.getElementById("lista-pensamentos")
+        
+        try {
+            const pensamentos = await api.buscarPensamentos()
+            pensamentos.forEach(pensamento => {
+                listaPensamentos.innerHTML += `
+                    <li class="li-pensamento" data-id="${pensamento.id}">
+                    <img src="assets/imagens/aspas-azuis.png" alt="Aspas azuis" class="icone-aspas">
+                    <div class="pensamento-conteudo">${pensamento.conteudo}</div>
+                    <div class="pensamento-autoria">${pensamento.autoria}</div>
+                    </li>
+                `
+            })
+        }
+        catch {
+            alert('Erro ao renderizar pensamentos')
+        }
+    },
+    adicionarPensamentoNaLista() {
+    }
+}
+```
+
+Entre suas chaves, criaremos uma constante para representar a lista de pensamentos. Já fizemos isso na linha const listaPensamentos = document.getElementById("lista-pensamentos").
+
+Precisamos ter acesso a essa lista, portanto, vamos copiar e colar esse conteúdo.
+
+```JavaScript
+adicionarPensamentoNaLista() {
+    const listaPensamentos = document.getElementById("lista-pensamentos")
+}
+```
+
+Na linha seguinte, criaremos um elemento que vai representar o item da lista. Para tornar o item da lista mais evidente, esse elemento será uma constante chamada li.
+
+Criaremos essa constante com document.createElement(), passando entre aspas duplas um li, elemento que queremos criar.
+
+```JavaScript
+adicionarPensamentoNaLista() {
+    const listaPensamentos = document.getElementById("lista-pensamentos")
+    const li = document.createElement("li")
+}
+```
+
+Na próxima linha, precisamos fazer a atribuição do id.
+
+Anteriormente, usamos um atributo de dados para adicionar o id na linha `<li class="li-pensamento" data-id="${pensamento.id}">`. Podemos fazer isso também.
+
+Para isso, digitaremos li.setAttribute(). Entre os parênteses, informaremos o nome do atributo, que é data-id, entre aspas duplas. Já o segundo parâmetro é a informação, ou seja, pensamento.id.
+
+Descendo uma linha, adicionaremos dinamicamente uma classe nesse item da lista, responsável pela estilização. Para isso, escreveremos li.classList.add(), adicoinando entre os parênteses o nome da classe, li-pensamento, entre aspas duplas.
+
+```JavaScript
+adicionarPensamentoNaLista() {
+    const listaPensamentos = document.getElementById("lista-pensamentos")
+    const li = document.createElement("li")
+    li.setAttribute("data-id", pensamento.id)
+    li.classList.add("li-pensamento")
+}
+```
+
+Assim, estamos criando o item da lista. Esse passo já foi feito e podemos continuar.
+
+Após criar o item da lista, precisamos criar o ícone das aspas. Pulando uma linha, criaremos uma constante que vai representar o ícone, chamada iconeAspas. Atribuiremos a ela o document.createElement(), criando, desta vez, uma tag img para uma imagem.
+
+Na próxima linha, acessaremos o iconeAspas para passar o src por meio de um .src. Ele receberá, entre aspas duplas, o caminho da imagem: assets/imagens/aspas-azuis.png.
+
+O próximo atributo a criar é o iconeAspas.alt, que receberá entre aspas duplas Aspas azuis. Por fim, adicionaremos uma classe com iconeAspas.classList.add(). Entre parênteses, o nome da classe vai ser icone-aspas.
+
+```JavaScript
+adicionarPensamentoNaLista() {
+    const listaPensamentos = document.getElementById("lista-pensamentos")
+    const li = document.createElement("li")
+    li.setAttribute("data-id", pensamento.id)
+    li.classList.add("li-pensamento")
+    
+    const iconeAspas = document.createElement("img")
+    iconeAspas.src = "assets/imagens/aspas-azuis.png"
+    iconeAspas.alt = "Aspas azuis"
+    iconeAspas.classList.add("icone-aspas")
+}
+```
+
+Criamos o segundo elemento e vamos continuar. Voltando à chamada de adicionarPensamentoNaLista(), estamos adicionando o pensamento na lista. Portanto, dentro dos parênteses, precisamos passar o pensamento como parâmetro.
+
+```JavaScript
+adicionarPensamentoNaLista(pensamento) {
+    const listaPensamentos = document.getElementById("lista-pensamentos")
+    const li = document.createElement("li")
+    li.setAttribute("data-id", pensamento.id)
+    li.classList.add("li-pensamento")
+    
+    const iconeAspas = document.createElement("img")
+    iconeAspas.src = "assets/imagens/aspas-azuis.png"
+    iconeAspas.alt = "Aspas azuis"
+    iconeAspas.classList.add("icone-aspas")
+}
+```
+
+Abaixo da criação do ícone das aspas, pularemos uma linha e criaremos duas divs: uma que conterá o conteúdo do pensamento, e outra que conterá a autoria. Para isso, adicionaremos outra constante, chamada pensamentoConteudo, que receberá um document.createElement() contendo o elemento que vamos criar, que será uma div.
+
+Na linha seguinte, atribuiremos um texto ao pensamentoConteudo, adicionando a ele um .textContent, que será igual ao pensamento.conteudo.
+
+Em outra linha, atribuiremos também uma classe, com pensamentoConteudo.classList.add(). Essa classe será pensamento-conteudo.
+
+```JavaScript
+adicionarPensamentoNaLista(pensamento) {
+    const listaPensamentos = document.getElementById("lista-pensamentos")
+    const li = document.createElement("li")
+    li.setAttribute("data-id", pensamento.id)
+    li.classList.add("li-pensamento")
+    
+    const iconeAspas = document.createElement("img")
+    iconeAspas.src = "assets/imagens/aspas-azuis.png"
+    iconeAspas.alt = "Aspas azuis"
+    iconeAspas.classList.add("icone-aspas")
+    
+    const pensamentoConteudo = document.createElement("div")
+    pensamentoConteudo.textContent = pensamento.conteudo
+    pensamentoConteudo.classList.add("pensamento-conteudo")
+}
+```
+
+O próximo bloco será a autoria. Como este é bem parecido com o bloco de conteúdo, vamos duplicá-lo, selecionando as três últimas linhas que escrevemos e pressionando "Alt + Shift + Seta para baixo". Por fim, separaremos os blocos com uma linha vazia entre eles.
+
+Nas linhas copiadas, faremos as alterações necessárias. Ao invés de pensamentoConteudo, será pensamentoAutoria. Para alterar simultaneamente vários trechos de código, podemos selecionar uma ocorrência do código que queremos modificar e pressionar "Ctrl + D" para selecionar as outras ocorrências dessa palavra.
+
+Após modificar tudo de uma vez, corrigiremos a inicial "A" de pensamento.autoria para ser minúscula. Já a classe entre os parênteses de classList.add() será pensamento-autoria.
+
+```JavaScript
+adicionarPensamentoNaLista(pensamento) {
+    const listaPensamentos = document.getElementById("lista-pensamentos")
+    const li = document.createElement("li")
+    li.setAttribute("data-id", pensamento.id)
+    li.classList.add("li-pensamento")
+    
+    const iconeAspas = document.createElement("img")
+    iconeAspas.src = "assets/imagens/aspas-azuis.png"
+    iconeAspas.alt = "Aspas azuis"
+    iconeAspas.classList.add("icone-aspas")
+    
+    const pensamentoConteudo = document.createElement("div")
+    pensamentoConteudo.textContent = pensamento.conteudo
+    pensamentoConteudo.classList.add("pensamento-conteudo")
+    
+    const pensamentoAutoria = document.createElement("div")
+    pensamentoAutoria.textContent = pensamento.autoria
+    pensamentoAutoria.classList.add("pensamento-autoria")
+}
+```
+
+Após criar todos os elementos que vão compor o cartão, faremos o append, adicionando esses elementos ao item da lista. Para isso, pularemos uma linha e digitaremos li.appendChild(), informando entre parênteses o nome da constante, iconeAspas.
+
+Com o cursor parado no final dessa linha, pressionaremos "Alt + Shift + Seta para baixo" duas vezes para duplicar essa linha duas vezes. Nas linhas copiadas, faremos append do pensamentoConteudo e do pensamentoAutoria.
+
+Com o item da lista completo, faremos o append dele. Para isso, na linha seguinte, acessaremos a listaPensamentos.appendChild(), passando a li.
+
+```JavaScript
+adicionarPensamentoNaLista(pensamento) {
+    const listaPensamentos = document.getElementById("lista-pensamentos")
+    const li = document.createElement("li")
+    li.setAttribute("data-id", pensamento.id)
+    li.classList.add("li-pensamento")
+    
+    const iconeAspas = document.createElement("img")
+    iconeAspas.src = "assets/imagens/aspas-azuis.png"
+    iconeAspas.alt = "Aspas azuis"
+    iconeAspas.classList.add("icone-aspas")
+    
+    const pensamentoConteudo = document.createElement("div")
+    pensamentoConteudo.textContent = pensamento.conteudo
+    pensamentoConteudo.classList.add("pensamento-conteudo")
+    
+    const pensamentoAutoria = document.createElement("div")
+    pensamentoAutoria.textContent = pensamento.autoria
+    pensamentoAutoria.classList.add("pensamento-autoria")
+    
+    li.appendChild(iconeAspas)
+    li.appendChild(pensamentoConteudo)
+    li.appendChild(pensamentoAutoria
+    listaPensamentos.appendChild(li)
+}
+```
+
+Após completar a função, podemos modificar seu conteúdo anterior. Subindo o código, apagaremos o bloco listaPensamentos.innerHTML += e todo o conteúdo entre suas crases.
+
+Dentro do forEach() que continha o bloco apagado, removeremos também a estrutura da arrow function para chamar a função nova em seu lugar. Para isso, digitaremos ui.adicionarPensamentoNaLista.
+
+Abaixo, temos a função completa.
+
+```JavaScript
+const ui = {
+    async renderizarPensamentos() {
+        const listaPensamentos = document.getElementById("lista-pensamentos")
+        try {
+            const pensamentos = await api.buscarPensamentos()
+            pensamentos.forEach(ui.adicionarPensamentoNaLista)
+        }
+        catch {
+            alert('Erro ao renderizar pensamentos')
+        }
+    },
+    
+    adicionarPensamentoNaLista(pensamento) {
+        const listaPensamentos = document.getElementById("lista-pensamentos")
+        const li = document.createElement("li")
+        li.setAttribute("data-id", pensamento.id)
+        li.classList.add("li-pensamento")
+
+        const iconeAspas = document.createElement("img")
+        iconeAspas.src = "assets/imagens/aspas-azuis.png"
+        iconeAspas.alt = "Aspas azuis"
+        iconeAspas.classList.add("icone-aspas")
+
+        const pensamentoConteudo = document.createElement("div")
+        pensamentoConteudo.textContent = pensamento.conteudo
+        pensamentoConteudo.classList.add("pensamento-conteudo")
+
+        const pensamentoAutoria = document.createElement("div")
+        pensamentoAutoria.textContent = pensamento.autoria
+        pensamentoAutoria.classList.add("pensamento-autoria")
+
+        li.appendChild(iconeAspas)
+        li.appendChild(pensamentoConteudo)
+        li.appendChild(pensamentoAutoria)
+        listaPensamentos.appendChild(li)
+    }
+}
+```
+
+Assim, a função renderizarPensamentos() passou a se responsabilizar por renderizar os pensamentos. Ela chama a função adicionarPensamentoNaLista(), explicitada logo abaixo, em seu interior.
+
+Próximos passos  
+Estamos cada vez mais perto de conseguir cadastrar um novo pensamento e exibi-lo na interface. No próximo vídeo, completaremos essa funcionalidade.
+
+### Aula 2 - Submetendo o formulário para criar um novo dado - Vídeo 3
+
+Transcrição  
+No vídeo anterior, criamos no arquivo ui.js toda a lógica na interface para conseguir criar um novo cartão de pensamentos. O que falta para cadastrar um novo pensamento?
+
+Acessando o VS Code, já atualizamos os arquivos da API e da interface. Agora, precisamos ajustar o arquivo que lida com a lógica principal da aplicação, o main.js.
+
+Configurando o formulário  
+Se acessarmos o index.html, temos um formulário com o id pensamento-form, por volta da linha 31. Também temos os campos para digitar o conteúdo e a autoria, cujos ids são pensamento-conteudo e pensamento-autoria.
+
+Além disso, temos a informação do id desse pensamento em um input localizado por volta da linha 32. Ele não está visível, mas serve para guardar essa informação.
+
+Então, precisaremos acessar esses elementos no main.js para conseguir enviar essas informações.
+
+Acessando o main.js, entre as chaves do primeiro EventListener (ouvinte de evento) e duas linhas abaixo da ui.renderizarPensamentos(), criaremos uma constante const formularioPensamento que representará o formulário. Atribuiremos a ela um document.getElementById() passando o ID do formulário, que é pensamento-form, entre aspas duplas.
+
+Na linha seguinte, adicionaremos um evento de submissão de formulário a essa constante. Acessaremos o formularioPensamento.addEventListener(), adicionando o evento de submit (envio) do formulário, entre aspas duplas.
+
+Precisaremos criar uma função que contém a lógica da submissão do formulário. Ela não será criada dentro desses parênteses, mas precisamos passar o seu nome.
+
+Para isso, adicionaremos uma vírgula após "submit" e passaremos o nome manipularSubmissaoFormulario, pois é o que essa função fará.
+
+main.js:
+
+```JavaScript
+document.addEventListener("DOMContentLoaded", () => {
+    ui.renderizarPensamentos()
+    const formularioPensamento = document.getElementById("pensamento-form")
+    formularioPensamento.addEventListener("submit", manipularSubmissaoFormulario)
+})
+```
+
+Abaixo das chaves que encerram o EventListener, criaremos essa função de manipular a submissão do formulário. Adicionaremos a nova função com async function e o nome da função, que copiaremos para não errar.
+
+Abriremos e fecharemos parênteses, e entre eles, informaremos o event como parâmetro, que é o evento de submissão do formulário. Também abriremos e fecharemos as chaves.
+
+Toda vez que submetemos o formulário, o comportamento padrão do navegador é recarregar a página ou redirecionar. Contudo, não queremos que isso aconteça.
+
+Para prevenir esse comportamento padrão do navegador, vamos adicionar o event.preventDefault() entre as chaves da função atual.
+
+```JavaScript
+document.addEventListener("DOMContentLoaded", () => {
+    ui.renderizarPensamentos()
+    
+    const formularioPensamento = document.getElementById("pensamento-form")
+    formularioPensamento.addEventListener("submit", manipularSubmissaoFormulario)
+}
+
+async function manipularSubmissaoFormulario(event) {
+    event.preventDefault()
+}
+```
+
+Na linha seguinte, precisaremos acessar aquelas três propriedades: o ID, o conteúdo e a autoria. Para isso, criaremos três constantes.
+
+A primeira será o id, que vamos acessar com document.getElementById() informando o id que é pensamento-id. Caso haja dúvida no nome das propriedades, basta acessar o arquivo index.html.
+
+Acessar o value (valor) desse id, portanto, adicionaremos um .value após os parênteses.
+
+```JavaScript
+document.addEventListener("DOMContentLoaded", () => {
+    ui.renderizarPensamentos()
+    
+    const formularioPensamento = document.getElementById("pensamento-form")
+    formularioPensamento.addEventListener("submit", manipularSubmissaoFormulario)
+}
+
+async function manipularSubmissaoFormulario(event) {
+    event.preventDefault()
+    const id = document.getElementById("pensamento-id").value
+}
+```
+
+Vamos deixar o cursor parado no final da linha e pressionar "Alt + Shift + Seta para baixo" duas vezes para duplicá-la e agilizar a escrita dos outros elementos.
+
+Acessaremos o conteúdo e a autoria, da mesma forma. Portanto, na segunda linha, adicionaremos a const conteudo, mudando o valor de getElementById() de pensamento-id para pensamento-conteudo. Já na linha seguinte, adicionaremos a const autoria, alterando o valor pensamento-id para pensamento-autoria.
+
+```JavaScript
+document.addEventListener("DOMContentLoaded", () => {
+    ui.renderizarPensamentos()
+    
+    const formularioPensamento = document.getElementById("pensamento-form")
+    formularioPensamento.addEventListener("submit", manipularSubmissaoFormulario)
+}
+async function manipularSubmissaoFormulario(event) {
+    event.preventDefault()
+    const id = document.getElementById("pensamento-id").value
+    const conteudo = document.getElementById("pensamento-conteudo").value
+    const autoria = document.getElementById("pensamento-autoria").value
+}
+```
+
+Assim, temos acesso a esses três elementos do HTML. A seguir, precisamos enviar essa informação.
+
+No arquivo de API, temos a função para salvar o pensamento. Por isso, vamos acessá-la dentro do arquivo main.
+
+Para isso, precisamos importar a API. Abaixo da outra importação, digitaremos import API from './api.js'.
+
+> import api from "./api.js"
+
+Voltando ao interior das chaves de manipularSubmissaoFormulario(), pularemos uma linha a partir do último conteúdo e adicionaremos a estrutura do try, catch, digitando try, um bloco de chaves, abaixo dele o catch para pegar algum erro, se houver, com outro bloco de chaves.
+
+Entre as chaves do try, digitaremos o await api.salvarPensamento(), passando entre os parênteses o que queremos salvar. Nesse caso, passaremos um par de chaves e entre elas, o conteúdo e a autoria, separados por vírgula.
+
+Não adicionaremos o ID pois não somos nós que o informamos. O JSON Server ficará encarregado de criar automaticamente um ID aleatório.
+
+```JavaScript
+document.addEventListener("DOMContentLoaded", () => {
+    ui.renderizarPensamentos()
+    
+    const formularioPensamento = document.getElementById("pensamento-form")
+    formularioPensamento.addEventListener("submit", manipularSubmissaoFormulario)
+}
+async function manipularSubmissaoFormulario(event) {
+    event.preventDefault()
+    const id = document.getElementById("pensamento-id").value
+    const conteudo = document.getElementById("pensamento-conteudo").value
+    const autoria = document.getElementById("pensamento-autoria").value
+    
+    try{
+        await api.salvarPensamento({ conteudo, autoria })
+    }
+    catch {
+    
+    }
+}
+```
+
+Após salvar esse pensamento, queremos que ele seja incluído no mural, a lista seja atualizada, e possamos ver automaticamente essa atualização. Para isso, escreveremos ui.renderizarPensamentos() para chamar a função de renderizar pensamentos novamente, que criamos no arquivo de UI.
+
+Dentro do catch, adicionaremos um alert() para avisar a pessoa que ocorreu algum erro ao salvar os pensamentos. A mensagem desse alert() será "Erro ao salvar pensamento".
+
+```JavaScript
+document.addEventListener("DOMContentLoaded", () => {
+    ui.renderizarPensamentos()
+    
+    const formularioPensamento = document.getElementById("pensamento-form")
+    formularioPensamento.addEventListener("submit", manipularSubmissaoFormulario)
+}
+async function manipularSubmissaoFormulario(event) {
+    event.preventDefault()
+    const id = document.getElementById("pensamento-id").value
+    const conteudo = document.getElementById("pensamento-conteudo").value
+    const autoria = document.getElementById("pensamento-autoria").value
+    
+    try{
+        await api.salvarPensamento({ conteudo, autoria })
+        ui.renderizarPensamentos()
+    }
+    catch {
+        alert("Erro ao salvar pensamento")
+    }
+}
+```
+
+Após salvar esse código, podemos testar para ver se está funcionando.
+
+Testando o formulário  
+Acessaremos a aplicação pelo navegador, na qual temos alguns pensamentos cadastrados. No topo da página, acessaremos o formulário para adicionar mais um.
+
+No campo "Pensamento", adicionaremos uma frase comum a pessoas desenvolvedoras:
+
+> Na minha máquina funciona!
+
+No campo "Autoria ou Fonte", escreveremos a seguinte autoria:
+
+> Dev
+
+Em seguida, clicaremos no botão "Adicionar".
+
+Após a adição, desceremos a página até o mural e veremos um novo cartão no mural, com o novo pensamento.
+
+Conclusão  
+Com isso, conseguimos fazer mais uma requisição - dessa vez, a requisição POST, enviando um pensamento para a API e conseguindo que ele seja renderizado no mural.
+
+### Aula 2 - Requisições HTTP em aplicações web
+
+Você está desenvolvendo um recurso para um aplicativo chamado Cookin'UP, que permite às pessoas compartilharem suas receitas favoritas.
+
+No momento, é necessário implementar uma função que envie os dados de uma nova receita para o servidor. Analise o código abaixo:
+
+```JavaScript
+async salvarReceita(receita) {
+  try {
+    const response = await fetch('http://localhost:3000/receitas', {
+      // Implementação a ser avaliada
+    });
+    return await response.json();
+  } catch (error) {
+    alert(`Erro: ${error.message}`);
+    throw error;
+  }
+}
+```
+
+Como você pode escrever o código da função ‘salvarReceita’?
+
+Alternativa correta:
+
+```JavaScript
+method: "POST",
+headers: {
+  "Content-Type": "application/json",
+},
+body: JSON.stringify(receita),
+```
+
+> Esta implementação está correta, porque utiliza o método POST para enviar dados ao servidor, especifica o cabeçalho Content-Type como application/json, indicando que o corpo da requisição está em formato JSON, e usa JSON.stringify(receita) para enviar os dados da receita no corpo da requisição.
+
+### Aula 2 - Conhecendo o protocolo HTTP - Vídeo 4
+
+Transcrição  
+No vídeo anterior, conseguimos cadastrar novos pensamentos na aplicação. Portanto, já conseguimos buscar pensamentos e cadastrar novas informações. Que tal recapitular tudo o que vimos até agora?
+
+**O que é HTTP?**  
+Compreendemos como funciona a comunicação entre cliente e servidor quando mostramos a analogia do restaurante, no qual éramos a clientela, o garçom se comportava como a API, e a cozinha do restaurante, que fornecia os dados, era o servidor.
+
+Na aplicação, já conseguimos fazer duas requisições:
+
+- GET, para buscar os dados
+- POST, para enviar esses dados ao servidor
+
+Essas requisições são chamadas requisições HTTP. O que será que isso significa?
+
+A sigla HTTP significa HyperText Transfer Protocol (Protocolo de Transferência de Hipertexto). Essa é a maneira com a qual a web funciona, ou seja, é a base da comunicação na internet.
+
+Quando digitamos uma URL para acessar um site, se prestarmos atenção, veremos o http:// no início. Esse protocolo é um conjunto de diretrizes que norteiam a comunicação na web.
+
+Basicamente, o HTTP é um protocolo de comunicação na internet muito famoso. Existem vários outros, mas o HTTP é um dos mais usados. Sua função é transferir os dados entre cliente e servidor.
+
+Estamos utilizando esse protocolo para conseguir fazer as requisições, GET e POST.
+
+Mas, será que existem outros tipos de requisições, que podem ser chamadas de métodos ou até verbos HTTP? Sim, existem mais verbos HTTP, além do GET e do POST, e vamos vê-los ao longo do curso.
+
+Antes disso, teremos um desafio a vencer.
+
+Desafio  
+Estamos acessando a aplicação Memoteca, e já conseguimos cadastrar um pensamento. Contudo, notaremos um detalhe: se digitarmos algum dado aleatório nos campos de pensamento e de autoria, e clicarmos no botão "Cancelar", nada acontece.
+
+Isso porque ainda não implementamos a funcionalidade do botão de cancelar. Essa tarefa será delegada a você para fins de prática!
+
+Portanto, você manipulará os arquivos da interface, do main, e adicionará essa funcionalidade para "resetar" (reiniciar) esses dados do formulário e tornar os campos vazios quando clicarmos no botão de cancelar.
+
+Não forneceremos muitas dicas, porque esse desafio é de sua responsabilidade. Mas não se preocupe! Se tiver alguma dúvida, disponibilizaremos o gabarito em uma atividade posterior.
+
+Após implementar essa funcionalidade e realizar essa prática, nos encontraremos na próxima aula para descobrir mais verbos HTTP e conseguir editar os pensamentos.
+
+### Aula 2 - Mão na massa: implementando a funcionalidade de cancelar
+
+Agora é sua vez de praticar, adicionando funcionalidade ao botão "Cancelar".
+
+![alt text](image-1.png)
+
+Um formulário de interface de usuário que permite adicionar um novo pensamento, incluindo campos para digitar o pensamento e o autor ou a fonte. Há também dois botões na parte inferior: um para adicionar o pensamento e outro para cancelar a ação.
+
+No momento, o comportamento atual é inexistente. Se você clicar nele, nada ocorre.
+
+Portanto, o resultado e comportamento esperado é: ao clicar no botão, os campos do formulário devem ser limpos.
+
+Consulte o [layout no Figma](https://www.figma.com/design/Sz1gmmemxqcB3amInL4Ndp/Rebrand-Memoteca-%7C-Curso-CRUD?node-id=148-26&t=hXUn5KaAoClRRZMr-0), se necessário.
+
+Vamos lá?
+
+Opinião do instrutor
+
+Para adicionar a funcionalidade de limpar o formulário ao clicar no botão de cancelar, podemos criar uma função limparFormulario, no arquivo "js/ui.js". A função, então, reseta o formulário e um event listener para o botão no main.js.
+
+Vejamos o passo a passo:
+
+Arquivo “js/main.js”:
+
+Adicione um event listener para o botão cancelar que chama a função manipularCancelamento ao clicar.
+
+```JavaScript
+import ui from "./ui.js"
+import api from "./api.js"
+document.addEventListener("DOMContentLoaded", () => {
+  ui.renderizarPensamentos()
+
+  const formularioPensamento = document.getElementById("pensamento-form")
+  **const botaoCancelar = document.getElementById("botao-cancelar")**
+
+  formularioPensamento.addEventListener("submit", manipularSubmissaoFormulario)
+  **botaoCancelar.addEventListener("click", manipularCancelamento)**
+})
+
+//código omitido
+
+**function manipularCancelamento() {
+  ui.limparFormulario();
+}**
+```
+
+No arquivo “js/ui.js”:
+
+Crie a função limparFormulario que reseta o formulário com o id "pensamento-form".
+
+```JavaScript
+import api from "./api.js"
+const ui = {
+  **limparFormulario() {
+    document.getElementById("pensamento-form").reset();
+  },**
+
+  //restante do código omitido
+```
+
+Acesse as alterações feitas no [commit](https://github.com/alura-cursos/3781-javascript/commit/037eb0352877f5c8f47e0b6975e798c979969523).
+
+### Aula 2 - Para saber mais: função fetch e comunicação entre front-end e back-end
+
+1. O que é a função fetch?  
+A função fetch é um recurso atual do JavaScript usado para fazer requisições HTTP assíncronas, permitindo a comunicação entre o cliente (front-end) e o servidor (back-end). É especialmente útil para interações com APIs, quando você precisa enviar ou receber dados.
+
+Geralmente, dentro da função fetch inserimos um método que especifica qual a operação deve ser feita: ler ou enviar dados.
+
+2. Quais são os métodos HTTP?  
+
+Até agora, exploramos dois métodos:
+
+- 2.1.GET: Usado para solicitar dados do servidor. Ideal para recuperar informações, como listar pensamentos armazenados em um banco de dados;
+- 2.2. POST: Usado para enviar dados ao servidor. Ideal para criar novos recursos, como adicionar um novo pensamento.
+
+3. O que é a comunicação entre front-end e back-end?  
+A comunicação entre o front-end e o back-end é fundamental para o funcionamento de aplicações web. O HTTP (HyperText Transfer Protocol) é o protocolo padrão para essa comunicação, funcionando no modelo cliente-servidor.
+
+4. O que é o modelo cliente-servidor?  
+É a relação que temos entre um cliente e um servidor, na qual há troca de dados.
+
+- Cliente: O navegador ou aplicativo que faz a requisição de dados ou recursos. No contexto de uma aplicação web, o cliente é o código JavaScript executado no navegador;
+- Servidor: O sistema que armazena os dados ou recursos e responde às requisições do cliente, como uma API que manipula dados e lógica de negócio.
+
+5. Como é a estrutura de uma requisição HTTP?  
+Via de regra, uma requisição HTTP possui as partes a seguir:
+
+- 5.1. URL: O endpoint (pense que o endpoint é uma espécie de “endereço) do servidor para onde a requisição será enviada;
+- 5.2. Headers: Informações adicionais enviadas junto com a requisição, como o tipo de conteúdo (Content-Type). No caso do nosso app, o tipo de conteúdo é um arquivo no formato JSON;
+- 5.3. Body: O corpo da requisição, onde os dados são enviados (principalmente usado em requisições POST).
+
+> Qualquer pessoa que aspira a trabalhar no desenvolvimento de páginas web com JavaScript precisa compreender tais conceitos. A função fetch é indispensável! E, também, a base para a comunicação entre front-end e back-end (essas palavras ficaram claras a você?).
+
+### Aula 2 - Faça como eu fiz: cadastre dados no projeto
+
+Nesta aula, avançamos com o projeto Memoteca. Descobrimos como fazer uma requisição POST para salvar dados em uma API-fake, simulando o contexto real de trabalho.
+
+Agora é sua vez!
+
+Caso ainda não tenha implementado, coloque em prática o conhecimento adquirido durante a aula. Assim, seu aprendizado será eficaz.
+
+O resultado final esperado é que, ao testar a aplicação, você consiga cadastrar novos pensamentos no projeto Memoteca.
+
+Vamos lá?
+
+**Opinião do instrutor**  
+
+Para ver detalhes do código implementado, acesse o repositório no GitHub.
+
+Para implementar o que foi visto na aula, siga este passo a passo:
+
+Nesta aula, foi adicionado um novo método assíncrono chamado salvarPensamento na classe api, que realiza uma requisição POST para salvar um pensamento no servidor. O método trata possíveis erros na requisição e retorna os dados salvos em formato JSON.
+
+**Arquivo “api.js”:**
+
+- Adicione um novo método assíncrono chamado salvarPensamento na classe api;
+- Utilize a palavra-chave async antes da declaração do método;
+- Realize uma requisição POST para a URL 'http://localhost:3000/pensamentos', utilizando o método fetch;
+- Defina o método da requisição como "POST";
+- Adicione um objeto de cabeçalho com a chave Content-Type e o valor application/json;
+- Converta o objeto pensamento em formato JSON utilizando JSON.stringify e envie como corpo da requisição;
+- Retorne os dados da resposta da requisição utilizando response.json();
+- Adicione um bloco catch para tratar possíveis erros na requisição;
+- Exiba um alerta com a mensagem 'Erro ao buscar pensamentos' em caso de erro;
+- Lance o erro novamente com throw error para propagar o erro.
+
+Também foi feita uma refatoração no código para adicionar um novo pensamento na lista de pensamentos de forma mais organizada. No arquivo "index.html", foi feita uma simplificação no campo de texto do formulário. Já no arquivo "js/ui.js", foi criada uma nova função chamada "adicionarPensamentoNaLista" para adicionar um pensamento na lista de forma mais estruturada.
+
+**No arquivo “index.html”:**
+
+Simplifique o campo de texto do formulário, removendo quebras de linha e espaços desnecessários.
+
+**No arquivo “js/ui.js”:**
+
+- Crie a função adicionarPensamentoNaLista para adicionar um novo pensamento na lista de pensamentos de forma estruturada;
+- Dentro da função, crie elementos HTML para representar o novo pensamento, como um <li>, <img>, <div> para o conteúdo e <div> para a autoria;
+- Adicione as classes e atributos necessários para cada elemento criado;
+- Por fim, adicione os elementos criados à lista de pensamentos.
+
+Além disso, foi feita uma atualização no arquivo “backend/db.json”, removendo um pensamento e adicionando outro.
+
+No arquivo “index.html”, foi feita uma pequena alteração na formatação do código.
+
+E no arquivo “js/main.js”, foi adicionada uma função para lidar com a submissão do formulário de pensamento, salvando os dados no backend e atualizando a interface.
+
+No arquivo “backend/db.json”:
+
+Remova o pensamento com o id "5b8a";
+
+Adicione um novo pensamento com o id "584a", conteúdo "Na minha máquina funciona!" e autoria "Dev".
+
+No arquivo “index.html”:
+
+Ajuste a formatação do código para manter a consistência.
+
+No arquivo “js/main.js”:
+
+- Crie uma função chamada manipularSubmissaoFormulario que será acionada ao submeter o formulário;
+- Capture os valores dos campos de conteúdo e autoria do pensamento;
+- Utilize a função api.salvarPensamento para salvar o novo pensamento no back-end;
+- Chame a função ui.renderizarPensamentos() para atualizar a interface após salvar o pensamento;
+- Adicione um bloco try...catch para lidar com possíveis erros ao salvar o pensamento e exibir um alerta em caso de falha.
+
+### Aula 2 - Lista de exercícios
+
+Vamos praticar o conteúdo que vimos nesta aula com alguns exercícios?
+
+A ideia é que você continue trabalhando com o arquivo JSON fornecido na aula 1 — aquele com a lista de pets! Utilize o seu editor de código para fazer os exercícios.
+
+Em todos os exercícios a ideia é que você implemente os códigos de verdade, sem preocupar-se com o layout.
+
+1) Implementando a função de cadastrar um novo pet
+
+Agora, sua tarefa é implementar uma função para possibilitar o cadastro de um novo pet. Esta função será responsável por enviar novos pets à API e lidar com a resposta do servidor.
+
+Escreva o código desta função no seu editor de código.
+
+Vamos lá?
+
+2) Criando um formulário para cadastro de novos animais
+
+Apenas com a requisição não é possível efetuar o cadastro de um pet, precisamos de um formulário na interface.
+
+Logo, seu objetivo é: desenvolva, no seu editor de código, um formulário HTML no arquivo principal (index.html) para permitir a entrada de dados de novos pets. Lembre-se de integrá-lo com a função de cadastro que você implementou.
+
+3) Renderizando novos pets na interface
+
+Agora é preciso atualizar a interface e sua tarefa é: implemente a função de cadastro de pet no arquivo ui.js para renderizar os pets cadastrados na interface da aplicação.
+
+Opinião do instrutor
+
+Agora que você concluiu os exercícios, é hora de ver o "gabarito" com as respostas!
+
+Lembre-se de que seu código pode variar um pouco. O importante é que ele funcione e siga boas práticas de programação!
+
+1) Implementando a função de cadastrar um novo Pet
+Veja a solução do exercício abaixo:
+
+Abra o arquivo api.js;
+
+- Adicione uma vírgula no fim da função anterior de buscar informações dos pets;
+- Implemente a função de cadastro de pet (aqui chamamos ela de salvarPet(pet), mas o nome fica ao seu critério) para enviar os dados do novo pet para a API utilizando o método POST, conforme mostrado abaixo:
+
+```JavaScript
+async salvarPet(pet) {
+  try {
+    const response = await fetch('http://localhost:3000/pets', {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(pet),
+    });
+    return await response.json();
+  } catch (error) {
+    alert(`Erro: ${error.message}`);
+    throw error;
+  }
+}
+```
+
+2) Criando um formulário para cadastro de novos animais
+
+No arquivo HTML principal (index.html), adicione o seguinte formulário:
+
+```JavaScript
+<form id="pet-form">
+    <input type="hidden" id="pet-id" />
+    <input type="text" id="pet-nome" placeholder="Nome do Pet">
+    <input type="text" id="pet-especie" placeholder="Espécie do Pet">
+    <input type="text" id="pet-raca" placeholder="Raça do Pet">
+    <button type="submit">Salvar</button>
+  </form>
+```
+
+No arquivo main.js, adicione o import do arquivo api.js e a lógica para manipular a submissão do formulário:
+
+```JavaScript
+//arquivo completo atualizado
+import ui from "./ui.js"
+import api from "./api.js"
+
+document.addEventListener("DOMContentLoaded", () => {
+  ui.renderizarPets();
+
+  const formularioPet = document.getElementById("pet-form");
+  formularioPet.addEventListener("submit", manipularSubmissaoFormulario);
+});
+
+async function manipularSubmissaoFormulario(event) {
+  event.preventDefault();
+  const nome = document.getElementById("pet-nome").value;
+  const especie = document.getElementById("pet-especie").value;
+  const raca = document.getElementById("pet-raca").value;
+
+  try {
+    await api.salvarPet({ nome, especie, raca });
+    ui.renderizarPets();
+  } catch (error) {
+    console.error("Erro ao salvar pet:", error);
+    alert("Erro ao salvar pet. Tente novamente mais tarde.");
+  }
+}
+```
+
+3) Renderizando novos pets na interface
+
+No arquivo ui.js, adicione a função adicionarPetNaLista para renderizar os pets na interface:
+
+```JavaScript
+//arquivo completo atualizado
+import api from "./api.js"
+
+const ui = {
+  async renderizarPets() {
+    const listaPets = document.getElementById("lista-pets");
+    listaPets.innerHTML = "";
+
+    try {
+      const pets = await api.buscarInformacoesPets();
+        pets.forEach(ui.adicionarPetNaLista);
+    } catch (error) {
+      console.error("Erro ao obter pets:", error);
+      alert("Erro ao obter pets. Tente novamente mais tarde.");
+    }
+  },
+
+  adicionarPetNaLista(pet) {
+    const listaPets = document.getElementById("lista-pets");
+    const li = document.createElement("li");
+    li.setAttribute("data-id", pet.id);
+    li.classList.add("li-pet");
+
+    const nomePet = document.createElement("div");
+    nomePet.textContent = `Nome: ${pet.nome}`;
+    nomePet.classList.add("pet-nome");
+
+    const especiePet = document.createElement("div");
+    especiePet.textContent = `Especie: ${pet.especie}`;
+    especiePet.classList.add("pet-especie");
+
+    const racaPet = document.createElement("div");
+    racaPet.textContent = `Raça: ${pet.raca}`;
+    racaPet.classList.add("pet-raca");
+
+    li.appendChild(nomePet);
+    li.appendChild(especiePet);
+    li.appendChild(racaPet);
+    listaPets.appendChild(li);
+  },
+};
+export default ui;
+```
+
+Teste a adição de novos pets e verifique se eles são renderizados corretamente na interface após serem salvos na API. Certifique-se de que a lista de pets está atualizada e exibindo os dados mais recentes do servidor.
+
+Parabéns por concluir essa lista!
+
+### Aula 2 - O que aprendemos?
+
+Nesta aula, você aprendeu a:
+
+- Enviar dados para o servidor usando uma requisição HTTP POST;
+- Configurar o método da requisição como POST, definir o cabeçalho Content-Type como application/json e enviar os dados no corpo da requisição em formato JSON;
+- Atualizar a interface dinamicamente para exibir dados (os pensamentos no mural);
+- Manipular eventos de formulário, adicionando event listeners para tratar a submissão do formulário e o cancelamento da operação;
+- Implementar a função para limpar os campos do formulário após a submissão ou cancelamento, preparando-o para novas entradas.
+
+Espero você na próxima aula!
+
+## Aula 3 - Requisição PUT
+
 ### Aula 2 -  - Vídeo 8
