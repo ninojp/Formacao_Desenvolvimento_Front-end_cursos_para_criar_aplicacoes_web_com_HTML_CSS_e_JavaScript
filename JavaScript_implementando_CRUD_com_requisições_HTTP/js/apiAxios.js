@@ -35,7 +35,6 @@ const apiAxios = {
         };
     },
     //============================================================================
-    
     async editarPensamento(pensamento) {
         try {
             const response = await axios.put(`${URL_BASE}pensamentos/${pensamento.id}`, pensamento);
@@ -47,7 +46,6 @@ const apiAxios = {
         };
     },
     //============================================================================
-    
     async excluirPensamento(id) {
         try {
             const response = await axios.delete(`${URL_BASE}pensamentos/${id}`);
