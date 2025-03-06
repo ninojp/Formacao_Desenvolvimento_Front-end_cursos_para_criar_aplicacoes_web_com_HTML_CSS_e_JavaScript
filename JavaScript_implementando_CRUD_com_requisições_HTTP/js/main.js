@@ -1,5 +1,6 @@
 'use strict';
-import api from "./api.js";
+// import api from "./api.js";
+import apiAxios from "./apiAxios.js";
 import ui from "./ui.js";
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -23,16 +24,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             };
             let novoPensamento;
             if (pensamentoId) {
-                novoPensamento = await api.editarPensamento({ id: pensamentoId, conteudo: pensamentoConteudo, autoria: pensamentoAutoria });
+                novoPensamento = await apiAxios.editarPensamento({ id: pensamentoId, conteudo: pensamentoConteudo, autoria: pensamentoAutoria });
             } else {
                 //O id é gerado automaticamente pelo json-server.
-                novoPensamento = await api.salvarPensamento({ conteudo: pensamentoConteudo, autoria: pensamentoAutoria });//A IA do VSC Copilot sugeriu essa linha
+                novoPensamento = await apiAxios.salvarPensamento({ conteudo: pensamentoConteudo, autoria: pensamentoAutoria });//A IA do VSC Copilot sugeriu essa linha
             };
             // await ui.renderizarPensamentos();//Professora fez assim, Renderiza todos os pensamentos                
             await ui.adicionarPensamentoNaLista(novoPensamento);
 
             // alert('Pensamentos Salvo e Adicionado!');
-            
+
             // Adiciona um pequeno atraso antes de rolar até o elemento
             // setTimeout(() => {
                 const elementoPensamento = document.querySelector(`[data-id='${novoPensamento.id}']`);

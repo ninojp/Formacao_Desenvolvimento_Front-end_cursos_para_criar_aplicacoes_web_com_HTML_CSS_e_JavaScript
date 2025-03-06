@@ -1,10 +1,11 @@
 'use strict';
-import api from "./api.js";
+// import api from "./api.js";
+import apiAxios from "./apiAxios.js";
 
 const ui = {
     async preencherFormulario(id) {
         try {
-            const pensamento = await api.buscaPensamentoPorId(id);
+            const pensamento = await apiAxios.buscaPensamentoPorId(id);
             document.getElementById('pensamento-id').value = pensamento.id;
             document.getElementById('pensamento-conteudo').value = pensamento.conteudo;
             document.getElementById('pensamento-autoria').value = pensamento.autoria;
@@ -65,7 +66,7 @@ const ui = {
             btnExcluir.onclick = async () => {
                 if (confirm('Tem certeza de que deseja excluir este pensamento?')) {
                     try {
-                        await api.excluirPensamento(pensamento.id);
+                        await apiAxios.excluirPensamento(pensamento.id);
                         ui.renderizarPensamentos();
                         // liPensamento.remove();
                     } catch (error) {
@@ -95,7 +96,7 @@ const ui = {
         const mensagemVazia = document.getElementById("mensagem-vazia");//não sei pra que a Professora fez essa linha
         listaPensamentos.innerHTML = "";
         try {
-            const pensamentos = await api.buscarPensamentos();
+            const pensamentos = await apiAxios.buscarPensamentos();
             // pensamentos.forEach(ui.adicionarPensamentoNaLista);//Professora fez essa linha
             pensamentos.forEach(this.adicionarPensamentoNaLista);
             //Usar this.adicionarPensamentoNaLista no forEach, mantein o contexto correto do objeto ui (VSC Copilot)

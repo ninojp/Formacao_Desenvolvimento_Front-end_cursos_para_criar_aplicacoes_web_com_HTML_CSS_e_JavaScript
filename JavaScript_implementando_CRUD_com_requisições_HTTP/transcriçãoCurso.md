@@ -3282,12 +3282,490 @@ Nesta aula, você aprendeu a:
 - Compreender o conceito de CRUD (Create, Read, Update, Delete) e aplicá-lo em um contexto prático;
 - Melhorar o código para torná-lo mais eficiente e fácil de manter, utilizando constantes para evitar repetição de URL.
 
-### Aula 5 - 
+### Aula 5 - Conhecendo o Axios
 
-### Aula 5 -  - Vídeo 1
-### Aula 5 -  - Vídeo 2
-### Aula 5 -  - Vídeo 3
-### Aula 5 -  - Vídeo 4
-### Aula 5 -  - Vídeo 5
-### Aula 5 -  - Vídeo 6
-### Aula 5 -  - Vídeo 7
+### Aula 5 - Projeto da aula anterior
+
+Caso queira revisar o código até aqui ou começar a partir desse ponto, [faça o download](https://github.com/alura-cursos/3781-javascript/archive/refs/heads/aula-4.zip) ou veja nosso [repositório do Github](https://github.com/alura-cursos/3781-javascript/tree/aula-4).
+
+### Aula 5 - Preparando o ambiente
+
+Nessa aula, você aprenderá sobre uma abordagem diferente para realizar as requisições HTTP em nossa aplicação: a biblioteca Axios.
+
+No próximo vídeo, vamos adicionar a seguinte CDN no arquivo HTML para incluir o Axios:
+
+index.html
+
+`<script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>`
+
+Copie esse código e quando ele for mencionado em vídeo, cole-o no seu arquivo index.html.
+
+Com isso feito, você estará pronto(a) para utilizar o Axios em nosso projeto.
+
+### Aula 5 - Implementando requisições HTTP com Axios - Vídeo 1
+
+Transcrição  
+A aplicação Memoteca está concluída e todas as funcionalidades do CRUD foram implementadas com sucesso!
+
+Abordagem alternativa para requisições HTTP
+No entanto, na programação geralmente existem diferentes maneiras de realizar a mesma tarefa. Por isso, queremos apresentar uma abordagem alternativa para fazer requisições HTTP.
+
+Atualmente, estamos utilizando o fetch(), uma função nativa do JavaScript. Porém, existe uma ferramenta que abstrai parte da lógica do fetch() e permite realizar requisições HTTP de forma mais simplificada, com menos código: o Axios.
+
+Instalação do Axios  
+Para começar a utilizar o Axios, é necessário instalar o Node e, em seguida, instalar o Axios e importá-lo no projeto. No entanto, para simplificar esse processo, podemos utilizar um script de CDN (Rede de Distruibuição de Conteúdo) fornecido na documentação do Axios, na seção de instalação.
+
+`<script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>`
+
+Basta copiar esse script e colá-lo após o fechamento da tag footer no arquivo index.html. No caso, estamos utilizando a versão 1.6.7 do Axios.
+
+```HTML
+</footer>
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
+    <script type="module" src="js/api.js"></script>
+```
+
+Com o script importado, já podemos utilizar o Axios no projeto.
+
+Utilizando o Axios no projeto  
+Vamos ao arquivo api.js para ver como ficaria a requisição HTTP, especificamente o método get, utilizando o Axios. Vamos substitur o fetch() por axios.get().
+
+```JavaScript
+ try {
+      const response = await axios.get(`${URL_BASE}/pensamentos`)
+      return await response.json
+    }
+```
+
+O Axios permite realizar essa requisição de forma mais direta e descritiva, já que o método é passado junto com a ferramenta. Além disso, não precisamos mais nos preocupar com a conversão da resposta para um objeto JavaScript, pois o Axios lida com isso automaticamente. Em vez de usar .json(), utilizamos response.data para acessar diretamente os dados.
+
+```JavaScript
+ try {
+      const response = await axios.get(`${URL_BASE}/pensamentos`)
+      return await response.data
+    }
+```
+
+Para confirmar que tudo está funcionando, basta recarregar a aplicação. Os pensamentos são carregados na tela, indicando que a requisição HTTP foi realizada com sucesso utilizando o Axios.
+
+Comparação entre fetch e Axios  
+Agora, surge a questão: qual abordagem é melhor? Tanto o fetch() quanto o Axios são válidos. A escolha depende do ambiente de trabalho e das preferências da equipe.
+
+O fetch() tem a vantagem de ser nativo do JavaScript, sem necessidade de instalar dependências adicionais. Por outro lado, o Axios requer a instalação de uma biblioteca externa ou o uso de um CDN, o que implica em gerenciar essas dependências ao longo do tempo, especialmente quando novas versões são lançadas e é necessário verificar se algo foi quebrado ou se ainda funciona corretamente.
+
+Refatorando outras requisições  
+Agora, vamos refatorar as outras requisições para utilizar o Axios. Dessa forma, você aprenderá a fazer requisições utilizando ambas as abordagens, o que será um diferencial na sua carreira.
+
+Vamos começar pela função salvarPensamento, substituindo o fetch() axios.post. Não é necessário especificar os headers e o body como no fetch, então podemos apagar o conteúdo das chaves. Em vez disso, passamos o objeto pensamento como segundo argumento. O await agora utilizará response.data para capturar os dados da resposta.
+
+```JavaScript
+async salvarPensamento(pensamento) {
+    try {
+      const response = await axios.post(`${URL_BASE}/pensamentos`, pensamento)
+      return await response.data
+    }
+```
+
+Em seguida, vamos adaptar as outras requisições. Na função buscarPensamentoPorId, que é um get, substituímos o fetch por axios.get e alteramos a captura da resposta para response.data.
+
+```JavaScript
+async buscarPensamentoPorId(id) {
+    try {
+      const response = await axios.get(`${URL_BASE}/pensamentos/${id}`)
+      return await response.data
+    }
+```
+
+Para a função editarPensamento, substituímos o fetch por axios.put, removemos o conteúdo das chaves, e passamos pensamento como segundo parâmetro. Novamente, a captura da resposta será feita com response.data.
+
+```JavaScript
+async editarPensamento(pensamento) {
+    try {
+      const response = await axios.put(`${URL_BASE}/pensamentos/${pensamento.id}`, pensamento)
+      return await response.data
+    }
+```
+
+Por fim, na função excluirPensamento, substituímos fetch por axios.delete, eliminando a parte do método que não é necessária.
+
+```JavaScript
+async excluirPensamento(id) {
+    try {
+      const response = await axios.delete(`${URL_BASE}/pensamentos/${id}`)
+    }
+    catch {
+```
+
+Conclusão  
+Pronto! Refatoramos todas as requisições de forma rápida e eficiente, utilizando o Axios. Agora, você conhece uma nova abordagem para realizar requisições HTTP e completar seu CRUD.
+
+### Aula 5 - Para saber mais: Axios vs Fetch
+
+Ao trabalhar com requisições HTTP em JavaScript, você tem à disposição duas principais opções: Axios e Fetch.
+
+Ambas são usadas para enviar solicitações para servidores e manipular respostas, mas existem diferenças que podem influenciar na escolha entre uma ou outra.
+
+1. Axios  
+Axios é uma biblioteca externa que oferece uma interface mais amigável para fazer requisições HTTP. Ela simplifica o tratamento de promises. Consequentemente, facilita na hora de modificar, de forma global, requisições e respostas.
+
+A biblioteca lida automaticamente com erros comuns de rede e HTTP, como timeouts e códigos de erro. Ou seja, dispensa que você se preocupe com falhas comuns. Dada sua simplificação e funcionalidades adicionais, Axios é bem adotada na comunidade e facilita o desenvolvimento de aplicações web complexas.
+
+2. Fetch  
+Por outro lado, o Fetch é uma API nativa atual do navegador, integrada diretamente ao ambiente JavaScript do navegador.
+
+Ela suporta promises e oferece controle sobre streams de dados, o que é útil para operações avançadas de manipulação de dados.
+
+No entanto, Fetch pode ser menos intuitiva devido à sua sintaxe mais direta e à necessidade de manipular manualmente algumas situações de erro e configurações globais.
+
+Podemos, então, dizer que implementar requisições HTTP fica mais “trabalhoso” com fetch. No entanto, de forma alguma é uma opção inválida.
+
+**Axios ou Fetch? Eis a questão!**  
+Lá vem o famoso “depende”. Quais as necessidades do seu projeto? Na empresa onde você atua (ou pretende trabalhar), qual abordagem é utilizada? Considere esses critérios ao escolher uma das duas opções.
+
+Os pontos fortes do Axios são sua simplicidade e funcionalidades extras, e não à toa costuma ser a favorita da comunidade. Porém, como toda biblioteca, precisa ser observada - e bem gerenciada. É indispensável acompanhar as atualizações e mudanças para que o código do projeto continue a rodar perfeitamente.
+
+Por outro lado, o Fetch oferece uma solução nativa no navegador, sem a necessidade de dependências externas, e pode ser mais adequada para projetos que precisam de um controle mais direto sobre streams de dados.
+
+Ambas as opções são válidas e eficazes para realizar requisições HTTP em aplicações web. A decisão final deve considerar o contexto do projeto, as necessidades de desenvolvimento e a familiaridade da equipe com cada uma das tecnologias.
+
+### Aula 5 - Inspecionando requisições no navegador - Vídeo 2
+
+Transcrição  
+Agora que você já aprendeu uma nova abordagem para fazer requisições HTTP, vamos mostrar como inspecionar essas requisições. Antes disso, é importante testar a aplicação para garantir que tudo está funcionando corretamente após a refatoração.
+
+Testando a aplicação após a refatoração  
+Primeiro, verificamos o recurso "Buscar Pensamentos". Se os pensamentos estão sendo exibidos, significa que ele está funcionando. Agora, vamos testar a criação de um novo pensamento.
+
+No campo "Pensamento", inserimos "Fiz um CRUD em JavaScript". No campo "Autoria", digitamos "pessoa desenvolvedora" e clicamos em salvar. O novo pensamento deve aparecer na lista.
+
+Vamos testar a edição clicando no botão de editar e o formulário de edição será exibido. Alteramos a autoria para "Dev Feliz" e salvamos. A alteração deve ser refletida corretamente. Por fim, vamos testar a exclusão. Ao clicar no botão de excluir, o pensamento deve ser removido com sucesso.
+
+Após implementar uma nova funcionalidade ou realizar uma refatoração, é fundamental testar todo o fluxo da aplicação para assegurar que tudo está funcionando como esperado.
+
+Inspecionando requisições HTTP com DevTools  
+Agora, vamos inspecionar as requisições usando o DevTools. Clicamos com o botão direito do mouse na aplicação, selecionamos "Inspecionar" e vamos para a aba "Rede". Nesta aba, veremos várias informações sobre as requisições. Selecionamos "Fetch/XHR" para visualizar todas as requisições que estão sendo feitas.
+
+Então, recarregamos a aplicação. Quando a página é carregada, a função buscarPensamentos é chamada, e veremos informações na parte inferior da tela, incluindo nome, status, tipo, tamanho e tempo da requisição. Ao clicar em "pensamentos", abrimos uma nova aba com mais detalhes.
+
+Quando a requisição Fetch é realizada (no nosso caso, usando Axios, que por sua vez utiliza XHR), vemos várias informações sobre a requisição. Isso facilita a verificação de erros, ajudando a identificar o tipo de erro, o método utilizado e o código de status.
+
+Na seção de cabeçalhos, veremos a URL da solicitação, o método utilizado (como GET), o código de status (em verde, indicando sucesso), o endereço remoto (nosso localhost na porta 3000) e a política de referenciador (relacionada à segurança da solicitação).
+
+Os códigos de status HTTP são importantes indicadores do sucesso ou falha de uma solicitação. Eles incluem a família 200, que indica sucesso, e as famílias 400 e 500, que indicam diferentes tipos de erros. Na seção "Para saber mais", você poderá se aprofundar nestes códigos, mas não é necessário decorá-los.
+
+Na seção de visualização do DevTools, podemos ver o conteúdo retornado pela requisição, o que é útil para verificar o que foi enviado e recebido da API. Além disso, há a resposta da requisição, o iniciador, e o tempo de execução.
+
+Lidando com erros nas requisições  
+Mas o que fazer quando ocorre um erro? Vamos simular um erro no VS Code. Na função buscarPensamentos, vamos remover o "s" do parâmetro pensamentos do endpoint. Isso deve gerar um erro, pois o endpoint se tornará inválido.
+
+```JavaScript
+const api = {
+  async buscarPensamentos() {
+    try {
+      const response = await axios.get(`${URL_BASE}/pensamento`)
+      return await response.data
+    }
+```
+
+Ao recarregar a aplicação, veremos um alerta indicando erro ao buscar e renderizar os pensamentos, e eles não serão exibidos. No DevTools, na aba "Rede", vamos recarregar e clicar em "pensamento". O status do código aparecerá em vermelho com o código 404, indicando que o recurso não foi encontrado.
+
+Erros de diferentes tipos podem ocorrer, e você pode usar essa aba para debugá-los e, se necessário, implementar mensagens de erro personalizadas, dependendo se o erro aconteceu do lado do cliente ou do servidor.
+
+Agora que você já sabe como debugar e entender melhor as requisições, vamos corrigir o bug que causamos, alterando o endpoint de volta para pensamentos.
+
+```JavaScript
+const api = {
+  async buscarPensamentos() {
+    try {
+      const response = await axios.get(`${URL_BASE}/pensamentos`)
+      return await response.data
+    }
+```
+
+Ao verificar, veremos que os pensamentos estão sendo exibidos corretamente.
+
+Conclusão  
+Com isso, nossa aplicação está completa. Você aprendeu uma nova abordagem e também como depurar usando o DevTools. Excelente trabalho!
+
+### Aula 5 - Implementando Axios no Buscante, o buscador de livros
+
+Você está desenvolvendo "Buscante", um e-commerce inovador focado na venda de livros.
+
+Até o momento, você utilizou a função fetch para realizar todas as requisições HTTP necessárias para operações CRUD (Criar, ler, atualizar, deletar) no seu projeto.
+
+Considere a seguinte função atualmente implementada com fetch:
+
+```javascript
+async function criarLivro(livro) {
+  try {
+    const response = await fetch(`${URL_BASE}/livros`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(livro),
+    });
+    return await response.json();
+  } catch (error) {
+    alert(`Erro: ${error.message}`);
+    throw error;
+  }
+}
+```
+
+Agora, você está considerando migrar para Axios para simplificar e melhorar a legibilidade do seu código.
+
+Como você pode transformar o código de fetch para Axios?
+
+Selecione uma alternativa
+
+```javascript
+async function criarLivro(livro) {
+  try {
+    const response = await axios.post(`${URL_BASE}/livros`, livro);
+    return response.data;
+  } catch (error) {
+    alert(`Erro: ${error.message}`);
+    throw error;
+  }
+}
+```
+
+> Ótimo! Esse código utiliza axios.post corretamente para enviar um objeto livro, mantendo a estrutura e manipulação de dados necessárias para a operação de criação de livro na API do "Buscante".
+
+### Aula 5 - Faça como eu fiz: utilizando Axios para criar requisições
+
+Nesta aula, avançamos com o projeto Memoteca substituindo o uso do fetch por Axios para realizar requisições HTTP, e aprendemos a inspecionar essas requisições usando o DevTools do navegador.
+
+Agora é sua vez!
+
+Caso ainda não tenha implementado, coloque em prática o conhecimento adquirido durante a aula. Assim, seu aprendizado será eficaz.
+
+O resultado final esperado é que, ao testar a aplicação, você consiga realizar operações de CRUD com Axios.
+
+Vamos lá?
+
+Opinião do instrutor
+
+Para ver detalhes do código implementado, [acesse o repositório no GitHub](https://github.com/alura-cursos/3781-javascript/tree/aula-5).
+
+Para implementar o que foi visto na aula, siga este passo a passo:
+
+Nesta aula, realizamos a substituição do uso do método fetch por axios. No arquivo "index.html", adicionamos a importação do axios através de um CDN. Em seguida, nos arquivos da pasta "js", fizemos a substituição do fetch por axios nos métodos de busca, salvamento, edição e exclusão de pensamentos no arquivo "api.js".
+
+index.html:
+
+Adicione a importação do axios através do CDN no final do body do arquivo.
+
+Certifique-se de que o script do axios está sendo carregado antes dos demais scripts.
+js/api.js:
+
+- Substitua o uso do método fetch pelo axios no método buscarPensamentos.
+- Substitua o uso do método fetch pelo axios no método salvarPensamento.
+- Substitua o uso do método fetch pelo axios no método buscarPensamentoPorId.
+- Substitua o uso do método fetch pelo axios no método editarPensamento.
+- Substitua o uso do método fetch pelo axios no método excluirPensamento.
+
+### Aula 5 - Para saber mais: entendendo os códigos de status das requisições HTTP
+
+1. O que são os códigos de status das requisições HTTP?  
+Os códigos de status das requisições HTTP são respostas numéricas enviadas pelo servidor para indicar o resultado da solicitação feita pelo cliente. Compreender esses códigos é fundamental, pois eles fornecem informações precisas sobre o sucesso, falhas ou outras condições das operações realizadas.
+
+Lembra quando dissemos que o HTTP é um conjunto de regras e protocolos que facilita o tráfego de dados da internet? Pois bem, os códigos de status são uma dessas regras, protocolos que funcionam de forma quase “universal” entre diversos dispositivos e linguagens.
+
+2. Quais os principais códigos de status?  
+2.1. 2xx (Sucesso): indica que a requisição foi recebida, entendida e aceita pelo servidor. Exemplos comuns são:
+
+- 200 OK: requisição bem-sucedida;
+- 201 Created: requisição foi bem-sucedida e resultou na criação de um novo recurso.
+
+2.2. 3xx (Redirecionamento): indica que mais ações são necessárias para completar a requisição. Exemplos incluem:
+
+- 301 Moved Permanently: recurso requisitado foi movido permanentemente para um novo endereço;
+- 302 Found: recurso requisitado foi encontrado temporariamente em um novo endereço.
+
+2.3. 4xx (Erro do cliente): indica que houve um erro por parte do cliente ao realizar a requisição. Exemplos incluem:
+
+- 400 Bad Request: requisição inválida, como parâmetros ausentes ou malformados;
+- 401 Unauthorized: requer autenticação para acessar o recurso;
+- 404 Not Found: recurso requisitado não foi encontrado no servidor. Quem nunca recebeu uma dessas na vida?
+
+2.4. 5xx (Erro do servidor): indica que houve um erro por parte do servidor ao processar a requisição. Exemplos incluem:
+
+- 500 Internal Server Error: erro genérico do servidor, indicando falha na execução da requisição.
+- 503 Service Unavailable: servidor temporariamente incapaz de processar a requisição devido a sobrecarga ou manutenção.
+
+3. Qual a importância de entender os códigos de status?  
+É importante que você compreenda o significado desses códigos, pois será mais tranquilo lidar com possíveis erros em uma aplicação:
+
+- Diagnóstico de problemas: os códigos de status ajudam a identificar rapidamente a causa de problemas durante o desenvolvimento ou manutenção de aplicações web;
+- Tratamento de erros: facilitam o tratamento correto de erros tanto no lado do cliente quanto no servidor, melhorando a experiência do usuário;
+- Monitoramento de performance: permitem monitorar a performance da aplicação ao analisar quantos e quais tipos de códigos de status são retornados.
+
+Você provavelmente vai se deparar com códigos de status - e algum ou outro erro. Sabe como é: às vezes as coisas voam pelos ares. Faz parte de trabalhar com tecnologia. Compreender esses códigos aumenta sua confiança e capacidade de solução de problemas.
+
+### Aula 5 - Projeto final do curso
+
+Caso queira revisar o código do projeto final do curso, você pode [fazer o download](https://github.com/alura-cursos/3781-javascript/archive/refs/heads/aula-5.zip) ou acessar nosso [repositório do Github](https://github.com/alura-cursos/3781-javascript/tree/aula-5).
+
+### Aula 5 - Para ir mais fundo
+
+1. [O que é Back-End e Front-End](https://cursos.alura.com.br/extra/alura-mais/o-que-e-back-end-e-front-end-c9076) (gratuito, português, vídeo)
+
+> Neste vídeo, você entenderá os dois lados da construção de websites e aplicativos: o front-end e o back-end. Enquanto o front-end lida com tudo o que você vê e interage - como design, animações e interface do usuário - o back-end é o motor oculto por trás dessas funcionalidades, garantindo que tudo funcione corretamente.
+
+2. [Documentação do Node.js](https://nodejs.org/pt)(gratuito, português, documentação)
+
+> A documentação oficial do Node.js é um recurso abrangente para quem deseja aprender sobre esta plataforma de execução JavaScript no servidor. Ela cobre desde os conceitos básicos até APIs avançadas, fornecendo exemplos e guias para ajudar na construção de aplicações escaláveis e eficientes.
+
+3. [JSON Server](https://github.com/typicode/json-server) - repositório (gratuito, inglês, repositório GitHub)
+
+> O JSON Server é uma ferramenta que permite criar uma API RESTful simulada rapidamente a partir de um arquivo JSON. O repositório oficial no GitHub fornece instruções sobre como configurar e utilizar o JSON Server, tornando-o uma ótima opção para prototipagem e testes de CRUD sem a necessidade de configurar um servidor real.
+
+4. [O que é uma API?](https://www.alura.com.br/artigos/api) (gratuito, português, artigo)
+
+> Este artigo explica de forma clara e detalhada o que é uma API (Interface de Programação de Aplicações). Ele aborda os conceitos básicos, como as APIs funcionam e como são utilizadas para permitir a comunicação entre diferentes sistemas e aplicações. Ideal para quem quer entender melhor o papel das APIs no desenvolvimento de software.
+
+5. [O que é uma API?](https://cursos.alura.com.br/extra/alura-mais/o-que-e-uma-api--c697) (vídeo, português)
+
+> Neste vídeo, é explicado o que é uma API, abordando seus usos, vantagens e importância no desenvolvimento moderno de software. É uma ótima introdução para quem quer entender como as APIs permitem a integração entre diferentes sistemas e serviços.
+
+6. [O que é HTTP?](https://www.alura.com.br/artigos/http) Entenda como funciona a base da web (gratuito, português, artigo)
+
+> Este artigo fornece uma introdução ao protocolo HTTP (Hypertext Transfer Protocol), que é a base da comunicação na web. Ele explica como o HTTP funciona, os principais métodos de requisição e como ele é utilizado para transferir dados entre clientes e servidores na internet.
+
+7. [Documentação do Axios](https://axios-http.com/ptbr/docs/intro) (gratuito, inglês, documentação)
+
+> O site oficial do Axios oferece uma documentação detalhada sobre como utilizar essa biblioteca de cliente HTTP baseada em promises. A documentação inclui guias de início rápido, exemplos de código e informações sobre as funcionalidades avançadas, como interceptors e cancelamento de requisições.
+
+8. [Requisições HTTP utilizando o AXIOS](https://www.alura.com.br/artigos/requisicoes-http-utilizando-axios) (gratuito, português, artigo)
+
+> Obter dados de uma API HTTP costuma ser algo comum quando trabalhamos com SPAs (Single Page Applications, ou Aplicações de Página Única em tradução livre). Sempre precisamos ter alguns cuidados com a camada de acesso aos dados, senão acabamos com vários trechos de código repetidos espalhados pelo projeto. Uma biblioteca famosa é o axios, que possui milhares de downloads semanais pelo NPM.
+
+### Aula 5 - Lista de exercícios
+
+Vamos finalizar o Adopet na lista de exercícios desta aula!
+
+1) Adicionando Axios e refatorando requisições GET  
+Na programação, sempre existem diferentes maneiras de fazer as coisas e é útil conhecer várias abordagens para escolher a que melhor se adequa ao seu projeto.
+
+Pensando nisso, adicione a biblioteca Axios ao seu projeto e refatore as duas requisições GET para usar Axios em vez de fetch.
+
+2) Refatorando mais requisições para Axios  
+As funções salvarPet, editarPet e deletarPet possuem uma estrutura diferente e enviam informações para a API, como method, headers e body.
+
+Refatore essas requisições para que também utilizem a abordagem com Axios e observe como essa biblioteca simplifica as solicitações e deixa o código mais conciso.
+
+3) Inspecionando requisições e entendendo códigos de status  
+É importante que você se familiarize com a ferramenta DevTools do navegador para visualizar e interpretar as requisições HTTP feitas pela sua aplicação, analisando os códigos de status das respostas.
+
+Portanto, sua tarefa é utilizar o DevTools do navegador para inspecionar as requisições feitas pela sua aplicação e entender os códigos de status.
+
+Vamos lá?
+
+Opinião do instrutor
+
+Agora que você concluiu os exercícios, é hora de ver o "gabarito" com as respostas!
+
+Lembre-se de que seu código pode variar um pouco. O importante é que ele funcione e siga boas práticas de programação!
+
+1) Adicionando Axios e refatorando requisições GET  
+Para adicionar a biblioteca Axios ao projeto, podemos adicionar a CDN no arquivo index.html:
+
+`<script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>`
+
+Para refatorar as requisições GET, utilizadas pelas funções buscarInformacoesPet e buscarPetPorId, devemos excluir o fetch e adicionar o axios juntamente com o método HTTP que queremos usar, no caso, o GET. Além disso, ao invés de utilizar response.json(), podemos acessar os dados de forma mais direta, com response.data;
+
+js/api.js
+
+```JavaScript
+async buscarInformacoesPets() {
+    try {
+      const response = await axios.get(`${URL_BASE}`);
+      return await response.data;
+    } catch (error) {
+      alert('Erro ao buscar dados');
+      throw error;
+    }
+  },
+
+  async buscarPetPorId(id) {
+    try {
+      const response = await axios.get(`${URL_BASE}/${id}`);
+      return await response.data;
+    } catch (error) {
+      alert(`Erro: ${error.message}`);
+      throw error;
+    }
+  },
+```
+
+2) Refatorando mais requisições para Axios
+Para refatorar as funções salvarPet, editarPet e deletarPet para usar Axios em vez de fetch, vamos continuar a substituição de fetch por axios mais o método HTTP. Além disso, não precisamos inserir as propriedades method, headers e body, passando as informações do pet como segundo parâmetro para a requisição axios e podendo excluir essas linhas e simplificar o código final.
+
+js/api.js
+
+```JavaScript
+async salvarPet(pet) {
+    try {
+      const response = await axios.post(`${URL_BASE}`, pet);
+      return await response.data;
+    } catch (error) {
+      alert(`Erro: ${error.message}`);
+      throw error;
+    }
+  },
+
+  async editarPet(pet) {
+    try {
+      const response = await axios.put(`${URL_BASE}/${pet.id}`, pet);
+      return await response.data;
+    } catch (error) {
+      alert(`Erro: ${error.message}`);
+      throw error;
+    }
+  },
+
+  async deletarPet(id) {
+    try {
+      const response = await axios.delete(`${URL_BASE}/${id}`)
+    } catch (error) {
+      alert(`Erro: ${error.message}`);
+      throw error;
+    }
+  }
+```
+
+3) Inspecionando requisições e entendendo códigos de status
+Para inspecionar as requisições, você deve abrir a aplicação no navegador e pressionar F12 ou Ctrl + Shift + I (ou Cmd + Option + I no Mac) para abrir o DevTools.
+
+- Navegue até a aba "Network" ou “Rede”: Esta aba mostrará todas as requisições HTTP feitas pela sua aplicação enquanto estiver aberta. Execute operações na sua aplicação que envolvam requisições HTTP, como buscar, criar, editar ou excluir um pet;
+
+- Observe as requisições: Na aba "Network", você verá uma lista de todas as requisições realizadas pela sua aplicação. Cada linha representa uma requisição e exibe detalhes como URL, método HTTP, status da resposta, tamanho da resposta e tempo de carregamento.
+
+- Clique em uma requisição para expandir e ver mais detalhes, incluindo os cabeçalhos da requisição e da resposta;
+
+- Analise e anote observações: Método HTTP: verifique qual método HTTP foi usado para cada tipo de operação (GET, POST, PUT, DELETE). Código de status da resposta: observe o código de status da resposta HTTP (ex.: 200 OK, 404 Not Found). Este código indica o resultado da requisição. Cabeçalhos: examine os cabeçalhos da requisição e da resposta para entender quais informações foram enviadas e recebidas pelo servidor. Corpo da requisição e da resposta: se aplicável, examine o conteúdo enviado na requisição (corpo da requisição) e o conteúdo recebido na resposta (corpo da resposta).
+
+- Compreenda os principais códigos de Status: 2xx: indicam sucesso na requisição (ex.: 200 OK, 201 Created). 4xx: indicam erros causados pelo cliente (ex.: 400 Bad Request, 404 Not Found). 5xx: indicam erros causados pelo servidor (ex.: 500 Internal Server Error).
+
+Esta tarefa ajudará você a se familiarizar com o fluxo de requisições HTTP na sua aplicação e a entender como interpretar e utilizar os códigos de status para depurar e otimizar o seu código.
+
+Parabéns por concluir essa lista!
+
+### Aula 5 - Conclusão - Vídeo 3
+
+Transcrição  
+Parabéns pela conclusão do curso!
+
+Agora que você implementou seu primeiro CRUD com JavaScript, vamos recapitular rapidamente o que aprendemos.
+
+Primeiro, entendemos como funciona a comunicação cliente-servidor e instalamos o JSON Server para simular uma API, permitindo que criássemos uma API fictícia. A partir daí, fizemos nossas requisições. Criamos três arquivos JavaScript, cada um com uma responsabilidade específica: ui.js para a interface, main.js para a lógica principal, e api.js para configurar as requisições.
+
+Utilizamos o Fetch, a função nativa do JavaScript, para fazer as requisições. Você aprendeu sobre headers (cabeçalhos), body (corpo da requisição), e os métodos GET, POST, PUT e DELETE. Ao final, exploramos uma nova abordagem utilizando a ferramenta Axios, que simplificou ainda mais o código.
+
+Além disso, você aprendeu a inspecionar requisições, verificando a resposta, os cabeçalhos e o código de status para garantir que tudo funcionou corretamente ou identificar possíveis erros.
+
+Esse conhecimento certamente será um diferencial em sua carreira como pessoa desenvolvedora! Queremos te convidar a compartilhar sua evolução e aprendizado, e a se conectar conosco na comunidade do Discord para fortalecer seu networking.
+
+Desejamos muito sucesso em sua jornada. Um grande abraço e até a próxima!
