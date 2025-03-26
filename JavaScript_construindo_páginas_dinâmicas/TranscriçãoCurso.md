@@ -136,7 +136,7 @@ Desvantagens:
 2. JavaScript Interno
 
 O que é?  
-O JavaScript interno é quando você escreve o código JavaScript dentro de uma tag <script> no próprio arquivo HTML.
+O JavaScript interno é quando você escreve o código JavaScript dentro de uma tag `<script>` no próprio arquivo HTML.
 
 Exemplo:
 
@@ -294,7 +294,7 @@ Para isso, vamos construir uma variável chamada inputItem, que representa o ite
 
 Nesse caso, podemos utilizar getElementById. Ao escrever getElement, a IDE nos oferece várias opções: getElementById, getElementsByClassName, getElementsByName, getElementsByTagName, entre outras.
 
-Como vamos buscar pelo ID, precisamos colocar, entre aspas, o ID que queremos selecionar. No index.html, podemos conferir qual é o ID do <input>. Na linha 22, conferimos que o atributo id é igual a input-item.
+Como vamos buscar pelo ID, precisamos colocar, entre aspas, o ID que queremos selecionar. No index.html, podemos conferir qual é o ID do `<input>`. Na linha 22, conferimos que o atributo id é igual a input-item.
 
 index.html:
 
@@ -316,7 +316,7 @@ index.js:
 > const inputItem = document.getElementById("input-item")  
 > console.log(inputItem);
 
-Atualizamos a tela do live server no navegador. Dessa forma, conseguimos visualizar o <input> no console:
+Atualizamos a tela do live server no navegador. Dessa forma, conseguimos visualizar o `<input>` no console:
 
 Console:
 
@@ -573,4 +573,793 @@ Nessa aula, você aprendeu como:
 - Adicionar JavaScript diretamente em um projeto HTML usando a tag `<script>`.
 - Manipular o DOM para acessar e modificar elementos HTML dinamicamente.
 
-### Aula 1 -  - Vídeo 7
+## Aula 2 - Detectando interações
+
+### Aula 2 - Ouvinte de eventos - Vídeo 1
+
+Transcrição  
+Integramos o JavaScript ao HTML e, também, compreendemos o conceito do Document Object Model (DOM), que nos permite acessar e manipular os elementos presentes no HTML.
+
+Em seguida, tentamos imprimir no console o valor do campo input. No entanto, enfrentamos um problema: como o JavaScript é executado após a renderização do HTML, o conteúdo do input ainda não havia sido definido no momento da execução. Consequentemente, ao tentar acessar seu valor, ele estava nulo, sem nenhum conteúdo.
+
+Para resolver essa situação, é necessário capturar o valor por meio de uma ação específica, como a digitação no campo ou o clique no botão de enviar.
+
+Entendendo o addEventListener  
+Neste caso, utilizaremos o clique no botão de enviar, aplicando o método addEventListener. Podemos procurar no Google por "addEventListener" para acessar a documentação do MDN, que explica que esse método registra uma escuta de evento em um único alvo. O alvo pode ser um elemento do documento, o próprio documento, uma janela ou um XMLHttpRequest.
+
+O addEventListener fica aguardando que um evento ocorra. Essa espera pode ser feita em um elemento específico, na tela inteira ou na janela inteira.
+
+Para utilizá-lo, na seção "Sintaxe", armazenamos o alvo em uma variável e aplicamos o método .addEventListener a esse alvo. Dentro dos parênteses, especificamos o evento que desejamos monitorar e a ação que deve ser executada quando o evento ocorrer.
+
+Trecho de código retirado da documentação:
+
+```JavaScript
+alvo.addEventListener(type, listener[, options]);
+alvo.addEventListener(type, listener [, useCapture, wantUntrusted]); //Gecko/Mozilla
+only
+```
+
+No nosso projeto, desejamos capturar o clique, então o evento será o "click", e a funcionalidade será capturar o valor do input.
+
+Implementando o addEventListener  
+Para isso, vamos implementar o código em JavaScript no Visual Studio Code. O primeiro passo é selecionar o botão de envio dentro do arquivo index.js. Digitamos const botaoAdicionar = document.getElementById().
+
+O document nos permite acessar o DOM, e, dentro do DOM, desejamos selecionar um elemento que possua um determinado id utilizando o método getElementById(). Para selecionar o id do botão, verificamos no index.html na linha 26, onde o id é adicionar-item. Em seguida, retornamos ao JavaScript e colocamos esse id entre parênteses e aspas. Assim, seguimos a estrutura da documentação para selecionar o alvo:
+
+index.js
+
+```JavaScript
+// código omitido
+const botaoAdicionar = document.getElementById("adicionar-item");
+```
+
+Seguindo a estrutura fornecida na documentação, na próxima linha, selecionamos o alvo digitando botaoAdicionar e, na sequência, inserir .addEventListener().
+
+```JavaScript
+// código omitido
+const botaoAdicionar = document.getElementById("adicionar-item");
+botaoAdicionar.addEventListener()
+```
+
+Dentro do listener, inserimos o evento, que pode ser um clique, digitação, passagem do mouse sobre o elemento, entre outros.
+
+Uma dica interessante é explorar outros tipos de eventos que podem ser monitorados em uma atividade disponível nesta aula.
+
+O evento deve ser colocado entre aspas, e utilizamos o clique no botão digitando "click".
+
+```JavaScript
+// código omitido
+botaoAdicionar.addEventListener("click", )
+// código omitido
+```
+
+O segundo argumento é a funcionalidade, que pode ser uma função externa chamada ou uma função construída diretamente. Optaremos por usar a arrow function, cuja sintaxe é () => {}. Nos parênteses, acessamos o evento em si. Colocamos evento entre os parênteses e utilizamos console.log(evento) para visualizar as propriedades retornadas pelo evento.
+
+```JavaScript
+// código omitido
+botaoAdicionar.addEventListener("click", (evento) => {
+    console.log(evento)
+});
+```
+
+Além disso, como estamos criando uma função que é executada a partir de uma ação, ela também é conhecida como função de retorno ou callback. As funções de callback são funções que estão dentro de outras funções.
+
+Deixaremos um conteúdo adicional para que vocês possam entender melhor esse conceito, pois é fundamental compreender os diferentes tipos de funcionalidades em uma aplicação web e como elas interagem entre si.
+
+Verificando o retorno  
+Agora, vamos verificar o retorno desse evento no console. No navegador, no endereço localhost:5500, clicamos com o botão direito do mouse e selecionamos "Inspecionar elemento" ("Ctrl + Shift + C") para abrir as ferramentas de desenvolvedor. Em seguida, acessamos a aba "Console" e clicamos no botão "Salvar item" à esquerda.
+
+O console exibirá diversas funcionalidades acessíveis através do evento.
+
+```JavaScript
+PointerEvent {isTrusted: true, pointerId: 1, width: 1, height: 1, pressure: 0, ...}
+
+isTrusted: true
+
+altKey: false
+
+altitudeAngle: 1.5707963267948966
+
+azimuthAngle: 0
+
+bubbles: true
+
+button: 0
+```
+
+Embora algumas dessas funcionalidades sejam específicas e não usadas com frequência, uma delas é especialmente útil: identificar qual foi o objeto alvo do clique.
+
+Para isso, usamos evento.target no arquivo index.js, voltar ao navegador e clicar em "salvar item".
+
+```JavaScript
+// código omitido
+botaoAdicionar.addEventListener("click", (evento) => {
+    console.log(evento.target)
+});
+```
+
+O target nos informará que estamos nos referindo ao botão "Salvar item", ou seja, o elemento em que o clique foi ativado.
+
+`<button class="button-item" id="adicionar-item" type="button">Salvar item</button>`
+
+A funcionalidade do evento.target é especialmente útil ao lidarmos com o envio de formulários. O comportamento padrão do envio de um formulário é atualizar a página, o que pode resultar na perda de todos os dados inseridos pela pessoa usuária. Esse comportamento não é ideal, pois, em caso de erro, a pessoa usuária precisaria preencher novamente todas as informações, o que comprometeria a experiência.
+
+Para evitar esse problema, utilizamos o método evento.preventDefault(), que impede a ação padrão do envio de formulário, ou seja, evita a atualização da página.
+
+```JavaScript
+// código omitido
+botaoAdicionar.addEventListener("click", (evento) => {
+    evento.preventDefault();
+});
+```
+
+Com isso, conseguimos capturar os valores inseridos no formulário e enviá-los para um destino específico, sem que a tela seja recarregada. Dessa maneira, conseguimos preservar os dados e ainda manipular as informações conforme necessário.
+
+É interessante mencionar isso, pois foi uma questão abordada em minha última entrevista: qual é o comportamento padrão de um formulário e como preveni-lo. Podemos também testar e imprimir o valor de outro input, que não está relacionado ao botão adicionar, no momento do clique:
+
+```JavaScript
+// código omitido
+botaoAdicionar.addEventListener("click", (evento) => {
+    evento.preventDefault();
+     console.log(inputItem.value);
+});
+```
+
+No navegador, adicionamos "suco de laranja" no input à esquerda, clicamos no botão "Salvar item" e conseguimos acessar o que está digitado no input no momento do clique, possibilitando imprimir ou resgatar esse valor após a escrita. À direita, no inspecionar, temos:
+
+suco de laranja
+
+O addEventListener é como um observador atento, ouvindo tudo o que acontece na aplicação e agindo conforme definimos na funcionalidade. Por exemplo, ele nos informa o valor do input no momento do clique. Essa associação ajuda a lembrar do que se trata o addEventListener e quando utilizá-lo.
+
+Próximo passo  
+Daremos continuidade à aplicação para construir outros elementos a partir do que está no input. Faremos isso no próximo vídeo. Até lá!
+
+### Aula 2 - Para saber mais: objeto evento
+
+Quando você começa a mergulhar no mundo da programação, especialmente na web com JavaScript, logo se depara com algo chamado "eventos". Mas o que são eventos? Simplificando, eventos são ações ou ocorrências que acontecem no sistema que você está programando, como um clique do mouse, pressionamentos de teclas, movimentos do mouse, etc. E para cada um desses eventos, o JavaScript nos permite interagir com eles através de algo chamado "objeto event".
+
+O que é o Objeto Event?  
+Imagine que você está em uma festa (o seu site ou aplicação web) e cada vez que algo notável acontece (como alguém abrir a porta, alguém apertar um botão de um jogo), isso é um evento. Agora, imagine que você tem um amigo (o objeto event) que anota tudo o que acontece nesses eventos - quem abriu a porta, que botão foi pressionado, etc. Esse amigo é muito detalhista e escreve todas as informações sobre o que aconteceu. No mundo do JavaScript, esse amigo é o objeto event.
+
+Propriedades do Objeto Event  
+O objeto event contém várias propriedades que nos dão informações sobre o evento que ocorreu. Aqui estão algumas das mais comuns:
+
+- type: diz qual foi o tipo do evento (click, mouseover, keyup, etc.).
+- target: refere-se ao elemento que disparou o evento.
+- currentTarget: semelhante ao target, mas se refere ao elemento ao qual o evento foi realmente atribuído.
+- clientX / clientY: fornece a posição horizontal e vertical do mouse quando um evento do mouse foi disparado.
+- keyCode: no caso de um evento de teclado, diz qual tecla foi pressionada.
+
+Métodos do Objeto Event  
+Além das propriedades, o objeto event também tem métodos (ações) que você pode usar. Dois dos mais usados são:
+
+- preventDefault(): impede que o comportamento padrão do evento aconteça. Por exemplo, impede que um link abra uma nova página.
+- stopPropagation(): impede que o evento continue a ser propagado. Ou seja, ele não deixa o evento "borbulhar" para os elementos pais.
+
+Exemplo prático  
+Vamos ver um exemplo simples de como usar o objeto event. Imagine que você tem um botão na sua página web e quer fazer algo quando ele é clicado:
+
+```html
+<button id="meuBotao">Clique aqui!</button>
+
+<script>
+  document.getElementById('meuBotao').addEventListener('click', function(event) {
+    alert("Botão clicado!");
+    console.log(event.type); // Mostra o tipo do evento no console, que será "click"
+    console.log(event.target); // Mostra o elemento que disparou o evento, que será o botão
+  });
+</script>
+```
+
+Neste exemplo, quando o botão é clicado, uma caixa de alerta aparece e o console logará o tipo de evento e o elemento que disparou o evento.
+
+Entender o objeto event e como trabalhar com eventos em JavaScript é fundamental para criar páginas web interativas. Quase todas as interações do usuário com sua página passarão por algum tipo de evento. Saber capturar esses eventos e responder a eles de forma adequada pode transformar completamente a experiência do usuário no seu site ou aplicação.
+
+### Aula 2 - Criar elementos - Vídeo 2
+
+Transcrição  
+Aprendemos como capturar os valores inseridos nos campos de digitação e também como adicionar um "ouvinte" que fica atento aos eventos gerados pela pessoa usuária, como um clique, por exemplo.
+
+Agora, o próximo passo é construir a funcionalidade principal da nossa aplicação, que consiste em criar novos itens na tela a partir das informações que a pessoa usuária digitou no campo de entrada.
+
+Questões a serem consideradas  
+A primeira questão a ser considerada é: e se a pessoa usuária tentar inserir um item vazio na lista? O ideal seria não criar o item e avisar à pessoa usuária de que não é permitido inserir um item vazio. Para isso, podemos começar com uma condicional, pois desejamos que algo aconteça apenas quando o campo estiver vazio.
+
+No arquivo index.js do Visual Studio Code, na linha 7, removemos o console.log(inputItem.value) e começar a construir uma condicional. A sintaxe de uma condicional é if() {}, seguida de parênteses e chaves. Dentro dos parênteses, colocamos a condição que desejamos verificar. Neste caso, vamos verificar se inputItem.value é igual a uma string vazia (""). A sintaxe fica assim:
+
+```JavaScript
+// código omitido
+    if (inputItem.value === "") {
+        alert();
+    }
+```
+
+Estamos verificando se o valor dentro desse input é igual a uma string vazia, ou seja, se não há nada digitado. Para essa comparação, utilizamos três sinais de igual (===). Caso utilizássemos apenas um sinal de igual (=), estaríamos atribuindo um valor, e não comparando. Ao usar dois ou três sinais de igual, estamos realizando a comparação.
+
+Se o campo estiver vazio, devemos definir o que fazer dentro das chaves. Neste caso, utilizamos o alert(), que exibirá uma janela de aviso no navegador para notificar a pessoa usuária. No alerta, inserimos a mensagem "Por favor, insira um item.".
+
+Se deixássemos apenas a condição e imprimíssemos o alerta, ele apareceria, a pessoa usuária clicaria no botão de confirmar e a funcionalidade continuaria a construção do elemento na lista. No entanto, isso não seria o ideal. Desejamos exibir o alerta e interromper a execução da função.
+
+Para isso, utilizamos o return. Quando a função encontra o return, ela é interrompida e os passos seguintes não são executados.
+
+```JavaScript
+// código omitido
+    if (inputItem.value === "") {
+        alert("Por favor, insira um item!");
+        return
+    }
+```
+
+Falando em próximos passos, vamos iniciar a construção do item da lista.
+
+Construindo o item da lista  
+A lógica para criar elementos na tela é a mesma utilizada no HTML. Precisamos pensar nos elementos que devem compor esse item da lista. No arquivo index.html do nosso projeto, já temos um exemplo de item de lista, e podemos seguir sua estrutura. O primeiro elemento que precisamos criar é o <li>, que está na linha 34. Em seguida, temos uma `<div>` com a classe list-item-container, que aparece na linha 35.
+
+Dentro da funcionalidade no arquivo index.js, que corresponde ao segundo parâmetro do listener do botão "Adicionar", será necessário criar uma variável para representar o novo item da lista. Na linha 10, criamos uma variável chamada const itemDaLista.
+
+```JavaScript
+// código omitido
+    if (inputItem.value === "") {
+        alert("Por favor, insira um item!");
+        return
+    }
+    const itemDaLista = 
+```
+
+A criação dessa variável é essencial, pois, ao simplesmente construir o elemento, ele não será automaticamente exibido na tela. Para que o item apareça, é necessário anexá-lo ao DOM, o que só será possível com o uso dessa variável.
+
+Agora, é preciso acessar o DOM para criar um elemento dentro da árvore de elementos. Utilizamos document.createElement(). O método createElement() recebe, entre parênteses, o elemento que desejamos criar, especificado como uma string.
+
+Assim, colocamos "li" entre aspas, fechamos as aspas e os parênteses. Essa sintaxe já cria o elemento. Se tentássemos exibir o itemDaLista com um console.log, ele aparecerá como um li. Vamos testar:
+
+```JavaScript
+// código omitido
+    if (inputItem.value === "") {
+        alert("Por favor, insira um item!");
+        return
+    }
+    
+    const itemDaLista = document.createElement("li");
+    console.log(itemDaLista)
+```
+
+No navegador, ao abrir o painel de "Inspecionar Elemento" e acessar o console, ao clicar no botão "Salvar item", se o campo estiver vazio, o alerta será exibido. Quando digitarmos "teste" e clicar em "Salvar item", será possível visualizar no console o li que foi criado.
+
+`<li></li>`
+
+Agora, para dar continuidade, não é apenas o li que precisamos criar. Na linha 13, removemos o console e criamos a variável const containerItemDaLista. A sintaxe para isso é a mesma:
+
+```JavaScript
+// código omitido
+    if (inputItem.value === "") {
+        alert("Por favor, insira um item!");
+        return
+    }
+    
+    const itemDaLista = document.createElement("li");
+    const containerItemDaLista = document.createElement("div");
+```
+
+Essa div tem algo a mais do que o item da lista: uma classe lista-item-container. Para atribuir uma classe a esse elemento, acessamos o elemento em si através da variável containerItemDaLista. Utilizamos .classList para acessar a lista de classes e o método .add para adicionar a classe:
+
+```JavaScript
+// código omitido
+    
+    const itemDaLista = document.createElement("li");
+    const containerItemDaLista = document.createElement("div");
+    containerItemDaLista.classList.add("lista-item-container");
+```
+
+Construímos dois elementos e também adicionamos uma classe. Se não adicionássemos essa classe, o item da lista não ficaria formatado como o que já existe inicialmente, pois é essa classe que aplica todos os estilos.
+
+Próximo passo  
+A seguir, continuaremos com a construção dos elementos dentro desse containerItemDaLista. Até breve!
+
+### Aula 2 - Capturando interações
+
+Imagine que você está desenvolvendo uma aplicação de checklist interativa. Você já aprendeu a capturar valores de input e agora precisa garantir que, ao clicar no botão "Salvar", o valor do input seja armazenado em uma variável para futuras manipulações. Para isso, você decide usar um Event Listener para capturar o evento de clique no botão.
+
+Qual código representa corretamente a implementação de um Event Listener para capturar o valor de um campo de input quando o botão "Salvar" é clicado?
+
+Resposta:
+
+```JavaScript
+const botaoSalvarItem = document.getElementById("adicionar-item");
+botaoSalvarItem.addEventListener("click", () => {
+    const conteudoDoInput = item.value;
+});
+```
+
+> Esta alternativa usa um Event Listener para "escutar" o evento de clique no botão e captura o valor do input, armazenando-o na variável conteudoDoInput.
+
+### Aula 2 - Checkbox - Vídeo 3
+
+Transcrição  
+Já criamos alguns elementos do nosso item da lista, como o item da lista em si e também o container que existe dentro dela. Agora, precisamos dar continuidade. Se analisarmos o arquivo index.html para entender os próximos passos, precisamos construir um input do tipo checkbox, que terá um id. Por exemplo, o primeiro item da lista pode ter o id como checkbox-1. Iremos incrementar esse id para cada um dos itens da lista.
+
+Para construir isso, vamos ao index.js. Na linha 14, após o classList, clicamos em "Enter" para abrir mais um espaço, e desejamos construir um item dentro do nosso HTML, um elemento. Então, criamos a constante inputCheckbox, acessamos o documento e criamos um elemento, conforme já aprendido.
+
+No caso, utilizamos input, pois o checkbox é um atributo, ou seja, o tipo desse input.
+
+```JavaScript
+// código omitido
+    const inputCheckbox = document.createElement("input");
+```
+
+Após criar o input, é necessário acessar a variável inputCheckbox e adicionar um atributo a ela. Isso pode ser feito utilizando o método setAttribute, ou, alternativamente, podemos acessar diretamente o atributo type que recebe o "checkbox".
+
+```JavaScript
+// código omitido
+    inputCheckbox.type = "checkbox";
+```
+
+Estamos atribuindo o valor "checkbox" ao tipo do input, semelhante à sintaxe do HTML.
+
+Criando o ID dinâmico  
+Chegamos ao momento de criar o nosso id dinâmico. Esse id deve ser incrementado a cada vez que um item da lista for criado. Para isso, é necessário primeiro criar uma variável de contador que armazenará o valor atual do checkbox e permitirá o incremento.
+
+Sem essa variável, não seríamos capazes de saber qual é o número do checkbox anterior, o que tornaria impossível gerar o próximo id corretamente.
+
+Na linha 4, antes do listener, criamos a variável contador:
+
+> let contador = 0;
+
+Ela inicia com zero, mas cada vez que clicarmos no botão, desejamos aumentar seu valor. Na linha 18, acessamos o atributo .id do inputCheckbox.
+
+O id deve começar com o texto "checkbox-" e, em seguida, exibir o valor do contador. Para adicionar uma informação no texto checkbox, inserimos um símbolo de adição que acessa o valor de contador: "checkbox-" + contador.
+
+Se deixássemos dessa forma sem incrementar, todos os checkboxes teriam o valor zero, o que não é o objetivo. Para incrementar o contador, existem várias opções de sintaxe, como contador = contador + 1. No entanto, uma forma mais concisa e intuitiva é utilizar o operador ++, que aumenta o valor da variável em 1 de maneira direta.
+
+> inputCheckbox.id = "checkbox-" + contador++;
+
+O operador ++ incrementa o valor de contador em 1. Assim, cada vez que o código for executado, o id será, por exemplo, "checkbox-1", "checkbox-2", "checkbox-3" e assim por diante.
+
+No código, utilizamos dois tipos de variáveis: const e let.
+
+Até agora, todas as variáveis estavam sendo declaradas com const, mas neste caso, introduzimos uma variável let. O let é utilizado porque estamos criando uma variável cujo valor mudará ao longo do tempo. Não podemos usar const para o contador, pois seu valor será alterado várias vezes durante a execução do código. O let permite essas modificações, enquanto o const impede alterações em uma variável após sua definição inicial.
+
+Próximo passo  
+Agora, precisamos continuar a construção dos outros itens que farão parte desse item da lista. Vamos prosseguir para o próximo vídeo, pois ainda temos bastante trabalho pela frente.
+
+### Aula 2 - Anexando elementos - Vídeo 4
+
+Transcrição  
+Já iniciamos a criação do nosso item da lista, incluindo o item em si, o container que o envolve e o checkbox.
+
+Analisando o index.html, o próximo passo é adicionar um parágrafo que conterá o valor inserido no campo de digitação (<p>).
+
+Construção do parágrafo no index.js
+Voltamos para o index.js. Na linha 18, pressionamos "Enter" e criamos uma variável chamada const nomeItem. Para construir esse elemento, utilizaremos uma repetição. Precisamos acessar o document e criar um elemento com createElement("p"), que criará o parágrafo.
+
+Após criar o parágrafo, devemos associar o valor do campo de digitação a esse parágrafo. Para isso, acessamos o texto dentro do parágrafo, que inicialmente está vazio. Assim como na tradução, utilizamos o innerText para isso. Portanto, acessamos o innerText da variável nomeItem e atribuímos a ela o valor de inputItem.value.
+
+index.js
+
+```JavaScript
+// código omitido
+    const nomeItem = document.createElement("p");
+    nomeItem.innerText = inputItem.value;
+})
+```
+
+No momento em que clicarmos no botão e houver conteúdo no campo de digitação, o valor do campo será atribuído à variável nomeItem. No entanto, não podemos deixar assim.
+
+Porque estamos criando os elementos, mas eles ainda não aparecem na tela. Eles estão sendo criados de forma isolada, fora da árvore do DOM. Para que esses elementos sejam visíveis, precisamos conectá-los ao DOM. Faremos isso de maneira inversa, ou seja, de trás para frente, começando pela inserção dos elementos na árvore do DOM.
+
+Associando checkbox e parágrafo ao container  
+Primeiro, precisamos associar o checkbox e o parágrafo com o container, sendo este o elemento pai. Para isso, acessamos o containerItemDaLista e utilizamos o método .appendChild() para anexar um filho a ele.
+
+```JavaScript
+// código omitido
+    const nomeItem = document.createElement("p");
+    nomeItem.innerText = inputItem.value;
+    
+    containerItemDaLista.appendChild();
+```
+
+Dentro dos parênteses do appendChild(), colocamos o elemento que queremos inserir no container, que será o elemento pai. O primeiro elemento será o inputCheckbox e o segundo, o parágrafo, nomeItem. Na linha 23, fazemos o mesmo: containerItemDaLista.appendChild(nomeItem).
+
+```JavaScript
+// código omitido
+    const nomeItem = document.createElement("p");
+    nomeItem.innerText = inputItem.value;
+    
+    containerItemDaLista.appendChild(inputCheckbox);
+    containerItemDaLista.appendChild(nomeItem);
+```
+
+Agora, qual é o elemento pai do containerItemDaLista? O item da lista em si.
+
+Acessamos o container pai, que é o itemDaLista, e usar o .appendChild() para anexar o containerItemDaLista como um filho dentro dele.
+
+```JavaScript
+// código omitido
+    containerItemDaLista.appendChild(nomeItem);
+    
+    itemDaLista.appendChild(containerItemDaLista)
+```
+
+Estamos, assim, começando a construir nossa árvore genealógica de elementos, de trás para frente. Ou seja, começamos pelos elementos mais novos e, em seguida, anexamos aos elementos mais velhos, que são os pais desses que estamos adicionando.
+
+Explicar isso sem um recurso visual pode ser complexo.
+
+No Paint, temos o checkbox e o parágrafo. Desejamos colocá-los como filhos do container. Através do appendChild, estamos construindo esses elementos dentro do containerItemDaLista. Esse, por sua vez, será filho do item da lista.
+
+Diagrama de estrutura hierárquica simples com quatro retângulos representando elementos de interface ou componentes. No topo há um retângulo maior rotulado com 'itemLista'. Logo abaixo, conectado por uma linha, há um retângulo intermediário com o rótulo 'containerItemList'. Duas linhas partem deste segundo retângulo para mais dois abaixo, um deles rotulado 'checkbox' e o outro 'parágrafo'.
+
+Na tela, o que temos é uma estrutura que se assemelha a uma árvore genealógica. O "avô" do checkbox e do parágrafo é o item da lista. O containerItemDaLista é o filho direto do item da lista e, ao mesmo tempo, é o pai do checkbox e do parágrafo. A organização dessa estrutura é parecida com uma árvore genealógica, e defendemos essa analogia para entender melhor como os elementos estão sendo conectados.
+
+Adicionando o item da lista à lista  
+Agora, precisamos adicionar o item da lista dentro da lista. Esta é a última etapa para finalmente exibir o item na tela. A lista em si já está fixa no HTML. Mas, até agora, não temos uma variável que capture a lista. Para isso, vamos adicionar, na segunda linha do index.js, o código const listaDeCompras = document.getElementById('').
+
+No arquivo index.html, precisamos verificar se a lista possui um id. Na linha 33, encontramos o id="lista-de-compras". Com isso, no index.js, podemos continuar. Na linha 2, usamos getElementById("lista-de-compras") para acessar a lista.
+
+```JavaScript
+// código omitido
+const listaDeCompras = document.getElementById("lista-de-compras")
+// código omitido
+```
+
+Agora, repetimos o procedimento. Dentro do listener, na linha 26, pegamos a listaDeCompras e usamos appendChild(itemDaLista) para adicionar o novo item à lista.
+
+```JavaScript
+// código omitido
+    
+    itemDaLista.appendChild(containerItemDaLista)
+    listaDeCompras.appendChild(itemDaLista)
+```
+
+Vamos testar!
+
+Testando a implementação  
+No navegador, fechamos o console, pois não precisaremos dele. Inserimos um "teste" no campo, clicamos em "Salvar item" e, como esperado, o item foi criado com o checkbox e o texto. Observe que na parte inferior, em "Lista de compras", agora temos:
+
+Ração de gato
+
+teste
+
+Próximo passo  
+Agora, enfrentamos um novo desafio. Precisamos adicionar a informação de data: qual é o dia de hoje? E qual é o horário? Existem várias outras informações que ainda precisam ser inseridas dentro do item da lista. Felizmente, já temos um bom progresso com o trabalho realizado até agora. Vamos aprimorar e seguir em frente. Vamos para a próxima aula, pois ainda há muito a aprender. Nos vemos por lá!
+
+### Aula 2 - Faça como eu fiz
+
+Agora é hora de praticar e aprimorar o que aprendemos em aula! Nesta atividade, você vai trabalhar com eventos, manipulação de DOM e lógica em JavaScript. A proposta é criar uma funcionalidade que:
+
+- Armazene um botão de salvar em uma variável.
+- Capture o valor do campo de digitação.
+- Evite o comportamento padrão de envio do formulário.
+- Impeça que itens vazios sejam adicionados à lista.
+- Construa dinamicamente cada item da lista com os valores inseridos pelo usuário.
+
+Bora implementar e colocar “a mão na massa”? Abaixo em “opinião da instrutora” deixarei a resolução, caso queira acompanhar.
+
+Opinião do instrutor
+
+Comece selecionando os elementos do HTML com os quais vamos interagir: o campo de input (input-item), a lista onde os itens serão exibidos (lista-de-compras) e o botão que será usado para adicionar os itens (adicionar-item). Essas seleções são armazenadas em variáveis para facilitar o uso posterior.
+
+```JavaScript
+const inputItem = document.getElementById("input-item");
+const listaDeCompras = document.getElementById("lista-de-compras");
+const botaoAdicionar = document.getElementById("adicionar-item");
+let contador = 0;
+```
+
+Adicione um ouvinte de eventos ao botão "Salvar" com o método addEventListener. Quando o botão é clicado, ele executa a função definida. Dentro dessa função, a primeira ação é evitar o comportamento padrão do formulário com evento.preventDefault(). Isso impede que a página seja recarregada ao enviar o formulário.
+
+```JavaScript
+botaoAdicionar.addEventListener("click", (evento) => {
+    evento.preventDefault();
+```
+
+Antes de adicionar um item à lista, valide o campo para garantir que o campo de input não está vazio. Se o campo estiver vazio, o código exibe um alerta e interrompe a execução com o comando return.
+
+```JavaScript
+    if (inputItem.value === "") {
+        alert("Por favor, insira um item!");
+        return;
+    }
+```
+
+Caso o campo esteja preenchido, o código deve criar os elementos necessários para montar o item da lista:
+
+- Um `<li>` para representar o item na lista.
+- Um `<div>` com a classe lista-item-container para organizar os conteúdos do item.
+- Um `<input>` do tipo checkbox para permitir marcar o item.
+- Um `<p>` que contém o texto digitado no input. Esse texto é inserido no elemento `<p>` com a propriedade innerText.
+
+```JavaScript
+    const itemDaLista = document.createElement("li");
+    const containerItemDaLista = document.createElement("div");
+    containerItemDaLista.classList.add("lista-item-container");
+    const inputCheckbox = document.createElement("input");
+    inputCheckbox.type = "checkbox";
+    inputCheckbox.id = "checkbox-" + contador++;
+    const nomeItem = document.createElement("p");
+    nomeItem.innerText = inputItem.value;
+```
+
+Os elementos criados devem ser organizados. Primeiro, o checkbox e o texto serão adicionados ao div. Depois, o div é anexado ao `<li>`, e o `<li>` é adicionado à lista de compras (ul).
+
+```JavaScript
+    containerItemDaLista.appendChild(inputCheckbox);
+    containerItemDaLista.appendChild(nomeItem);
+    itemDaLista.appendChild(containerItemDaLista);
+    listaDeCompras.appendChild(itemDaLista);
+```
+
+### Aula 2 - Lista de exercícios
+
+Exercício 1) Adicionando funcionalidade ao botão de salvar
+
+Imagine que você está trabalhando no desenvolvimento de uma aplicação web para uma lista de tarefas. Você já tem o layout pronto e agora precisa fazer a parte funcional do botão de salvar.
+
+```html
+   <form>
+            <input class="input-item" type="text" placeholder="Digite a tarefa que deseja adicionar">
+            <button class="button-item">Salvar tarefa</button>
+        </form>
+```
+
+Quando alguém digita um item no campo de texto e clica em "Salvar", o item deve ser adicionado à lista abaixo do campo de entrada. Vamos criar essa funcionalidade usando JavaScript.
+
+- No arquivo script.js, selecione o campo de entrada e o botão de salvar usando getElementById.
+- Adicione um ouvinte de eventos ao botão que, ao ser clicado, chama uma função para adicionar a tarefa à lista.
+- Dentro da função, obtenha o valor digitado no campo de entrada e crie um novo elemento HTML para esse item.
+- Imprima no console o valor dentro desse input.
+
+Exercício 2) Criando um checkbox dinâmico com JavaScript
+
+Você está trabalhando em um projeto de lista de tarefas e sua tarefa é adicionar checkboxes dinamicamente para cada item que o usuário inclui na lista. Cada checkbox deve ter um ID único que aumenta automaticamente conforme novos itens são adicionados. Use seu conhecimento em JavaScript para criar uma função que gera esses elementos e os insere no DOM conforme descrito.
+
+Exercício 3) Implementando controles dinâmicos em uma lista de compras
+
+Neste exercício, você precisa construir uma funcionalidade em JavaScript que permite ao usuário adicionar novos itens em uma lista de tarefas, cada um com um checkbox associado. O desafio está em fazer com que cada checkbox tenha um ID único que se incrementa automaticamente, garantindo que cada item possa ser identificado individualmente.
+
+Exercício 4) Criando e manipulando elementos no DOM
+
+Imagine que você está desenvolvendo uma lista de músicas interativa. Para adicionar novos itens à lista, você precisa capturar o texto digitado pelo usuário e exibi-lo em uma nova entrada na lista com opções de editar e remover.
+
+Utilize o código descrito para construir um exercício prático em que você irá criar os elementos de lista (li), o container para os itens, e adicionar classes CSS a eles dinamicamente usando JavaScript.
+
+- Crie um elemento li e armazene-o em uma variável chamada itemDaLista.
+- Crie uma div chamada containerItemLista e adicione a ela a classe "ListaIfInItemIfInContainer".
+- Insira o containerItemLista dentro do itemDaLista usando o método appendChild.
+- Adicione um elemento p para mostrar o nome do item da lista, cujo conteúdo será o texto inserido pelo usuário em um campo de entrada.
+- Adicione a div com o nome do item e os botões de ação dentro do containerItemLista.
+
+Exercício 5) Criando e manipulando elementos no DOM
+
+Você recebeu a tarefa de criar uma aplicação para listar seus filmes favoritos e a princípio você conta com seguinte estrutura no seu arquivo HTML:
+
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filmes favoritos</title>
+</head>
+<body>
+    <h1>Lista de filmes</h1>
+    <div>
+        <input type="text" id="input_item" placeholder="Digite uma tarefa">
+        <button id="adicionar_Button">Adicionar</button>
+    </div>
+    <ul id="lista_de_filmes"></ul>
+    <script src="script.js"></script>
+</body>
+</html>
+```
+
+Seu objetivo é capturar os valores que são digitados no campo de input e ao clicar no botão adicionar eles na tela.
+
+Para isso, você precisa:
+
+- Usar o document.getElementByID para capturar os elementos de input, button e ul;
+- Criar uma função chamada adicionarFilme() que vai:
+- Capturar o valor do campo de input;
+- Criar um elemento da <li>da lista com a ajuda do createElement;
+- Inserir o valor do input no elemento <li> através do textContent;
+- Adicionar os itens na lista com o appendChild;
+- Limpar o campo de input .
+- Adicionar um evento de clique ao botão e implementar a função adicionarFilme(), para que o valor seja acrescentado de fato à lista.
+
+Opinião do instrutor
+
+Resposta do exercício 1
+
+Adicionando funcionalidade ao botão de salvar
+
+- Primeiro, no script.js, crie constantes para acessar o campo de entrada e o botão de salvar usando document.getElementById, passando os IDs correspondentes como argumento.
+- Adicione um ouvinte de eventos ao botão de salvar com addEventListener, configurando para escutar o evento de clique. Dentro do manipulador do evento, crie uma função que:
+- Obtenha o valor atual do campo de entrada.
+- Crie um novo elemento HTML (como um `<li>`) e defina seu texto para o valor obtido.
+- Anexe este novo elemento à lista de compras existente na página.
+- Não esqueça de limpar o campo de entrada após adicionar o item à lista.
+
+```JavaScript
+const input = document.getElementById('input_item');
+const btnSalvar = document.getElementById('salvar_item');
+
+btnSalvar.addEventListener('click', function() {
+console.log(input.value)
+});
+```
+
+Resposta do exercício 2
+
+Criando um checkbox dinâmico com JavaScript
+
+- Primeiro, crie um novo elemento div que será o container para o checkbox:
+
+```JavaScript
+const containerCheckbox = document.createElement("div");
+containerCheckbox.classList.add("container", "checkbox");
+```
+
+- Crie o elemento input para o checkbox:
+
+```JavaScript
+const checkboxInput = document.createElement("input");
+checkboxInput.type = "checkbox";
+checkboxInput.classList.add("input", "fintcheckbox");
+```
+
+Implemente uma lógica para gerar um ID único para cada checkbox, utilizando uma variável contador que é incrementada cada vez que um novo item é adicionado:
+
+```JavaScript
+let contador = 0;
+checkboxInput.id = `checkbox_${++contador}`;
+```
+
+Insira o checkboxInput dentro de um label, e adicione o label ao containerCheckbox:
+
+```JavaScript
+const checkboxLabel = document.createElement("label");
+checkboxLabel.appendChild(checkboxInput);
+containerCheckbox.appendChild(checkboxLabel);
+```
+
+Finalmente, adicione o containerCheckbox ao elemento principal da lista no DOM:
+
+```JavaScript
+document.querySelector("#mainListContainer").appendChild(containerCheckbox);
+```
+
+Resposta do exercício 3
+
+Implementando controles dinâmicos em uma lista de compras
+
+- Inicie criando a estrutura básica no JavaScript para suportar a adição de novos itens:
+
+```JavaScript
+const containerCheckbox = document.createElement("div");
+containerCheckbox.classList.add("container", "checkbox");
+```
+
+- Crie um novo input do tipo checkbox para cada item adicionado:
+
+```JavaScript
+const checkboxInput = document.createElement("input");
+checkboxInput.type = "checkbox";
+checkboxInput.classList.add("input", "fintcheckbox");
+```
+
+- Configure um ID dinâmico para cada novo input:
+
+```JavaScript
+let contador = 0; // Este contador deve ser inicializado fora da função de adição para manter o estado.
+checkboxInput.id = `checkbox_${++contador}`;
+```
+
+- Insira o checkboxInput dentro de um label e configure o for do label para corresponder ao ID do input:
+
+```JavaScript
+const checkboxLabel = document.createElement("label");
+checkboxLabel.setAttribute("for", checkboxInput.id);
+checkboxLabel.appendChild(checkboxInput);
+```
+
+- Adicione o label com o checkbox ao container principal da lista de compras no seu HTML:
+
+```JavaScript
+containerCheckbox.appendChild(checkboxLabel);
+document.querySelector("#tarefasListContainer").appendChild(containerCheckbox)
+```
+
+Resposta do exercício 4
+
+Criando e manipulando elementos no DOM
+
+- Primeiro, crie o elemento li utilizando document.createElement('li') e armazene-o na variável itemDaLista.
+- Crie uma div, armazene-a na variável containerItemLista, e adicione a classe "ListaIfInItemIfInContainer" usando classList.add.
+- Use itemDaLista.appendChild(containerItemLista) para adicionar o containerItemLista como filho do itemDaLista.
+- Para adicionar o nome do item, crie um elemento p, defina seu innerText com o valor capturado do campo de entrada do usuário, e adicione este p ao containerItemLista.
+- Finalmente, adicione o containerItemLista com todos os seus elementos no DOM principal da página.
+
+Resposta do exercício 5
+
+Criando e manipulando elementos no DOM
+
+- Primeiro, capture os elementos de input, button e ul com o document.queryElementById() e guarde em constantes, como mostro no código abaixo:
+
+```JavaScript
+const inputItem = document.getElementById('input_item');
+const botao = document.getElementById('adicionar_Button');
+const listaDeFilmes = document.getElementById('lista_de_filmes');
+```
+
+- Cria a função adicionarFilme():
+
+```JavaScript
+function adicionarFilme() {
+
+}
+```
+
+- Capture o valor do elemento de input e salve dentro de uma constante chamada filme:
+
+```JavaScript
+function adicionarFilme() {
+    const filme = inputItem.value;
+}
+```
+
+Crie um elemento `<li>` através do createElement e salve dentro da constante li:
+
+```JavaScript
+function adicionarFilme() {
+    const filme = inputItem.value;
+    const li = document.createElement('li');
+}
+```
+
+- Insira o valor do input dentro do elemento li que você acabou de criar:
+
+```JavaScript
+function adicionarFilme() {
+    const filme = inputItem.value;
+    const li = document.createElement('li');
+    li.textContent = filme;
+}
+```
+
+- Adicione os itens da lista com o appendChild:
+
+```JavaScript
+function adicionarFilme() {
+    const filme = inputItem.value;
+    const li = document.createElement('li');
+    li.textContent = filme;
+    listaDeFilmes.appendChild(li);
+}
+```
+
+- Garanta que ao ser adicionado à lista o campo de input volte a ficar novamente vazio:
+
+```JavaScript
+function adicionarFilme() {
+    const filme = inputItem.value;
+    const li = document.createElement('li');
+    li.textContent = filme;
+    listaDeFilmes.appendChild(li);
+    inputItem.value = '';
+}
+```
+
+- Por fim, crie um ouvinte de eventos para que no momento em que o botão for clicado a função adicionarFilme() seja executada:
+
+> botao.addEventListener('click', adicionarFilme);
+
+## Aula 3 - Construindo conteúdos dinâmicos
+
+### Aula 3 - Data completa - Vídeo 1
+
+
+
+### Aula 3 -  - Vídeo 2
+### Aula 3 -  - Vídeo 3
+### Aula 3 -  - Vídeo 4
+### Aula 3 -  - Vídeo 5
+### Aula 3 -  - Vídeo 6
+### Aula 3 -  - Vídeo 7
