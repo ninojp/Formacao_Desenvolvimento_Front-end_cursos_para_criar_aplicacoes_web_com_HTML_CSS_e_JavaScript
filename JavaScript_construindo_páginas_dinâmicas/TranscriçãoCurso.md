@@ -1355,11 +1355,696 @@ function adicionarFilme() {
 
 ### Aula 3 - Data completa - Vídeo 1
 
+Transcrição  
+Já começamos a construir os itens da lista de forma dinâmica e conseguimos inseri-los na aplicação. No entanto, faltou incluir a data completa nesses novos itens.
 
+Incluindo a data completa  
+Ao visualizarmos o resultado do projeto, temos um item fixo com a informação do dia da semana, da data no formato dia/mês/ano, e também o horário em que o item foi salvo na lista.
 
-### Aula 3 -  - Vídeo 2
-### Aula 3 -  - Vídeo 3
-### Aula 3 -  - Vídeo 4
-### Aula 3 -  - Vídeo 5
-### Aula 3 -  - Vídeo 6
-### Aula 3 -  - Vídeo 7
+Dito isso, vamos retornar ao Visual Studio Code.
+
+Declarando a variável diaDaSemana  
+Para começar, vamos declarar a variável diaDaSemana no arquivo index.js, logo após listaDeCompras.appendChild(itemDaLista), ao final do código.
+
+O JavaScript oferece a possibilidade de usar new Date(). Pela tradução, new Date() significa nova data. A documentação da MDN explica que o Date() cria uma instância JavaScript de Date que representa um único momento no tempo.
+
+Objetos Date são baseados no valor de tempo, que é o número de milissegundos desde 1º de janeiro de 1970. Basicamente, Date() informa o momento atual se não enviarmos nenhum parâmetro.
+
+Podemos visualizar o resultado com console.log(diaDaSemana).
+
+index.js:
+
+```JavaScript
+const diaDaSemana = new Date();
+console.log(diaDaSemana);
+```
+
+De volta ao navegador, podemos visualizar o resultado de new Date() em "Inspecionar elemento". Nessa janela, vamos até a aba "Console".
+
+Ao adicionar um novo item na lista apenas para imprimir no console, temos que hoje é segunda-feira (Mon), 18 de novembro de 2024 (Nov 18 2024), com o horário 06:57:20 GMT-0300, indicando o horário padrão de Brasília. Portanto, o Date() pega do navegador a informação de localização.
+
+Utilizando o método toLocaleDateString()
+
+O JavaScript possui algumas propriedades que permitem formatar esse objeto, isto é, a instância de Date. No nosso caso, usaremos o método toLocaleDateString().
+
+Na documentação da MDN, temos a seção do método toLocaleDateString(). Existem várias opções de propriedades para manipular a data, e a MDN é uma excelente fonte de estudo para quem deseja se aprofundar nessas informações que não serão usadas neste projeto.
+
+Como queremos imprimir em um parágrafo, escolhemos toLocaleDateString(), que retorna uma string, representa a data com base no idioma, e espera os argumentos locales e options.
+
+O locales é a base da data, no nosso caso, português brasileiro, enquanto o options permite customizar o comportamento da função, definindo o que queremos que ela retorne. Assim, o options será um objeto. Podemos informar, por exemplo, que queremos a data em dias da semana.
+
+Existem várias opções, e a documentação explica como usar toLocaleDateString(), locales e options. Um exemplo prático é utilizar options para obter o weekday, que é o dia da semana, além do ano (year), o mês (month) e o dia (day) separadamente.
+
+```JavaScript
+var options = {
+  weekday: "long",
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+};
+```
+
+Vamos colocar isso em prática no VS Code? Onde adicionamos o new Date() no arquivo index.js, vamos adicionar toLocaleDateString() da seguinte forma:
+
+index.js:
+
+```JavaScript
+const diaDaSemana = new Date().toLocaleDateString();
+console.log(diaDaSemana);
+```
+
+Entre parênteses, a primeira opção será o locales, que definiremos como pt-BR. Isso fará a conversão para a localização do Brasil.
+
+A segunda opção entre parênteses será o options, um objeto ({}) que define o que queremos retornar. Como queremos apenas o dia da semana, passamos weekday.
+
+Precisamos informar como queremos o weekday, que pode ser abreviado ou completo. Para exibir completo, como "segunda-feira", colocamos {weekday: "long"}.
+
+```JavaScript
+// código omitido
+const diaDaSemana = new Date().toLocaleDateString("pt-BR", {
+    weekday: "long"
+});
+console.log(diaDaSemana);
+```
+
+Agora podemos visualizar o resultado do novo dia da semana. Na aba do Live Server no navegador, vamos abrir novamente "Inspecionar elemento > Console".
+
+Ao criar um novo item de teste, ele imprime "segunda-feira". Assim, conseguimos identificar o dia da semana, que de fato é segunda-feira no momento da gravação.
+
+Declarando a variável data  
+Agora, precisamos do valor da data, ou seja, dia/mês/ano. Para isso, vamos declarar uma nova variável logo após diaDaSemana, chamada data.
+
+Novamente, usaremos new Date(), e para garantir que sempre será impresso no formato brasileiro (dia, mês e ano), utilizamos toLocaleDateString(), informando apenas o locales como pt-BR conforme fizemos anteriormente. Por fim, vamos imprimir a data com console.log(data).
+
+```JavaScript
+// código omitido
+const diaDaSemana = new Date().toLocaleDateString("pt-BR", {
+    weekday: "long"
+});
+const data = new Date().toLocaleDateString("pt-BR")
+console.log(data);
+```
+
+Ao testar o retorno no navegador, ele mostra dia, mês e ano normalmente:
+
+Retorno no console:
+
+> 18/11/2024
+
+Declarando a variável dataCompleta  
+Por último, precisamos unir essas duas informações que acabamos de construir. Faremos isso declarando uma nova variável no index.js: a dataCompleta.
+
+Como queremos formatar a dataCompleta, usamos crases, conhecidas como template strings. Com elas, construímos uma string a partir do valor das variáveis, podendo formatá-la como desejado.
+
+A primeira variável é diaDaSemana, referenciada com ${diaDaSemana}. Após as chaves, colocamos um espaço, que será contabilizado na impressão. Em seguida, entre parênteses, colocamos ${data}. Com isso, teremos a impressão no formato desejado, mas sem o horário por enquanto.
+
+```JavaScript
+// código omitido
+const diaDaSemana = new Date().toLocaleDateString("pt-BR", {
+    weekday: "long"
+});
+const data = new Date().toLocaleDateString("pt-BR")
+const dataCompleta = `${diaDaSemana} (${data})`
+console.log(dataCompleta);
+```
+
+Para visualizar essa alteração, vamos retornar ao navegador e testar no console. Agora, ao adicionar um novo item na lista, recebemos o seguinte retorno:
+
+> segunda-feira (18/11/2024)
+
+Conclusão  
+Agora que temos a data no formato desejado, precisamos dar continuidade para ter acesso ao horário. Trabalharemos nisso a partir do próximo vídeo!
+
+### Aula 3 - Horário - Vídeo 2
+
+Transcrição  
+Conseguimos capturar a data da pessoa usuária e imprimir tanto o dia da semana quanto a data no formato brasileiro, com dia, mês e ano.
+
+Agora, para completar a parte da inserção do momento em que a pessoa inseriu o item na lista, precisamos saber também o horário em que isso aconteceu.
+
+Incluindo o horário
+
+Acessando a documentação da MDN
+
+Podemos fazer isso com o New Date(), utilizado anteriormente, mas em vez de usar o método toLocaleDateString(), existe outra propriedade chamada toLocaleTimeString().
+
+De acordo com a [documentação da MDN](https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/Date/toLocaleTimeString), o método toLocaleTimeString() retorna uma string com uma representação sensível ao idioma de uma porção de tempo dessa data.
+
+Basicamente, o toLocaleTimeString() funciona de maneira semelhante ao toLocaleDateString(), onde inserimos os locales e as options.
+
+Há um exemplo prático em que recebemos uma nova data com new Date() e podemos utilizar o toLocaleTimeString() para definir como queremos apresentá-la.
+
+```JavaScript
+// Depending on timezone, your results will vary
+const event = new Date('August 19, 1975 23:15:30 GMT+00:00');
+
+console.log(event.toLocaleTimeString('en-US'));
+// Expected output: "1:15:30 AM"
+
+console.log(event.toLocaleTimeString('it-IT'));
+// Expected output: "01:15:30"
+
+console.log(event.toLocaleTimeString('ar-EG'));
+// Expected output: "١٢:١٥:٣٠ ص"
+```
+
+Note que alguns países utilizam o formato de 24 horas, enquanto outros utilizam o formato de 12 horas, por exemplo, indicando AM e PM.
+
+A maioria das opções trata de especificar o país, mas também há opções como timeZone, timeZoneName, ou se queremos contabilizar em formato de 12 horas (short).
+
+A questão do horário é customizável, mas não precisamos de tanta customização. Precisamos apenas do horário brasileiro, com informações de horas e minutos.
+
+Declarando a variável hora  
+De volta ao VS Code, vamos acessar o arquivo index.js e tratar das horas antes da variável dataCompleta. Para isso, vamos declarar a variável hora.
+
+index.js:
+
+```JavaScript
+// código omitido
+const diaDaSemana = new Date().toLocaleDateString("pt-BR", {
+    weekday: "long"
+});
+const data = new Date().toLocaleDateString("pt-BR")
+const hora = new Date().toLocaleTimeString("pt-BR", {
+    hour: "numeric",
+    minute: "numeric"
+})
+const dataCompleta = `${diaDaSemana} (${data})`
+console.log(dataCompleta);
+```
+
+A new Date() recebe a informação de dia, mês, ano e horário, que é a string extensa impressa no vídeo anterior. Agora, usamos toLocaleTimeString() e, entre parênteses, passamos a informação pt-BR, que é o horário no formato brasileiro.
+
+Além disso, enviamos um objeto de opções que define as horas com hour: "numeric" e os minutos com minute: "numeric". Ambos os valores são enviados como string.
+
+Imprimindo a hora na dataCompleta  
+Por fim, queremos imprimir o horário na string de dataCompleta. Para isso, inserimos o texto "às" seguido do valor da hora (${hora}) logo após (${data}).
+
+```JavaScript
+// código omitido
+const diaDaSemana = new Date().toLocaleDateString("pt-BR", {
+    weekday: "long"
+});
+const data = new Date().toLocaleDateString("pt-BR")
+const hora = new Date().toLocaleTimeString("pt-BR", {
+    hour: "numeric",
+    minute: "numeric"
+})
+const dataCompleta = `${diaDaSemana} (${data}) às ${hora}`
+console.log(dataCompleta);
+```
+
+Com o inspetor de elementos aberto no navegador, vamos criar um item na lista novamente para testar o código. No console, podemos visualizar o seguinte:
+
+> segunda-feira (18/11/2024) às 07:10
+
+Inserindo a data completa ao item da lista  
+Nosso próximo passo será inserir a data completa no item da lista. Nesse momento, podemos remover o console.log(), pois queremos a data completa na tela.
+
+Para isso, precisamos selecionar o itemDaLista, que será o contêiner pai da dataCompleta. Lembrando que a dataCompleta não está no contêiner, mas diretamente no itemDaLista.
+
+Nesse caso, usaremos o appendChild() para anexar o elemento filho ao itemDaLista, passando dataCompleta entre parênteses.
+
+index.js:
+
+```JavaScript
+// código omitido
+const diaDaSemana = new Date().toLocaleDateString("pt-BR", {
+    weekday: "long"
+});
+const data = new Date().toLocaleDateString("pt-BR")
+const hora = new Date().toLocaleTimeString("pt-BR", {
+    hour: "numeric",
+    minute: "numeric"
+})
+const dataCompleta = `${diaDaSemana} (${data}) às ${hora}`
+itemDaLista.appendChild(dataCompleta)
+```
+
+Para testar no navegador, vamos criar um novo item. Ao fazer isso, verificamos que ele não é exibido na tela. Isso ocorre devido à ordem do código.
+
+Corrigindo a ordem do código  
+No momento, anexamos o itemDaLista na listaDeCompras logo antes da declaração da variável diaDaSemana, com listaDeCompras.appendChild(itemDaLista).
+
+```JavaScript
+// código omitido
+itemDaLista.appendChild(containerItemDaLista)
+listaDeCompras.appendChild(itemDaLista)
+
+const diaDaSemana = new Date().toLocaleDateString("pt-BR", {
+    weekday: "long"
+});
+// código omitido
+```
+
+Se colocarmos todas as informações em itemDaLista posteriormente, o anexo do itemDaLista na lista em si não irá acontecer novamente. A ordem importa. Dito isso, vamos recortar a informação desde o início da declaração de diaDaSemana até o final do código, onde temos a parte do anexo, e mover para antes do momento em que o itemDaLista é anexado à listaDeCompras:
+
+```JavaScript
+// código omitido
+itemDaLista.appendChild(containerItemDaLista)
+
+const diaDaSemana = new Date().toLocaleDateString("pt-BR", {
+    weekday: "long"
+});
+const data = new Date().toLocaleDateString("pt-BR")
+const hora = new Date().toLocaleTimeString("pt-BR", {
+    hour: "numeric",
+    minute: "numeric"
+})
+const dataCompleta = `${diaDaSemana} (${data}) às ${hora}`
+itemDaLista.appendChild(dataCompleta)
+
+listaDeCompras.appendChild(itemDaLista)
+```
+
+Declarando a variável itemData
+Já construímos a data, mas ainda não temos um elemento. Só conseguimos utilizar o appendChild() se lidarmos com um elemento, então após dataCompleta, vamos declarar a variável itemData:
+
+```JavaScript
+// código omitido
+const diaDaSemana = new Date().toLocaleDateString("pt-BR", {
+    weekday: "long"
+});
+const data = new Date().toLocaleDateString("pt-BR")
+const hora = new Date().toLocaleTimeString("pt-BR", {
+    hour: "numeric",
+    minute: "numeric"
+})
+const dataCompleta = `${diaDaSemana} (${data}) às ${hora}`
+const itemData = document.createElement("p");
+itemDaLista.appendChild(dataCompleta)
+
+listaDeCompras.appendChild(itemDaLista)
+```
+
+Com isso, criamos o parágrafo. Como texto do parágrafo, queremos colocar a data completa, então acessamos itemData.innerText igual a dataCompleta. Assim, temos um elemento HTML que conterá a template string que construímos. Por fim, precisamos ajustar o appendChild() de itemDaLista, substituindo a dataCompleta por itemData entre parênteses.
+
+```JavaScript
+// código omitido
+const dataCompleta = `${diaDaSemana} (${data}) às ${hora}`
+const itemData = document.createElement("p");
+itemData.innerText = dataCompleta;
+itemDaLista.appendChild(itemData)
+
+listaDeCompras.appendChild(itemDaLista)
+```
+
+Testando novamente no navegador, adicionaremos um novo item. Agora, temos o item da lista com a data e o horário em que ele foi inserido.
+
+Lista de compras
+
+Ração de gato
+Segunda-feira (31/10/2022) às 08:30
+Suco de laranja
+Segunda-feira (18/11/2024) às 07:15
+
+Estilizando a data  
+A questão agora é a seguinte: onde estão os estilos da data? Para aplicar a estilização, precisamos utilizar a classe correspondente. No arquivo index.html, temos uma classe chamada texto-data.
+
+index.html:
+
+```html
+<!-- código omitido -->
+
+<p class="texto-data">Segunda-feira (31/10/2022) às 08:30</p>
+
+<!-- código omitido -->
+```
+
+Vamos praticar como inserir uma classe em um elemento? Fizemos isso anteriormente ao acessar a lista de classes e adicionar uma nova em index.js:
+
+index.js:
+
+> containerItemDaLista.classList.add("lista-item-container");
+
+Faremos o mesmo após o itemData.innerText, mas chamando itemData.classList seguido do método add(), que receberá a classe texto-data entre aspas:
+
+```JavaScript
+// código omitido
+const dataCompleta = `${diaDaSemana} (${data}) às ${hora}`
+const itemData = document.createElement("p");
+itemData.innerText = dataCompleta;
+itemData.classList.add("texto-data")
+itemDaLista.appendChild(itemData)
+
+listaDeCompras.appendChild(itemDaLista)
+```
+
+Para confirmar se tudo funciona corretamente, basta criar um novo item na aplicação. Agora, ele possui todas as informações necessárias e estilizadas.
+
+Conclusão  
+Nosso próximo passo será construir uma interação a partir do momento em que clicamos na checkbox da lista de compras. No momento, é realizada a função nativa do HTML, de exibir um check dentro do quadrado, mas queremos adicionar outros feedbacks visuais para que a pessoa usuária saiba que determinado item da lista foi comprado.
+
+Daremos continuidade no próximo vídeo!
+
+### Aula 3 - Exibição de datas e horas
+
+Você está desenvolvendo uma aplicação de checklist em JavaScript.
+
+Como escrever corretamente o código que exibe o dia da semana, a data e hora de forma legível ao lado de cada item adicionado à lista?
+
+Resposta:
+
+```JavaScript
+const dataCompleta = new Date().toLocaleDateString("pt-BR", { weekday: "long" }) +
+                     " (" + new Date().toLocaleDateString("pt-BR") + ")";
+const hora = new Date().toLocaleTimeString("pt-BR", { hour: "numeric", minute: "numeric" });
+itemData.innerText = `${dataCompleta} às ${hora}`;
+```
+
+Esta alternativa utiliza os métodos toLocaleDateString e toLocaleTimeString para formatar a data e hora no padrão brasileiro, exibindo o dia da semana por extenso e a hora com minutos.
+
+### Aula 3 - Para saber mais: métodos de formatação de data e hora
+
+Quando estamos programando, muitas vezes precisamos mostrar datas e horas de uma forma que seja fácil de entender para as pessoas que vão usar o nosso programa. Por exemplo, se você está criando um aplicativo que mostra a data de hoje, você quer que essa data apareça de uma forma que faça sentido para quem está usando o aplicativo, não é mesmo? É aí que entram os métodos toLocaleDateString e toLocaleTimeString.
+
+O que são toLocaleDateString e toLocaleTimeString?  
+Esses dois métodos são usados em JavaScript para transformar datas e horas em texto, de uma forma que seja fácil de ler. Eles fazem parte do objeto Date, que é uma ferramenta que o JavaScript nos dá para trabalhar com datas e horas.
+
+toLocaleDateString: Este método transforma uma data em uma string (um texto) que representa a data de uma forma legível. Por exemplo, ele pode transformar uma data como "2023-10-05" em "05/10/2023" ou "October 5, 2023", dependendo de como você quiser mostrar a data.
+
+toLocaleTimeString: Este método faz a mesma coisa, mas para o tempo. Ele transforma uma hora como "14:30:00" em "2:30 PM" ou "14:30", dependendo do formato que você escolher.
+
+Por que usar esses métodos?  
+Imagine que você está criando um site que será usado por pessoas de diferentes países. Cada país tem uma maneira diferente de mostrar datas e horas. Nos Estados Unidos, por exemplo, as datas são geralmente escritas como "mês/dia/ano", enquanto no Brasil usamos "dia/mês/ano". Usar toLocaleDateString e toLocaleTimeString ajuda a mostrar as datas e horas de uma forma que faz sentido para cada pessoa, não importa de onde ela seja.
+
+Como usar toLocaleDateString e toLocaleTimeString?  
+Vamos ver alguns exemplos de como usar esses métodos no seu código.
+
+Exemplo de toLocaleDateString  
+const data = new Date(); // Cria uma nova data com o momento atual
+
+// Formata a data para o padrão do Brasil  
+const dataFormatadaBrasil = data.toLocaleDateString('pt-BR');
+console.log(dataFormatadaBrasil); // Exemplo de saída: "05/10/2023"
+
+// Formata a data para o padrão dos EUA  
+const dataFormatadaEUA = data.toLocaleDateString('en-US');
+console.log(dataFormatadaEUA); // Exemplo de saída: "10/5/2023"
+
+Exemplo de toLocaleTimeString  
+const hora = new Date(); // Cria uma nova data com o momento atual
+
+// Formata a hora para o padrão do Brasil  
+const horaFormatadaBrasil = hora.toLocaleTimeString('pt-BR');
+console.log(horaFormatadaBrasil); // Exemplo de saída: "14:30:00"
+
+// Formata a hora para o padrão dos EUA  
+const horaFormatadaEUA = hora.toLocaleTimeString('en-US');
+console.log(horaFormatadaEUA); // Exemplo de saída: "2:30:00 PM"
+
+Opções de formatação avançadas  
+Além de simplesmente escolher o local (como 'pt-BR' para português do Brasil ou 'en-US' para inglês dos EUA), você pode personalizar ainda mais como a data e a hora são mostradas usando opções avançadas.
+
+Exemplo com opções avançadas
+
+```JavaScript
+const data = new Date();
+
+// Formatação avançada para mostrar o nome completo do mês e o ano
+const opcoes = { year: 'numeric', month: 'long', day: 'numeric' };
+const dataAvancada = data.toLocaleDateString('pt-BR', opcoes);
+console.log(dataAvancada); // Exemplo de saída: "5 de outubro de 2023"
+```
+
+Suporte a diferentes locais  
+Uma das grandes vantagens desses métodos é que eles suportam muitos locais diferentes. Isso significa que você pode facilmente adaptar seu aplicativo para ser usado em qualquer lugar do mundo, apenas mudando o código do local.
+
+Exemplo de suporte a diferentes locais  
+const data = new Date();
+
+// Formatação para o Japão  
+const dataJapao = data.toLocaleDateString('ja-JP');
+console.log(dataJapao); // Exemplo de saída: "2023/10/5"
+
+// Formatação para a Alemanha  
+const dataAlemanha = data.toLocaleDateString('de-DE');
+console.log(dataAlemanha); // Exemplo de saída: "5.10.2023"
+
+Os métodos toLocaleDateString e toLocaleTimeString são ferramentas poderosas para formatar datas e horas de uma maneira que seja fácil de entender para pessoas de diferentes partes do mundo. Com eles, você pode garantir que seu aplicativo seja acessível e amigável para todos os seus usuários, não importa onde eles estejam. Experimente usar essas ferramentas no seu próximo projeto e veja como elas podem facilitar a vida dos(as) seus(suas) usuários(as)!
+
+### Aula 3 - Estilos dinâmicos - Vídeo 3
+
+Transcrição  
+Conseguimos construir os itens da lista de compras de forma dinâmica, e agora queremos adicionar uma semelhança com a realidade.
+
+Quando fazemos uma lista de compras escrita à mão, geralmente, no momento em que compramos o item ou o colocamos no carrinho, riscamos o item da lista para indicar que foi comprado. Queremos implementar o mesmo comportamento na aplicação.
+
+Trabalhando com estilos dinâmicos
+
+Adicionando um addEventListener()  
+Para isso, vamos adicionar um addEventListener() no inputCheckbox dentro do addEventListener() já existente, que é o da criação do item. No arquivo index.js, vamos inserir o addEventListener() antes dos appendChild() de inputCheckbox e nomeItem.
+
+Inicialmente, precisamos acessar o inputCheckbox, e depois adicionar o addEventListener(), que aceita dois argumentos:
+
+O primeiro é o tipo de ação que queremos monitorar (type), onde adicionaremos a ação click entre aspas duplas;
+E o segundo é uma função anônima (function() {}), que define o que queremos que aconteça no momento dessa ação específica.
+O que queremos que aconteça? Se o inputCheckbox estiver marcado (checked), significa que ele está preenchido e queremos adicionar um estilo ao nomeItem.
+
+Para fazer essa condicional, podemos utilizar o seguinte código:
+
+index.js:
+
+```JavaScript
+// código omitido
+inputCheckbox.addEventListener("click", function() {
+    if (inputCheckbox.checked) {
+        nomeItem.style.textDecoration = "line-through";
+    }
+)
+// código omitido
+```
+
+Dessa forma, se a condição inputCheckbox.checked for verdadeira, acessaremos os estilos de nomeItem com style para aplicar uma decoração de texto (textDecoration) line-through.
+
+Lembre-se! Precisamos fechar as chaves tanto da condicional quanto da função. Caso contrário, ocorrerá um erro de sintaxe no código.
+
+Se o inputCheckbox não estiver marcado, utilizamos o bloco else para definir outra ação, que será não aplicar decoração de texto em nomeItem.style.
+
+```JavaScript
+// código omitido
+inputCheckbox.addEventListener("click", function() {
+    if (inputCheckbox.checked) {
+        nomeItem.style.textDecoration = "line-through";
+    } else {
+        nomeItem.style.textDecoration = "none"
+    }
+})
+// código omitido
+```
+
+Por que fizemos duas condições? Queremos que a decoração de texto seja aplicada apenas no momento do clique. Isso permite que, se a pessoa marcar o item, mas depois perceber que esqueceu de comprar algo, ela possa desfazer a ação.
+
+Importante! Esse é um dos princípios fundamentais da experiência da pessoa usuária: permitir que a pessoa desfaça suas ações.
+
+Vamos adicionar alguns tabs para formatar melhor nosso código e facilitar a compreensão. Não estamos aplicando a formatação automática do Visual Studio Code, mas fazemos manualmente.
+
+Agora podemos visualizar o que acontece na aplicação. Ao clicar no checkbox de um item que acabamos de adicionar à lista, o nome do item é riscado.
+
+No entanto, se clicarmos em itens anteriores, não haverá efeito, pois o addEventListener() foi adicionado apenas no momento em que um novo item é criado na lista.
+
+Conclusão  
+Nosso próximo passo será remover o item fixo da lista e mostrar um feedback para a pessoa usuária quando não houver nenhum item na lista. Na próxima aula, faremos essa verificação e daremos o feedback para a pessoa usuária. O projeto já está bonito, mas sempre há espaço para melhorias.
+
+Vamos aperfeiçoar a experiência da pessoa usuária? Nos encontramos na próxima aula!
+
+### Aula 3 - Faça como eu fiz: determinando data e hora
+
+Agora é hora de praticar e aprimorar o que aprendemos em aula! Nesta atividade, você vai aprimorar a funcionalidade da lista criada anteriormente, adicionando dois novos elementos:
+
+1. Estilo para itens marcados:
+
+Itens da lista poderão ser riscados automaticamente quando o checkbox for selecionado.
+
+2. Informação de data e hora:
+
+Cada item da lista exibirá a data e a hora em que foi adicionado, para um registro mais completo.
+
+Bora implementar e colocar “a mão na massa”? Abaixo em “opinião da instrutora” deixarei a resolução, caso queira acompanhar.
+
+Opinião do instrutor
+
+Utilize o evento click no checkbox de cada item da lista. Quando o checkbox é marcado, o estilo do nome do item é alterado para "riscado" (line-through). Se desmarcado, o texto volta ao estilo normal.
+
+```JavaScript
+ inputCheckbox.addEventListener("click", function() {
+    if (inputCheckbox.checked) {
+        nomeItem.style.textDecoration = "line-through";
+    } else {
+        nomeItem.style.textDecoration = "none";
+    }
+});
+```
+
+Usando o objeto Date do JavaScript, mostre a data e a hora atual no formato brasileiro com os métodos toLocaleDateString e toLocaleTimeString. Além disso, extraia e formate o dia da semana.
+
+```JavaScript
+ const diaDaSemana = new Date().toLocaleDateString("pt-BR", {
+    weekday: "long"
+});
+const data = new Date().toLocaleDateString("pt-BR");
+const hora = new Date().toLocaleTimeString("pt-BR", {
+    hour: "numeric",
+    minute: "numeric"
+});
+const dataCompleta = `${diaDaSemana} (${data}) às ${hora}`;
+```
+
+Adicionar um novo parágrafo (`<p>`) é criado para exibir a data e hora. Ele é estilizado com uma classe CSS chamada texto-data e adicionado ao item da lista.
+
+```JavaScript
+ const itemData = document.createElement("p");
+itemData.innerText = dataCompleta;
+itemData.classList.add("texto-data");
+```
+
+O código agora exibe a lista com itens interativos que podem ser marcados e riscados. Além disso, cada item registra a data e hora em que foi adicionado, proporcionando mais detalhes ao usuário.
+
+### Aula 3 - Lista de exercícios
+
+Exercício 1) Implementando funcionalidade de clique no checkbox
+
+Você está desenvolvendo uma página web onde um elemento de checkbox precisa ser interativo, não apenas em sua função básica, mas também alterando visualmente quando clicado.
+
+Seu objetivo é garantir que quando o checkbox for selecionado, ele adicione uma classe que muda sua aparência, e quando desmarcado, remova essa classe. Utilize JavaScript para adicionar um ouvinte de evento ao label associado ao checkbox para controlar essa interação.
+
+Exercício 2) Manipulação de classes com eventos de clique
+
+Neste exercício, você vai trabalhar com a manipulação do DOM para adicionar interatividade a um checkbox customizado. A ideia é que ao clicar no label que envolve o checkbox, você verifique se o checkbox está selecionado e, com base nisso, adicione ou remova uma classe que modifica sua aparência visual.
+
+Escreva o código JavaScript necessário para adicionar um ouvinte de eventos ao label, capturar o clique e alterar a classe do elemento de checkbox de acordo com seu estado atual.
+
+Exercício 3) Adicionando informações de data e hora na lista de compras
+
+Você trabalha com desenvolvimento web e recentemente adicionou uma funcionalidade em um aplicativo de lista de tarefas que permite aos usuários adicionar itens à lista de tarefas a realizar e as já concluídas. Agora, sua liderança solicitou que cada item inclua informações sobre a data e hora em que foi adicionado.
+
+Seu objetivo é implementar essa funcionalidade utilizando JavaScript para criar um elemento de parágrafo que mostra essas informações de maneira formatada e clara.
+
+Exercício 4) Integrando formato de data e hora ao item de lista
+
+Imagine que você está finalizando um recurso em um aplicativo de gestão de tarefas onde os usuários podem adicionar itens às suas listas de desejos ou comprados. Você já implementou a função para adicionar itens, mas agora precisa exibir a data e a hora em que cada item foi adicionado.
+
+Utilize JavaScript para extrair e formatar a data e hora de adição do item, apresentando essas informações ao usuário de uma forma amigável. Faça uso das funcionalidades do JavaScript para obter a data atual e formatar de acordo com a localidade do Brasil, além de garantir que o horário seja exibido sem os segundos para evitar desorganização visual.
+
+Exercício 5) Criando um checklist de outra maneira
+
+Uma outra maneira de implementar um check em itens de uma lista, pode ser:
+
+- Utilizar a criação de um elemento de input através do createElement;
+- Definir o tipo do campo como checklist por meio do .type;
+- Adicionar esse elemento de input no item da lista com a ajuda do appendChild.
+
+Agora, chegou sua hora de explorar esta maneira de criar um checklist em uma lista de filmes favoritos. Como ficaria o código seguindo os passos apresentados acima?
+
+Opinião do instrutor
+
+Resposta do exercício 1
+
+Implementando funcionalidade de clique no checkbox
+
+Adicione um ouvinte de eventos ao label que interage com o checkbox. Para isso, localize o label no seu arquivo JavaScript:
+
+```JavaScript
+document.querySelector('.checkbox-label').addEventListener('click', function(event) {
+
+ var checkbox = event.currentTarget.querySelector('.input-checkbox');
+
+  var customCheckbox = event.currentTarget.querySelector('.custom-checkbox');
+
+ if (checkbox.checked) {
+  customCheckbox.classList.add('checked');
+  } else {
+  customCheckbox.classList.remove('checked');
+  }
+  });
+```
+
+Essa função anônima dentro do addEventListener verifica se o checkbox está selecionado e, dependendo do estado, adiciona ou remove a classe checked que altera a aparência visual do checkbox customizado.
+
+Resposta do exercício 2
+
+Manipulação de classes com eventos de clique
+
+Primeiro, selecione o elemento do label e adicione um ouvinte de eventos para capturar o clique:
+
+```JavaScript
+var label = document.querySelector('.checkbox-label');
+
+label.addEventListener('click', function(event) {
+
+ var checkboxInput = document.querySelector('.input-checkbox');
+
+  var customCheckbox = document.querySelector('.custom-checkbox');
+
+ if (checkboxInput.checked) {
+  customCheckbox.classList.add('checked');
+  } else {
+  customCheckbox.classList.remove('checked');
+  }
+  });
+```
+
+Neste código, ao clicar no label, o script verifica se o checkbox dentro do label está selecionado. Se estiver, ele adiciona a classe checked ao checkbox customizado, alterando sua aparência visual. Se não estiver selecionado, ele remove a classe, retornando ao estado visual original.
+Resposta do exercício 3
+
+Adicionando informações de data e hora na lista de compras
+
+Inicie criando um elemento parágrafo no JavaScript usando document.createElement('p').
+
+Armazene este parágrafo em uma variável, por exemplo, dataInfo.
+
+Defina o conteúdo interno deste parágrafo com a data e hora atual. Utilize o método new Date().toLocaleDateString('pt-BR', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'}) para formatar a data e new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'}) para a hora.
+
+Combine esses valores em uma string que descreve quando o item foi adicionado, por exemplo: "Adicionado em: " + data + ", " + hora.
+
+Adicione o parágrafo como filho do elemento que representa o item na lista usando itemElement.appendChild(dataInfo).
+
+Resposta do exercício 4
+
+Integrando formato de data e hora ao item de lista
+
+Crie uma nova instância de Date para obter a data e hora atuais.
+
+Utilize toLocaleDateString para extrair e formatar a data como "dia da semana, dia do mês de ano" (e.g., "segunda-feira, 15 de julho de 2024") com parâmetros apropriados: { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }.
+
+Use toLocaleTimeString para formatar a hora, especificando que você deseja apenas a hora e os minutos com { hour: '2-digit', minute: '2-digit' }.
+
+Combine esses formatos em uma string e defina como conteúdo de um novo elemento parágrafo.
+
+Anexe esse parágrafo ao item correspondente na lista para que a data e hora de adição sejam exibidas diretamente abaixo do nome do item.
+
+Resposta do exercício 5
+
+Criando um checklist de outra maneira
+
+Primeiro, você precisa criar um elemento de input com o createElement e guardar em uma constante chamada checkbox:
+
+```JavaScript
+const checkbox = document.createElement('input');
+```
+
+Em seguida, você vai alterar o tipo desse campo da seguinte maneira:
+
+```JavaScript
+checkbox.type = 'checkbox';
+```
+
+Por fim, para implementar em um elemento li já criado anteriormente, você pode usar o appendChild da seguinte forma:
+
+```JavaScript
+li.appendChild(checkbox);
+```
+
+### Aula 3 - O que aprendemos?
+
+Nessa aula, você aprendeu como:
+
+- Utilizar os métodos toLocaleDateString e toLocaleTimeString para formatar a data e hora de forma legível no padrão brasileiro.
+- Separar a data e a hora em variáveis distintas para melhorar a clareza e manutenção do código.
+- Usar template strings para unir variáveis em uma única string, tornando o código mais legível.
+- Adicionar classes CSS aos elementos via JavaScript.
+- Implementar um Event Listener para monitorar cliques em checkboxes, permitindo marcar itens como concluídos e alterar seu estilo visual.
+
+## Aula 4 - 
+
+### Aula 4 -  - Vídeo 1
