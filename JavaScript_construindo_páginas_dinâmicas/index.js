@@ -1,56 +1,31 @@
 'use strict';
 
-const inputItem = document.getElementById('input-item');
+import { criarItemDaLista } from "./JS/criarItemDaLista.js";
 const ulItens = document.getElementById('lista-de-compras');
 const btnAdicionar = document.getElementById('adicionar-item');
-let contador = 0;
 
 btnAdicionar.addEventListener('click', (evento) => {
     evento.preventDefault();
-    if (inputItem.value === '') {
+    if (document.getElementById('input-item').value === '') {
         alert('Por favor insira um item!');
         return;
     };
-    const itemDaLista = document.createElement('li');
-
-    const containerItemDaLista = document.createElement('div');
-    containerItemDaLista.classList.add('lista-item-container');
-
-    const inputCheckBox = document.createElement('input');
-    // inputCheckBox.type = 'checkbox';//poderia ser feito assim ou como está abaixo
-    inputCheckBox.setAttribute('type', 'checkbox');
-    inputCheckBox.id = `checkbox-${contador++}`;
-
-    const novoItem = document.createElement('p');
-    novoItem.textContent = inputItem.value;
-
-    const dataAtual = new Date().toLocaleDateString('pt-BR');
-    const diaDaSemana = new Date().toLocaleDateString('pt-BR', { weekday: 'long' });
-    const horaAtual = new Date().toLocaleTimeString('pt-BR', { hour: 'numeric', minute: 'numeric' });
-    const dataCompleta = `${diaDaSemana} (${dataAtual}) às ${horaAtual}`;
-
-    const itemData = document.createElement('p');
-    itemData.classList.add('texto-data');
-    itemData.innerText = dataCompleta;
-    
-    inputCheckBox.addEventListener('click', () => {
-        if (inputCheckBox.checked) {
-            novoItem.style.textDecoration = 'line-through';
-            novoItem.style.color = 'red';
-        } else {
-            novoItem.style.textDecoration = 'none';
-            novoItem.style.color = 'black';
-        }
-    });
-
-    containerItemDaLista.appendChild(inputCheckBox);
-    containerItemDaLista.appendChild(novoItem);
-    itemDaLista.appendChild(containerItemDaLista);
-    itemDaLista.appendChild(itemData);
-    inputItem.value = '';//limpa o input, para que o usuário possa inserir um novo item
+    const itemDaLista = criarItemDaLista();
     ulItens.appendChild(itemDaLista);
-
+    verificarListaVazia();
 });
+//================================================================================
+function verificarListaVazia() {
+    const mensagemListaVazia = document.querySelector('.mensagem-lista-vazia');
+    // const itensDaLista = ulItens.querySelectorAll("li");
+    // if (itensDaLista.length === 0) {
+    if (ulItens.childElementCount === 1) {//porque o primeiro filho é a mensagemVazia
+        mensagemListaVazia.style.display = 'block';
+    } else {
+        mensagemListaVazia.style.display = 'none';
+    }
+};
+verificarListaVazia();
 //================================================================================
 
 //Aula 4, Trabalhando com datas

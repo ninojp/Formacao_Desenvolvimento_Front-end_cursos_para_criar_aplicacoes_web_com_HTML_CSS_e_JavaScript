@@ -2045,6 +2045,593 @@ Nessa aula, você aprendeu como:
 - Adicionar classes CSS aos elementos via JavaScript.
 - Implementar um Event Listener para monitorar cliques em checkboxes, permitindo marcar itens como concluídos e alterar seu estilo visual.
 
-## Aula 4 - 
+## Aula 4 - Modularizando o Código
 
-### Aula 4 -  - Vídeo 1
+### Aula 4 - Lista vazia - Vídeo 1
+
+Transcrição  
+Já construímos uma funcionalidade para detectar quando um item da lista já foi comprado e riscar o nome desse item. Essa funcionalidade opera a partir do clique no botão do tipo checkbox. No entanto, temos um item fixo no HTML, que é "ração de gato", e, ao clicar no input do tipo checkbox nele, nada acontece. Isso ocorre porque o event listener do checkbox está sendo implementado apenas para os itens novos, não para esse fixo. Portanto, podemos removê-lo.
+
+Criando uma mensagem de lista vazia  
+No arquivo "index.html", vamos remover todo o conteúdo dentro da `<ul>`. Da linha 34 até a linha 40, removemos o conteúdo. Agora, não temos nenhum feedback para o usuário saber o que está acontecendo, se é algum bug, erro ou se simplesmente não há nenhum item na lista de compras.
+
+Para melhorar a experiência do usuário, podemos colocar uma mensagem de lista vazia quando não houver nenhum item na lista.
+
+Vamos fazer isso primeiro no HTML. Podemos colocar, após a `<ul>`, que está na linha 33, um parágrafo com a classe mensagem-lista-vazia, que terá o texto "Não há nenhum item na lista no momento". Ao salvar, já conseguimos visualizar essa mensagem no navegador. Esse feedback visual para a pessoa usuária pode parecer um detalhe tecnicamente, mas melhora bastante a experiência ao disponibilizar uma aplicação.
+
+```html
+    <ul id="lista-de-compras"></ul>
+    <p class="mensagem-lista-vazia">Não há nenhum item na lista no momento.</p>
+```
+
+Queremos mostrar essa mensagem apenas quando a lista estiver realmente vazia. Podemos testar criando um novo item no navegador, clicando em "Salvar item", e a mensagem aparece mesmo com um novo item. Para resolver isso, precisamos mexer no JavaScript.
+
+No Visual Studio Code, vamos para o "index.js" e começamos essa funcionalidade no fim do código, após a funcionalidade de criação de novos itens na lista. Primeiro, precisamos selecionar a mensagem de lista vazia:
+
+> const mensagemListaVazia = document.querySelector('.mensagem-lista-vazia');
+
+Utilizamos o querySelector para selecionar o elemento pelo nome da classe, semelhante ao CSS, inserindo . seguido do nome da classe. Podemos testar se ele selecionou o elemento certo usando console.log(mensagemListaVazia). No navegador, vamos clicar com o botão direito do mouse e selecionar "Inspecionar" e acessar o console, conseguimos visualizar que ele selecionou o elemento correto.
+
+Criando uma condicional  
+Precisamos fazer uma condicional para que essa mensagem apareça apenas quando não existirem itens na lista. Isso deve ocorrer em dois momentos: quando a tela é carregada e quando um novo `<li>` é criado na lista. Se colocarmos a condicional diretamente na linha 57, ela será verificada apenas na primeira renderização, e novos itens não serão considerados. Podemos criar uma função verificarListaVazia:
+
+```JavaScript
+function verificarListaVazia() {
+    const itensDaLista = listaDeCompras.querySelectorAll("li");
+    if (itensDaLista.length === 0) {
+        mensagemListaVazia.style.display = "block";
+    } else {
+        mensagemListaVazia.style.display = "none";
+    }
+}
+```
+
+A função verificarListaVazia verifica se há mais de um item na lista. Podemos criar uma constante itensDaLista. Utilizamos listaDeCompras.querySelectorAll('li') para buscar todos os elementos `<li>` dentro da lista de compras, retornando um array.
+
+Isso porque, imagine um e-commerce que utiliza vários pop-ups para login, registro, além de coletar detalhes de algum item e cada modal tem um formulário. Se selecionarmos diretamente no DOM para procurar por formulários, teremos vários para selecionar. Não terá nenhum detalhe específico e será preciso colocar várias classes para referenciar de qual formulário se trata.
+
+Porém, se queremos acessar diretamente um modal dentro de um formulário, podemos pesquisar diretamente dentro dele. Assim, não precisamos procurar no documento inteiro e acrescentar mais classes e ids. No nosso caso, é a mesma coisa: temos só uma lista de compras, mas poderíamos aumentar a aplicação e ter outras listas.
+
+O querySelectorAll busca dentro da lista de compras todos os elementos do tipo 'li' e retorna um array. Com essa informação, verificamos o tamanho da lista para determinar se existem itens ou não. Vamos construir a verificação na linha seguinte com (itensDaLista.length === 0) {}. O === serve para verificar em vez de atribuir.
+
+Com isso, temos acesso ao comprimento da lista com o length, que só funciona em itens da lista.
+
+Atenção: a palavra "length" do inglês termina com "TH", e não "HT". Se escrevermos "lenght", obteremos um erro no console.
+
+Feita a verificação, queremos mostrar a mensagem de lista vazia quando o comprimento da lista for zero. Acessaremos mensagemListaVazia.style.display = "block". O display block faz a mensagem aparecer na tela. Se não estivermos nessa condição, queremos usar mensagemListaVazia.style.display = "none", para que a pessoa não consiga visualizar a mensagem.
+
+Chamamos a função verificarListaVazia() no início da aplicação, na linha 66, quando o "index.js" é carregado pela primeira vez. Também a utilizamos dentro do event listener, antes do fechamento das chaves e parênteses, para garantir que a verificação ocorra sempre que um novo item for adicionado.
+
+> verificarListaVazia();
+
+Testando a funcionalidade  
+Agora, podemos testar a funcionalidade na aplicação. A mensagem "Não há nenhum item na lista no momento" é exibida quando a lista está vazia. Ao criar um novo item, como "suco de laranja", e clicar em "Salvar item", a mensagem de feedback é removida, pois a lista não está mais vazia.
+
+Com várias funcionalidades implementadas, podemos nos preocupar com a experiência da pessoa desenvolvedora. O "index.js" já possui 66 linhas de código, e algumas funcionalidades, como o event listener do botão adicionar, são extensas e podem tornar a aplicação difícil de manter. Vamos começar a separar essas funcionalidades, mas isso será feito no próximo vídeo.
+
+### Aula 4 - Alerta de lista vazia
+
+Maria é uma desenvolvedora que está criando uma aplicação de checklist. Ela quer garantir que uma mensagem apareça na tela sempre que a lista estiver vazia, para que pessoas usuárias saibam que não há itens adicionados.
+
+Ajude Maria a implementar essa nova funcionalidade: uma função em JavaScript para verificar se a lista está vazia e mostrar ou esconder a mensagem conforme necessário. A mensagem de lista vazia também deve mudar o fundo para vermelho quando a lista estiver vazia.
+
+Resposta:
+
+```JavaScript
+function verificarListaVazia() {
+    const itensDaLista = listaDeCompras.querySelectorAll("li");
+    if (itensDaLista.length === 0) {
+        mensagemListaVazia.style.display = "block";
+        mensagemListaVazia.style.backgroundColor = "red";
+    } else {
+        mensagemListaVazia.style.display = "none";
+    }
+}
+```
+
+> Esta alternativa adiciona a linha mensagemListaVazia.style.backgroundColor = "red"; dentro do bloco if, garantindo que o fundo da mensagem mude para vermelho quando a lista estiver vazia.
+
+### Aula 4 - Para saber mais: seletores do DOM no JavaScript
+
+No JavaScript, os seletores do DOM (Document Object Model) permitem acessar e manipular elementos de uma página HTML. Com eles, é possível alterar conteúdo, estilos, adicionar ou remover elementos e muito mais. Vamos explorar os principais métodos para selecionar elementos no DOM:
+
+1. getElementById
+
+Esse seletor busca um elemento específico pelo seu ID. Como os IDs são únicos em uma página, ele sempre retorna um único elemento.
+
+> const elemento = document.getElementById("meuId");
+
+- Vantagem: É rápido e direto.
+- Limitação: Só funciona para IDs.
+
+2. getElementsByClassName
+
+Esse método retorna uma coleção de elementos (HTMLCollection) que possuem a mesma classe.
+
+> const elementos = document.getElementsByClassName("minhaClasse");
+
+- Vantagem: Útil para trabalhar com vários elementos que compartilham a mesma classe.
+- Limitação: A coleção retornada não é um array real, o que pode dificultar algumas manipulações.
+
+3. getElementsByTagName
+
+Seleciona todos os elementos de um tipo específico (por exemplo, <div>, <p>, <input>). Ele também retorna uma HTMLCollection.
+
+> const divs = document.getElementsByTagName("div");
+
+- Vantagem: Permite acessar elementos pelo nome da tag.
+- Limitação: A seleção pode incluir muitos elementos, dependendo da tag.
+
+4. querySelector
+
+Retorna o primeiro elemento que corresponde a um seletor CSS. É muito flexível e aceita seletores como IDs, classes ou combinações.
+
+> const elemento = document.querySelector(".minhaClasse");
+
+- Vantagem: Permite usar seletores CSS completos, como #id, .classe, ou combinações como div > p.
+- Limitação: Retorna apenas o primeiro elemento correspondente.
+
+5. querySelectorAll
+
+Retorna todos os elementos que correspondem a um seletor CSS, em forma de NodeList.
+
+Uso:
+
+const elementos = document.querySelectorAll(".minhaClasse");
+
+Vantagem: Aceita seletores CSS avançados e retorna todos os elementos correspondentes.
+
+Limitação: O NodeList retornado não é um array real, mas pode ser percorrido com forEach.
+
+Dicas para escolher o seletor certo:
+
+1. ID exclusivo: Use getElementById para buscas rápidas e diretas.
+
+2. Classe ou tag comum: Use getElementsByClassName ou getElementsByTagName para grupos de elementos semelhantes.
+
+3. Seletores avançados: Use querySelector ou querySelectorAll para maior flexibilidade e precisão.
+
+### Aula 4 - Criar item da lista - Vídeo 2
+
+Transcrição  
+Já construímos as funcionalidades referentes à criação do item na lista de compras e também a interação com esses itens. Agora, pensando na experiência de pessoas desenvolvedoras e na possibilidade de aumentar o escopo deste projeto ou de trabalhar em equipe, é interessante começar a separar as funcionalidades. Isso auxiliará na manutenção ou no compartilhamento do código com outras pessoas.
+
+A primeira funcionalidade que temos, que é extensa e está no nosso "index.js", é a do botão adicionar. O que acontece no momento do clique desse botão? Queremos isolar toda essa lógica em outro arquivo.
+
+Imagine a situação em que, dentro da lista de compras, queiramos adicionar uma nova funcionalidade que permita diversas listas de compras, como uma lista de hortifruti, uma lista de açougue, uma lista de produtos de higiene, etc. Todas serão listas diferentes, mas a funcionalidade de criação do item da lista será a mesma.
+
+Repetir todo esse código no "index.js" para cada nova lista resultaria em um arquivo imenso. Portanto, vamos começar a modularizar esse código para construir funções reutilizáveis.
+
+Modularizando o código  
+Para começar, no Visual Studio Code, vamos clicar em New Folder (Nova Pasta) no menu lateral esquerdo. Nomearemos a nova pasta como "scripts". Dentro de "scripts", criaremos um novo arquivo clicando com o botão direito do mouse sobre a pasta. Esse arquivo se chamará "criarItemDaLista.js". O nome foi escolhido para deixar claro do que trata a função que estará dentro desse arquivo. Agora, podemos criar a função criarItemDaLista dentro desse arquivo:
+
+```JavaScript
+function criarItemDaLista() {
+    // lógica da função
+}
+```
+
+Dentro das chaves, começaremos a migrar todo o conteúdo que temos no "index.js", desde o evento.preventDefault da linha 7 até o uso do appendChild na lista de compras, que está na linha 50. Para recortar, utilizaremos o "Ctrl + X" do teclado.
+
+```JavaScript
+function criarItemDaLista() {
+    evento.preventDefault();
+    if (inputItem.value === "") {
+        alert("Por favor, insira um item!");
+        return
+    }
+
+    const itemDaLista = document.createElement("li");
+    const containerItemDaLista = document.createElement("div");
+    containerItemDaLista.classList.add("lista-item-container");
+    const inputCheckbox = document.createElement("input");
+    inputCheckbox.type = "checkbox";
+    inputCheckbox.id = "checkbox-" + contador++;
+    const nomeItem = document.createElement("p");
+    nomeItem.innerText = inputItem.value;
+
+inputCheckbox.addEventListener("click", function() {
+    if (inputCheckbox.checked) {
+            nomeItem.style.textDecoration = "line-through";
+        } else {
+            nomeItem.style.textDecoration = "none"
+        }
+    }
+)
+
+    containerItemDaLista.appendChild(inputCheckbox);
+    containerItemDaLista.appendChild(nomeItem);
+
+    itemDaLista.appendChild(containerItemDaLista)
+    
+    const diaDaSemana = new Date().toLocaleDateString("pt-BR", {
+        weekday: "long"
+    });
+    const data = new Date().toLocaleDateString("pt-BR")
+    const hora = new Date().toLocaleTimeString("pt-BR", {
+        hour: "numeric",
+        minute: "numeric"
+    })
+
+    const dataCompleta = `${diaDaSemana} (${data}) às ${hora}`
+    const itemData = document.createElement("p");
+    itemData.innerText = dataCompleta;
+    itemData.classList.add("texto-data")
+    itemDaLista.appendChild(itemData)
+}
+```
+
+Agora, dentro do nosso EventListener no "index.js", só temos o verificarListaVazia. Vamos colar o conteúdo no novo arquivo dentro da função.
+
+```JavaScript
+botaoAdicionar.addEventListener("click", (evento) => {
+
+    verificarListaVazia();
+})
+```
+
+Conseguimos separar, mas há algumas situações específicas que exigem a importação de mais elementos. Por exemplo, dentro dessa funcionalidade, utilizamos o InputItem, que no "index.js" era uma variável. Não temos acesso a essa variável dentro do "criarItemDaLista". Precisamos migrar essa etapa também, caso contrário, ele não reconhecerá o InputItem. Como ele não está sendo utilizado em outro local, vamos recortar a linha 1 do "index.js", onde declaramos a variável InputItem, e colá-la na linha 1 do "criarItemDaLista".
+
+const inputItem = document.getElementById("input-item")
+Copiar código
+Verificamos que utilizamos o itemDaLista e o containerItemDaLista, que são declarados dentro dessa funcionalidade. O inputCheckbox e o itemDaLista também são criados ali. A princípio, precisamos apenas da listaDeCompras, onde realizamos o appendChild.
+
+Vamos recortar essa função de "criarItemDaLista" e retorná-la para o botaoAdicionar dentro do arquivo "index.js":
+
+```JavaScript
+botaoAdicionar.addEventListener("click", (evento) => {
+
+    listaDeCompras.appendChild(itemDaLista)
+    verificarListaVazia();
+})
+```
+
+Fizemos isso porque, como vamos criar o item da lista na funcionalidade nova, podemos retornar o itemDaLista no fim do código do arquivo "criarItemDaLista".
+
+```JavaScript
+// Trecho de código suprimido
+    itemData.innerText = dataCompleta;
+    itemData.classList.add("texto-data")
+    itemDaLista.appendChild(itemData)
+
+   return itemDaLista;
+}
+```
+
+Quando chamarmos essa função em qualquer outro lugar, ele retornará o item da lista e podemos usá-lo para realizar o appendChild em outro arquivo. Mas como utilizaremos esse arquivo "criarItemDaLista" dentro do "index.js"?
+
+Poderíamos chamar diretamente inserindo const itemDaLista = criarItemDaLista() dentro do botaoAdicionar. Nessa sintaxe, estamos declarando uma variável chamada itemDaLista, que será utilizada no appendChild da lista de compras, e receberá um valor que será retornado da funcionalidade criarItemDaLista(), ou seja, um item da lista.
+
+Podemos fazer dessa forma e voltar ao navegador, clicando em "Inspecionar" e acessando o Console. Criaremos um novo item e clicaremos em "Salvar item". Obteremos um erro dizendo que "criarItemDaLista is not defined". Eles estão em arquivos diferentes. O "index.js" não identifica o criarItemDaLista. Por isso, teremos que exportar essa funcionalidade nova de outro arquivo e importá-la onde ela será utilizada.
+
+Para exportar a função criarItemDaLista, escreveremos export na frente do nome da função.
+
+```JavaScript
+export function criarItemDaLista() {
+```
+
+Agora, podemos voltar ao arquivo "index.js" e importar o criarItemDaLista. Na primeira linha do arquivo, escreveremos import { criarItemDaLista }, entre chaves para que o Javascript compreenda que se trata de uma lista. Em seguida, especificamos de onde o arquivo vem com a palavra from e colocamos a localização da pasta e do arquivo com "./scripts/criarItemDaLista".
+
+> import { criarItemDaLista } from "./scripts/criarItemDaLista";
+
+Agora, com o CriarItemDaLista importado, vamos verificar se recebemos o mesmo erro no navegador. Ao renderizar a página, podemos receber o erro "Você não pode usar import fora de um módulo". Esse erro não está relacionado ao import em si, mas a como o JavaScript lida com os imports.
+
+Para resolver esse erro, já que fizemos a migração, exportação e importação, deixaremos para o próximo vídeo, onde descobriremos um novo mundo de modularização do JavaScript. Vamos continuar?
+
+### Aula 4 - Modularização - Vídeo 3
+
+Transcrição  
+Estávamos modularizando nosso código utilizando as palavras import, export, etc. Recebemos um erro no console: "você não pode usar o import fora de um módulo".
+
+Para resolver essa situação, precisamos utilizar dentro da tag `<script>` no index.html a seguinte palavra: type="module".
+
+```JavaScript
+    </main>
+    <script defer src="index.js" type="module"></script>
+  </body>
+</html>
+```
+
+No momento em que salvamos isso, podemos testar no navegador. Ele informa outro erro, mas não está relacionado ao import e export. A situação é que não podemos utilizar essas palavras reservadas fora de um script que definimos como tipo módulo.
+
+Consultando a documentação  
+Deixaremos uma atividade "Preparando o Ambiente" sobre isso, mas também queremos incentivar a prática de navegar pela documentação para entender melhor as coisas. É importante ter a documentação como guia.
+
+Não precisamos ler toda a documentação, mas há situações que ocorrem várias vezes durante o desenvolvimento. Se tivermos alguma dúvida, não é necessário assistir ao curso inteiro novamente.
+
+Podemos acessar no MDN a seção de "Módulos JavaScript". No caso, pesquisamos no Google apenas type="module", e ele já fez a associação com esse conteúdo. Podemos utilizar o "Ctrl + F" para pesquisar diretamente onde ele fala sobre o atributo type="module". Ele explica que é usado para indicar quando um módulo está sendo apontado.
+
+Podemos ir para a próxima seção que explica sobre isso, e ela detalha que, se não colocarmos type="module", receberemos um erro de sintaxe, pois declarações de importação só podem aparecer em um módulo. Há várias explicações, inclusive sobre a história de por que os módulos foram inseridos no JavaScript. Fica a seu critério estudar a história do JavaScript e seus módulos.
+
+Finalizando a correção
+Outro fator é que, antigamente, dentro deste projeto, utilizávamos o defer dentro do script, que fazia o JavaScript ser lido apenas após o carregamento do HTML. No momento em que estamos utilizando o type="module", não precisamos mais do defer.
+
+Não retornará nenhum erro, mas o type="module" também realiza o trabalho de colocar o JavaScript no final do carregamento da tela. Removemos o defer da linha 37 do index.html para apontar essa semelhança entre os dois.
+
+```JavaScript
+    </main>
+    <script src="index.js" type="module"></script>
+  </body>
+</html>
+```
+
+Corrigindo os outros erros  
+Agora, podemos começar a resolver outros erros, já que conseguimos ver a importação. Podemos visualizar se algo foi feito errado ou certo na parte da migração do criarItemDaLista. O primeiro erro no console, se verificarmos no navegador, é que ele não encontrou o arquivo criarItemDaLista. Isso ocorre porque não definimos o formato do arquivo. Ele está procurando um arquivo sem formato.
+
+No "index.js", dentro do import, onde definimos scripts/criarItemDaLista, ao final, inserimos .js. Agora ele encontrou o arquivo e não aponta mais o erro no navegador. Podemos tentar criar um item da lista e já estamos detectando outros erros.
+
+> import { criarItemDaLista } from "./scripts/criarItemDaLista.js";
+
+A situação é que criarItemDaLista não sabe o que é evento. O evento só é acessível dentro do eventListener do botão adicionar. Poderíamos enviar o evento como parâmetro para o criarItemDaLista, mas não sabemos se faz sentido enviar um parâmetro apenas para o evento.
+
+O que podemos fazer é, dentro do criarItemDaLista, na linha 4, recortar onde estamos prevenindo o evento padrão e voltar para o "index.js".
+
+```JavaScript
+botaoAdicionar.addEventListener("click", (evento) => {
+    evento.preventDefault();
+    const itemDaLista = criarItemDaLista();
+    listaDeCompras.appendChild(itemDaLista)
+    verificarListaVazia();
+})
+```
+
+Salvamos. Agora, podemos tentar adicionar um novo item para ver o resultado.
+
+Ocorreu uma confusão com o contador. O contador está sendo utilizado no Checkbox do criarItemDaLista, mas sua definição está acontecendo dentro do "index.js". Podemos recortar o let contador = 0, que está na linha 4 do "index.js", e colocá-lo na linha 2 do "criarItemDaLista", antes da criação da função.
+
+```JavaScript
+const inputItem = document.getElementById("input-item")
+let contador = 0;
+```
+
+Agora, vamos ao navegador testar novamente, e não temos mais nenhum erro.
+
+Esse é um processo normal que acontece, especialmente quando estamos fazendo uma migração sem muita clareza, porque, no momento em que estávamos migrando a funcionalidade do "index.js" para o "criarItemDaLista.js", não tínhamos como testar, pois os arquivos não estavam realmente conectados. Conseguimos resolver todos os problemas em duas linhas nos dois arquivos JavaScript.
+
+Agora, podemos utilizar a modularização em outras funcionalidades também. Por exemplo, colocar dentro do "index.js" uma meta, que é o que queremos que esse arquivo faça.
+
+Dentro do "index.js", queremos que apenas tenha contato com o botão e faça algo referente a isso. Já sabemos que dentro da aplicação há outras coisas sendo utilizadas dentro do "index.js", que não são necessariamente sobre conectar todas as funcionalidades ao clique do botão.
+
+Vamos para a próxima aula, onde continuaremos a modularização do nosso código. Nos vemos lá.
+
+### Aula 4 - Faça como eu fiz: modularizando o código
+
+Agora é hora de praticar e aprimorar o que aprendemos em aula! Nesta atividade, vamos dar um passo adiante na organização do nosso projeto. O objetivo é modularizar o código, separando funcionalidades em arquivos específicos e reaproveitando-as de maneira eficiente. Isso facilita a manutenção, a leitura e a escalabilidade do código no futuro.
+
+Bora implementar? Abaixo em “opinião da instrutora” deixarei a resolução, caso queira acompanhar.
+
+Opinião do instrutor
+
+Primeiro, crie uma funcionalidade para verificar se a lista de compras está vazia. Para isso, use a classe .mensagem-lista-vazia no HTML para exibir ou ocultar a mensagem de lista vazia.
+
+```JavaScript
+ const mensagemListaVazia = document.querySelector(".mensagem-lista-vazia");
+
+function verificarListaVazia() {
+    const itensDaLista = listaDeCompras.querySelectorAll("li");
+    if (itensDaLista.length === 0) {
+        mensagemListaVazia.style.display = "block";
+    } else {
+        mensagemListaVazia.style.display = "none";
+    }
+}
+verificarListaVazia();
+```
+
+Em seguida, crie um arquivo separado, criarItemDaLista.js, para centralizar a lógica de criação de um novo item da lista. Isso deixa o código mais modular e facilita futuras modificações.
+ export function criarItemDaLista() {
+
+```JavaScript
+// código de criação do item da lista
+
+    return itemDaLista;
+}
+```
+
+No arquivo index.js, use a instrução import para trazer a função criarItemDaLista e utilizá-la no event listener do botão de adicionar item.
+
+```JavaScript
+ import { criarItemDaLista } from "./scripts/criarItemDaLista.js";
+
+botaoAdicionar.addEventListener("click", (evento) => {
+    evento.preventDefault();
+
+    // Criar novo item e adicionar à lista
+    const itemDaLista = criarItemDaLista();
+    listaDeCompras.appendChild(itemDaLista);
+
+    // Verificar se a lista está vazia
+    verificarListaVazia();
+});
+```
+
+No arquivo HTML, altere o script principal para usar o atributo type="module", habilitando a importação/exportação de módulos JavaScript.
+`<script type="module" src="index.js"></script>`
+
+### Aula 4 - Lista de exercícios
+
+Exercício 1) Refatorando o código da lista de compras
+
+Você está trabalhando em um projeto de lista de tarefas e o arquivo script.js está ficando muito grande, com 88 linhas. Sua liderança solicitou a separação de mais uma funcionalidade do arquivo script.js. Agora, você deve mover a lógica de criação do item da lista para um novo arquivo. Crie o arquivo criarItemDaLista.js e mova o código que cria os elementos HTML do item de compra para essa função.
+
+Exercício 2) Removendo item fixo da lista de compras
+
+Você trabalha com desenvolvimento web e precisa ajustar uma aplicação de lista de tarefas.
+
+```html
+ <ul>
+                <li>
+                    <div class="lista-item-container">
+                        <div>
+                            <div class="container-checkbox">
+                        <input type="checkbox" class="input-checkbox" id="checkbox-1" />
+                               
+                            </div>
+                            <p>Comprar ração</p>
+                        </div>
+
+                        <div>
+                            <button class="item-lista-button">
+                                <img src="./img/delete.svg" alt="remover">
+                            </button>
+                            <button class="item-lista-button">
+                                <img src="./img/edit.svg" alt="editar">
+                            </button>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+```
+
+No momento, a lista contém um item fixo ("Comprar ração.") que deve ser removido. Para isso, vamos editar o arquivo index.html e garantir que o item não apareça mais.
+
+Exercício 3) Exibindo mensagem de lista vazia
+
+Quando a lista de tarefas está vazia, é importante que o usuário receba um feedback visual. Vamos adicionar uma mensagem de aviso com HTML e garantir que ela apareça somente quando a lista estiver vazia com JavaScript.
+
+Exercício 4) Implementando a verificação de lista vazia
+
+Você está trabalhando em uma plataforma e precisa melhorar a usabilidade. Uma das maneiras de fazer isso é adicionar mensagens de feedback para que o usuário saiba o que está acontecendo na tela. Crie uma função em JavaScript que verifique se uma lista está vazia e mostre ou esconda uma mensagem de acordo com o resultado.
+
+Exercício 5) Personalizando a mensagem de lista vazia
+
+Para tornar a mensagem de lista vazia mais informativa e amigável, você vai personalizá-la para que exiba o nome da lista e uma mensagem encorajadora. Por exemplo, "A lista de tarefas está vazia. Adicione itens para começar!". Faça isso através de uma função JavaScript que verifique se a lista está vazia.
+
+Opinião do instrutor
+
+Resposta do exercício 1
+
+Criando a função criarItemDaLista
+
+- Crie um arquivo criarItemDaLista.js dentro da pasta js.
+- No arquivo adicionarItem.js, recorte o código que cria os elementos HTML do item de compra e cole no arquivo criarItemDaLista.js.
+- Adicione a palavra export na declaração da função, assim:
+
+```JavaScript
+export function criarItemDaLista(item) {
+ // código da função
+ return itemDaLista;
+}
+```
+
+No arquivo adicionarItem.js, importe a função criarItemDaLista no topo do arquivo:
+
+> import { criarItemDaLista } from './criarItemDaLista.js';
+
+Utilize a função criarItemDaLista dentro de adicionarItem para criar o item da lista:
+
+```JavaScript
+const itemDaLista = criarItemDaLista(item);
+listaDeCompras.appendChild(itemDaLista);
+```
+
+Teste a funcionalidade no navegador para garantir que está funcionando corretamente e verifique se os itens estão sendo adicionados à lista sem erros.
+
+Resposta do exercício 2
+
+Removendo item fixo da lista de compras
+
+Remova o item fixo "Comprar ração", que deve estar em uma tag `<li>`.
+
+Salve o arquivo.
+
+Resposta do exercício 3
+
+Exibindo mensagem de lista vazia
+
+Dentro da tag `<ul>` da lista de tarefas, adicione um parágrafo com a mensagem "sua lista está vazia, adicione itens a ela para não esquecer nada".
+
+```html
+<ul id=”lista-tarefas”>
+ <p id="mensagem-vazia" style="display: block;">sua lista está vazia, adicione itens a ela para não esquecer nada</p>
+ <!-- Outros itens -->
+</ul>
+```
+
+Crie uma função em JavaScript para exibir ou ocultar a mensagem dependendo do estado da lista.
+
+```JavaScript
+ const listaTarefas = document.getElementById("lista-tarefas");
+ const mensagemVazia = document.getElementById("mensagem-vazia");
+
+ function atualizarMensagem() {
+ if (listaCompras.getElementsByTagName("li").length === 0) {
+ mensagemVazia.style.display = "block";
+ } else {
+ mensagemVazia.style.display = "none";
+ }
+ }
+ // Atualize a mensagem quando a página for carregada
+ atualizarMensagem();
+```
+
+Salve o arquivo e teste no navegador para garantir que a mensagem aparece corretamente quando a lista está vazia e desaparece quando a lista contém itens.
+
+Resposta do exercício 4
+
+Implementando a verificação de lista vazia
+
+Para implementar a função de verificação de lista vazia, siga os passos abaixo:
+
+- Crie o arquivo verificarListaVazia.js na pasta js.
+- No arquivo, escreva a função verificarListaVazia que recebe a lista como parâmetro.
+- Utilize getElementById para selecionar a mensagem com o ID ifinVazia.
+- Adicione uma condição que verifique se a lista está vazia (usando childElementCount).
+- Mostre a mensagem se a lista estiver vazia (style.display = 'block') ou esconda a mensagem se houver itens na lista (style.display = 'none').
+- Chame a função após a criação e remoção de itens na lista.
+
+```JavaScript
+export function verificarListaVazia(lista) {
+ const mensagemVazia = document.getElementById('ifinVazia');
+ 
+ if (lista.childElementCount === 0) {
+ mensagemVazia.style.display = 'block';
+ } else {
+ mensagemVazia.style.display = 'none';
+ }
+}
+```
+
+Resposta do exercício 5
+
+Para personalizar a mensagem de lista vazia, siga os passos abaixo:
+
+No arquivo verificarListaVazia.js, modifique a função verificarListaVazia para receber um segundo parâmetro, nomeLista.
+Personalize a mensagem exibida para incluir o nome da lista e um texto encorajador.
+
+```JavaScript
+export function verificarListaVazia(lista, nomeLista) {
+ const mensagemVazia = document.getElementById('ifinVazia');
+ 
+ if (lista.childElementCount === 0) {
+ mensagemVazia.textContent = `A ${nomeLista} está vazia. Adicione itens para começar!`;
+ mensagemVazia.style.display = 'block';
+ } else {
+ mensagemVazia.style.display = 'none';
+ }
+}
+```
+
+Esses exercícios ajudarão a entender como melhorar a usabilidade de uma aplicação web através de mensagens de feedback dinâmicas e personalizadas.
+
+### Aula 4 - O que aprendemos?
+
+Nessa aula, você aprendeu como:
+
+- Dividir o código em módulos menores e independentes, facilitando a manutenção e a legibilidade do projeto.
+- Utilizar o método querySelectorAll para contar elementos na lista e determinar se ela está vazia.
+- Controlar a visibilidade de elementos na interface, exibindo ou ocultando mensagens conforme necessário.
+- Exportar funções de um módulo e importá-las em outros, promovendo a reutilização de código.
+
+## Aula 5 - Criando novos Arquivos
+
+### Aula 5 - Export default - Vídeo 1
+
+### Aula 5 -  - Vídeo 2
+### Aula 5 -  - Vídeo 3
+### Aula 5 -  - Vídeo 4
+### Aula 5 -  - Vídeo 5
+### Aula 5 -  - Vídeo 6
+### Aula 5 -  - Vídeo 7
+### Aula 5 -  - Vídeo 8
+### Aula 5 -  - Vídeo 9
