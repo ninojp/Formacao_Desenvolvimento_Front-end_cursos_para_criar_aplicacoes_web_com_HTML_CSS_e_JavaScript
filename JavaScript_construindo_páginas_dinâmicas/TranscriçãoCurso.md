@@ -2627,11 +2627,564 @@ Nessa aula, você aprendeu como:
 
 ### Aula 5 - Export default - Vídeo 1
 
-### Aula 5 -  - Vídeo 2
-### Aula 5 -  - Vídeo 3
-### Aula 5 -  - Vídeo 4
-### Aula 5 -  - Vídeo 5
-### Aula 5 -  - Vídeo 6
-### Aula 5 -  - Vídeo 7
-### Aula 5 -  - Vídeo 8
-### Aula 5 -  - Vídeo 9
+Transcrição  
+Começamos a modularização do nosso código a partir da função CriarItemDaLista e, com isso, aprendemos que podemos separar trechos de código para colocá-los em uma função exclusiva para determinada ação, permitindo o reuso em outros locais. Dentro da função CriarItemDaLista, também possuímos algumas funcionalidades que podemos separar do escopo, como, por exemplo, gerar o dia da semana.
+
+Isolando funcionalidades na função riarItemDaLista()  
+Podemos fazer essa separação porque, ao lidar com diversas listas e uma lista específica de itens comprados, é útil isolar a lógica para reutilizá-la em diferentes situações. Quando um item é criado, ele registra o dia da semana. Ao concluir a compra, queremos que essa data seja atualizada para o momento da compra, tornando a lógica aplicável a ambos os casos.
+
+Para fazer isso, vamos ao arquivo criarItemDaLista.js. Selecionamos da linha 34, em const diaDaSemana até à linha 42, const dataCompleta e recortamos pressionando "Ctrl + X". Tendo da pasta "scripts", criamos um novo arquivo chamado gerarDiaDaSemana.js.
+
+Implementando a função gerarDiaDaSemana()  
+Começamos escrevendo um function gerarDiaDaSemana() {}. Nas chaves, colamos o trecho de código pressionando "Ctrl + V". Queremos que, ao construir esse texto de dia da semana, ele seja retornado para o local que está chamando essa funcionalidade. Portanto, utilizamos ao final dessa função o return dataCompleta.
+
+Já conseguimos isolar a funcionalidade, mas, para utilizá-la, precisamos exportar esse conteúdo para importar dentro do CriarItemDaLista.
+
+Diferença entre exportações  
+Vamos mostrar uma diferença de exports. No arquivo index.js, na linha 1, quando importamos do criarItemDaLista, colocamos o nome da funcionalidade entre chaves. Isso ocorre porque não importamos por padrão, isso significa que dentro daquela funcionalidade poderiam haver outras funções dentro do arquivo que também poderiam ser resgatadas em outro local.
+
+Agora, ao criar uma função dentro de um arquivo e queremos que exista somente aquela funcionalidade, podemos utilizar export default gerarDiaDaSemana. Então, no arquivo gerardiadasemana.js, no fim da linha, passamos esse trecho de código. Essas palavras definem que, por padrão, exportaremos o gerarDiadaSemana, que é a única funcionalidade presente.
+
+gerarDiaDaSemana.js
+
+```JavaScript
+function gerarDiaDaSemana() {
+    const diaDaSemana = new Date().toLocaleDateString("pt-BR", {
+        weekday: "long"
+    });
+    const data = new Date().toLocaleDateString("pt-BR")
+    const hora = new Date().toLocaleTimeString("pt-BR", {
+        hour: "numeric",
+        minute: "numeric"
+    })
+    const dataCompleta = `${diaDaSemana} (${data}) às ${hora}`
+
+    return dataCompleta
+}
+export default gerarDiaDaSemana;
+```
+
+Após, podemos acessar o arquivo criarItemDaLista.js na primeira linha de ´código, escrevemos import gerarDiaDaSemana from "./gerarDiaDaSemana.js", que não estará dentro de chaves. Essa é a diferença entre os dois tipos de export: com o default ou sem, um pode exportar diversas funcionalidades e o outro está exportando apenas uma.
+
+Isso é um fato curioso. Durante o processo de desenvolvimento das aplicações, podemos nos deparar com situações em que ficamos confusos sobre por que não conseguimos importar uma funcionalidade em um arquivo. O que está acontecendo? Precisamos colocar chaves? Não precisamos? Esse é o segredo para fazer um import bem-sucedido.
+
+criarItemDaLista.js
+
+```JavaScript
+import gerarDiaDaSemana from "./gerarDiaDaSemana.js";
+const inputItem = document.getElementById("input-item")
+let contador = 0;
+```
+
+Para ajustar a funcionalidade de criar item da lista para utilizar a nova função gerarDiaDaSemana, na linha 34 dentro do criarItemDaLista.js, escrevemos const dataCompleta, que receberá o valor da funcionalidade gerarDiaDaSemana(). Com o retorno, essa variável dataCompleta, na linha 34, receberá o texto que informa o dia da semana, a data e a hora.
+
+```JavaScript
+//Código omitido
+    containerItemDaLista.appendChild(inputCheckbox);
+    containerItemDaLista.appendChild(nomeItem);
+
+    itemDaLista.appendChild(containerItemDaLista)
+    const dataCompleta = gerarDiaDaSemana()
+   
+    const itemData = document.createElement("p");
+    itemData.innerText = dataCompleta;
+    itemData.classList.add("texto-data")
+    itemDaLista.appendChild(itemData)
+
+   return itemDaLista;
+}
+```
+
+Vamos testar. Minimizamos o Visual Studio Code e abrimos a aplicação. No campo de texto, escrevemos "teste" e clicamos em "Salvar item". Assim, conseguimos visualizar em letras pequenas, que está sendo impresso a data de hoje.
+
+Conseguimos modularizar mais uma parte desse código com sucesso. Daremos continuidade no próximo vídeo. Até lá!
+
+### Aula 5 - Para saber mais: importando funcionalidades
+
+No JavaScript, a diferença entre usar {} ao importar um módulo e não usar está diretamente relacionada ao tipo de exportação definida no arquivo de origem. Essa escolha afeta a maneira como as funções ou objetos são exportados e importados entre arquivos, garantindo flexibilidade no uso de módulos. Vamos entender as duas situações:
+
+1. Importação com {} – Exportações Nomeadas  
+Esse tipo de importação é usado para exportar e importar partes específicas de um módulo. Ao usar {}, estamos dizendo ao JavaScript para buscar apenas as exportações nomeadas que especificamos.
+
+Como funciona:
+
+No arquivo de origem (exemplo: adicionarItem.js), você precisa exportar explicitamente cada item que deseja disponibilizar, usando export.
+
+```JavaScript
+// Exportação nomeada
+export function adicionarItem(evento) {
+    // código da função
+}
+export function criarItemDaLista() {
+    // código da função
+}
+```
+
+Ao importar, você precisa mencionar os nomes exatos das exportações, utilizando {}:
+
+> import { adicionarItem, criarItemDaLista } from "./js/adicionarItem.js";
+
+Isso é útil quando o módulo oferece várias funções ou objetos e você quer usar apenas alguns deles. Importações nomeadas também permitem combinar diversas exportações de diferentes módulos:
+
+```JavaScript
+import { adicionarItem } from "./js/adicionarItem.js";
+import { formatarTexto } from "./js/utilitarios.js";
+```
+
+2. Importação sem {} – Exportação Padrão
+
+Quando um módulo define uma exportação padrão (default), ele permite exportar uma única funcionalidade principal. Nesse caso, não usamos {} ao importar, e o nome que você atribui durante a importação pode ser qualquer um.
+
+Como funciona:
+
+No arquivo de origem, a exportação padrão é declarada com export default:
+
+```JavaScript
+// Exportação padrão
+export default function adicionarItem(evento) {
+    // código da função
+}
+```
+
+Ao importar, você pode usar qualquer nome para representar o módulo:
+
+```JavaScript
+import adicionarItem from "./js/adicionarItem.js";
+// Ou
+import qualquerNome from "./js/adicionarItem.js";
+```
+
+Isso é útil quando o módulo tem um propósito único, como uma função principal, e você quer simplificar o uso.
+
+Principais diferenças:
+
+Exportação Nomeada Exportação Padrão
+
+- Usa {} na importação. Não usa {} na importação.
+- Permite exportar múltiplas partes. Exporta uma única funcionalidade.
+- Precisa do nome exato da exportação. O nome na importação pode ser qualquer.
+
+Exemplo: export function adicionarItem() Exemplo: export default function adicionarItem()
+
+Quando usar cada uma?
+
+- Use exportações nomeadas quando seu módulo contém múltiplas funções ou objetos que podem ser usados separadamente.
+- Use exportação padrão quando seu módulo tem uma funcionalidade central ou única.
+
+Com essas distinções, você pode estruturar seu código de forma mais clara e aproveitar ao máximo os módulos no JavaScript!
+
+### Aula 5 - Funções com parâmetros - Vídeo 2
+
+Transcrição  
+Separamos a funcionalidade de gerar o dia da semana da funcionalidade de criar item da lista, pois, ao pensar no nome de criar item da lista, desejamos que tenha apenas a responsabilidade de criar o elemento li, suas estilizações e seus elementos. Da mesma forma, no index.js, gostaríamos que fosse responsável apenas pelas ações ao clicar no botão adicionar. Portanto, queremos manter apenas o addEventListener.
+
+Removendo a função verificarListaVazia() do index.js
+
+Para isso, precisamos remover a função verificarListaVazia(). Nesse caso, também precisamos remover a variável mensagemListaVazia, pois elas se comunicam entre si. Então, selecionamos o código da linha 13 até a 22 e pressionamos "Ctrl X" para recortar.
+
+Criando um arquivo para a função verificarListaVazia()
+
+Agora, precisamos colocar em outro arquivo para continuar a modularização. Dentro da pasta "scripts", no explorador de arquivos à esquerda da tela, podemos clicar com o botão direito e selecionar "novo arquivo". Nomeamos de verificarListaVazia.js e colamos o trecho de código.
+
+Precisamos de uma maneira de exportar essa funcionalidade. Podemos utilizar o que aprendemos no último vídeo, usar o export default verificarListaVazia, pois essa será a única funcionalidade dentro desse arquivo.
+
+Ajustando a função para futuras expansões
+
+Por exemplo, na linha 4, temos a construção da variável itemDaLista, que utiliza listaDeCompras. No contexto deste novo arquivo, não existe listaDeCompras. Poderíamos pegar a variável definida dentro do index.js, mas é interessante pensar no futuro.
+
+Se quisermos adicionar mais listas de compras à aplicação, seria interessante que verificarListaVazia pudesse ser utilizado em todas as listas. Para isso, podemos utilizar dois parâmetros na função. Em vez de fixar qual lista de compras queremos pesquisar, podemos receber, nos parênteses da função na linha 3, a listaDeCompras. Assim, sempre que acessarmos listaDeCompras.querySelectorAll("li") na linha 4, ele acessará a lista enviada no momento em que chamamos essa nova funcionalidade.
+
+```JavaScript
+const mensagemListaVazia = document.querySelector(".mensagem-lista-vazia");
+function verificarListaVazia(listaDeCompras) {
+    const itensDaLista = listaDeCompras.querySelectorAll("li");
+    if (itensDaLista.length === 0) {
+        mensagemListaVazia.style.display = "block"
+    } else {
+        mensagemListaVazia.style.display = "none"
+    }
+}
+export default verificarListaVazia;
+```
+
+Atualizando o index.js para usar a função modularizada
+Para fazer isso, precisamos ir ao index.js e importar essa nova funcionalidade. Na linha 1, escrevemos import verificarListaVazia from "./scripts/verificarListaVazia.js";
+
+```JavaScript
+//Código omitido
+import verificarListaVazia from "./scripts/verificarListaVazia.js";
+//Código omitido
+```
+
+Podemos visualizar os dois tipos de importação, um abaixo do outro, tornando mais visível a diferença do que estava acontecendo dentro do gerarDiaDaSemana.
+
+Agora, como comentamos, precisamos enviar qual lista queremos verificar se está vazia ou não. Chamamos essa nova funcionalidade na linha 11 e na linha 15. Temos a variável na linha 3. Podemos utilizar o texto listaDeCompras, copiando-o ou digitando, e colocá-lo na linha 11, dentro dos parênteses da nova funcionalidade, e na linha 15, dentro dos parênteses da função.
+
+```JavaScript
+import { criarItemDaLista } from "./scripts/criarItemDaLista.js";
+import verificarListaVazia from "./scripts/verificarListaVazia.js";
+const listaDeCompras = document.getElementById("lista-de-compras");
+const botaoAdicionar = document.getElementById("adicionar-item");
+
+botaoAdicionar.addEventListener("click", (evento) => {
+    evento.preventDefault();
+    const itemDaLista = criarItemDaLista();
+    listaDeCompras.appendChild(itemDaLista)
+    verificarListaVazia(listaDeCompras);
+})
+verificarListaVazia(listaDeCompras);
+```
+
+Testando a função no navegador
+e
+No navegador, abrimos a aplicação e atualizamos a tela. Feito isso, é exibida a mensagem indicando que não há nenhum item na lista no momento. Se criarmos um novo item, ele removerá o texto e mostrará o novo item da lista.
+
+Assim, conseguimos ver que, mesmo que verificarListaVazia esteja em outro arquivo, ele continua monitorando se a lista está vazia ou não.
+
+Com isso, aprendemos a aplicar import, export e funções com parâmetros, conceitos essenciais para nossa carreira como pessoas desenvolvedoras.
+
+### Aula 5 - unções e módulos
+
+Maria é uma desenvolvedora iniciante que está criando um aplicativo de checklist usando JavaScript. Ela construiu a seguinte função em um arquivo chamado verificarListaVazia.js:
+
+```JavaScript
+const mensagemListaVazia = document.querySelector(".mensagem-lista-vazia");
+
+function verificarListaVazia(listaDeCompras) {
+    const itensDaLista = listaDeCompras.querySelectorAll("li");
+    if (itensDaLista.length === 0) {
+        mensagemListaVazia.style.display = "block"
+    } else {
+        mensagemListaVazia.style.display = "none"
+    }
+}
+export default verificarListaVazia;
+```
+
+Como Maria pode aplicar essa função no seu arquivo index.js para adicionar um novo item à lista de compras e garantir que a mensagem de lista vazia seja atualizada corretamente?
+
+Resposta:
+
+```JavaScript
+import { adicionarItem } from "./scripts/adicionarItem.js";
+import verificarListaVazia from "./scripts/verificarListaVazia.js";
+
+const listaDeCompras = document.getElementById("lista-de-compras");
+const botaoAdicionar = document.getElementById("adicionar-item");
+
+botaoAdicionar.addEventListener("click", (evento) => {
+    evento.preventDefault();
+    adicionarItem(listaDeCompras);
+    verificarListaVazia(listaDeCompras);
+});
+```
+
+> Maria está importando corretamente as funções necessárias e passando listaDeCompras como parâmetro para ambas as funções, garantindo que a lista seja atualizada e verificada.
+
+### Aula 5 - Faça como eu fiz: novos módulos
+
+Agora é hora de praticar e aprimorar o que aprendemos em aula! Nesta atividade, vamos continuar a organizar nosso código separando funcionalidades em arquivos dedicados. Vamos criar dois novos módulos: um para gerar o dia da semana e outro para verificar se a lista está vazia. Isso deixa nosso projeto mais limpo, reutilizável e fácil de manter.
+
+Bora implementar? Abaixo em “opinião da instrutora” deixarei a resolução, caso queira acompanhar.
+
+Opinião do instrutor
+
+Construa o arquivo gerarDiaDaSemana.js, onde você irá extrair a lógica para obter o dia da semana, a data e a hora que anteriormente estava no 
+
+criarItemDaLista.js.
+
+```JavaScript
+function gerarDiaDaSemana() {
+    const diaDaSemana = new Date().toLocaleDateString("pt-BR", {
+        weekday: "long"
+    });
+    const data = new Date().toLocaleDateString("pt-BR")
+    const hora = new Date().toLocaleTimeString("pt-BR", {
+        hour: "numeric",
+        minute: "numeric"
+    })
+    const dataCompleta = `${diaDaSemana} (${data}) às ${hora}`
+
+    return dataCompleta
+}
+
+export default gerarDiaDaSemana;
+```
+
+Essa função retorna uma string formatada contendo o dia da semana, a data e a hora.
+
+No módulo criarItemDaLista.js, importe a função de geração do dia da semana e a utilize para adicionar a data e hora em cada item da lista.
+
+> import gerarDiaDaSemana from "./gerarDiaDaSemana.js";
+
+Agora, crie um módulo específico para verificar se a lista está vazia. Esse código estava originalmente no index.js, mas agora será movido para um arquivo separado.
+
+```JavaScript
+const mensagemListaVazia = document.querySelector(".mensagem-lista-vazia");
+
+function verificarListaVazia(listaDeCompras) {
+    const itensDaLista = listaDeCompras.querySelectorAll("li");
+    if (itensDaLista.length === 0) {
+        mensagemListaVazia.style.display = "block"
+    } else {
+        mensagemListaVazia.style.display = "none"
+    }
+}
+export default verificarListaVazia;
+```
+
+No index.js, importe a funcionalidade para verificar se a lista está vazia e a chamamos sempre que um item é adicionado.
+
+> import verificarListaVazia from "./scripts/verificarListaVazia.js";
+
+### Aula 5 - Lista de exercícios
+
+Chegou o seu momento de praticar tudo que você viu nesta aula com a lista de exercícios abaixo!
+
+Você está trabalhando em um projeto de lista de tarefas e quer acrescentar a data e o horário em que uma tarefa foi adicionada à lista, mas para isso precisa capturar a data e hora, formatar os valores e finalmente exibir ao lado dos itens da lista.
+
+Exercício 1) Capturando a data atual
+
+Você está trabalhando nesse projeto de lista de tarefas e quer acrescentar a data e o horário em que uma tarefa foi adicionada à lista, então agora você recebeu um desafio! Sua missão é criar uma função que capture o momento atual e exiba esse valor no console do navegador.
+
+Exercício 2) Ajustando o formato do dia da semana
+
+Ao capturar a data no exercício anterior o formato que você obteve deve ser parecido com esse exemplo:
+
+Wed Nov 27 2024 13:09:09 GMT-0300 (Horário Padrão de Brasília)
+Copiar código
+Contudo, não é um formato fácil de entender e por isso agora, seu objetivo é manipular o valor do dia da semana para ser exibido como o exemplo abaixo:
+
+quarta-feira
+
+Uma dica valiosa é que você pode usar o método toLocaleDateString() para te ajudar nesse processo.
+
+Exercício 3) Exibindo a data no formato brasileiro
+
+No exercício anterior, você ajustou o dia da semana para que ele fosse exibido com nome completo. Agora chegou a vez de formatar a data no formato brasileiro para que ele fique da seguinte maneira:
+
+dd/mm/aaaa
+
+Seu objetivo é usar novamente o método toLocaleDateString() com algumas alterações no parâmetro de opções para formatar a data e obter o padrão apresentado no exemplo acima. Além disso, você precisa exibir no console tanto o dia da semana quanto a data formatada. O resultado deve ser:
+
+quarta-feira, dd/mm/aaaa
+
+Uma dica para exibir ambas as informações é usar as template strings no retorno da função.
+
+Exercício 4) Formatando o horário
+
+Você já formatou o dia da semana e a data, agora é o momento de formatar o horário para que ele seja exibido da seguinte maneira:
+
+hh:mm
+
+Seu objetivo é criar uma nova constante e usar a função toLocaleTimeString de maneira similar ao que foi feito anteriormente com o método toLocaleDateString. Além disso, você precisa exibir no console do navegador o dia da semana, a data e a hora.
+
+Exercício 5) Implementando a data e horário dos itens na lista
+
+Agora que você formatou a data, precisa aplicar essa função na tela ao lado de cada item.
+
+A estrutura do seu HTML é a seguinte:
+
+```html
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de tarefas</title>
+</head>
+<body>
+    <h1>Lista de tarefas</h1>
+    <div>
+        <input type="text" id="tarefaInput" placeholder="Digite uma tarefa">
+        <button id="adicionarButton">Adicionar</button>
+    </div>
+    <ul id="listaTarefas"></ul>
+    <script src="script.js"></script>
+</body>
+</html>
+```
+
+No seu JavaScript você possui a seguinte estrutura:
+
+```JavaScript
+//Constantes que capturam os elementos HTML
+const tarefaInput = document.getElementById("tarefaInput");
+const adicionarButton = document.getElementById("adicionarButton");
+
+//Aplica um ouvidor de eventos que ao ser clicado vai executar a função adicionarItemNaLista
+adicionarButton.addEventListener("click", adicionarItemNaLista);
+
+//Função que gera e formata a data e hora atual
+function gerarData() {
+    const dataAtual = new Date();
+    const diaDaSemana = dataAtual.toLocaleDateString("pt-BR", { weekday: "long" });
+    const dataCompleta = dataAtual.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" });
+    const hora = dataAtual.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+    return `${diaDaSemana}, ${dataCompleta} às ${hora}`;
+}
+
+//Função que adiciona uma nova atividade na lista de tarefas
+function adicionarItemNaLista(){
+    const tarefa = tarefaInput.value;
+    if (tarefa) {
+        const novaTarefa = document.createElement("li");
+        novaTarefa.textContent = tarefa;
+        const listaTarefas = document.getElementById("listaTarefas");
+        listaTarefas.appendChild(novaTarefa);
+        tarefaInput.value = "";
+    }
+}
+```
+
+Com este código em mãos, implemente a função gerarData() para que ao adicionar um item na lista o resultado apareça da seguinte maneira:
+
+> estudar react - quarta-feira, 27/11/2024 às 14:51
+
+Uma dica é que você vai precisar usar template strings e a implementação deve acontecer na função que adiciona um item na lista.
+
+Opinião do instrutor
+
+Resposta do exercício 1
+
+Capturando a data atual
+
+No arquivo "script.js", crie a função gerarData():
+
+```JavaScript
+function gerarData(){
+
+}
+```
+
+Dentro desta função, crie uma constante dataAtual que vai receber o new Date() para instanciar um objeto que vai representar o momento atual e faça o retorno dessa constante, da seguinte maneira:
+
+```JavaScript
+function gerarData() {
+    const dataAtual = new Date();
+    return dataAtual;
+}
+```
+
+Agora para exibir o valor no console, fora da função chame o console.log e passe como parâmetro a função que acabou de criar, como mostro no código abaixo:
+
+```JavaScript
+console.log(gerarData());
+//Wed Nov 27 2024 13:09:09 GMT-0300 (Horário Padrão de Brasília)
+```
+
+Resposta do exercício 2
+
+Ajustando o formato do dia da semana
+
+Dentro da função gerarData, escreva uma nova constante chamada diaDaSemana que vai receber o valor da dataAtual e vai aplicar o método toLocaleDateString com os parâmetros de local e opções sendo "pt-Br" e {weekday:"long"} respectivamente para definir o formato como português do brasil e exibir o dia da semana com nome completo. Para conseguir visualizar a mudança no console o retorno da função deve ser agora a constante diaDaSemana. O resultado em código ficaria assim:
+
+```JavaScript
+function gerarData() {
+    const dataAtual = new Date();
+    const diaDaSemana = dataAtual.toLocaleDateString("pt-BR", { weekday: "long" });
+    return diaDaSemana;
+}
+console.log(gerarData());
+//quarta-feira
+```
+
+Resposta do exercício 3
+
+Exibindo a data no formato brasileiro
+
+Dentro da função gerarData(), crie uma nova constante chamada dataFormatada que vai receber o valor da dataAtual e vai aplicar o método toLocaleDateString com os parâmetros de local e opções sendo "pt-Br" e { day: "2-digit", month: "2-digit", year: "numeric" } respectivamente. Com isso, você define o resultado no formato de português do Brasil e garante a exibição do dia e do mês com dois dígitos e do ano no padrão numérico.
+
+```JavaScript
+function gerarData() {
+    const dataAtual = new Date();
+    const diaDaSemana = dataAtual.toLocaleDateString("pt-BR", { weekday: "long" });
+    const dataCompleta = dataAtual.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" });
+}
+```
+
+A função de retorno, agora vai receber duas constantes e para isso, podemos usar a template string da seguinte forma:
+
+> return `${diaDaSemana}, ${dataCompleta}`;
+
+O código completo fica assim:
+
+```JavaScript
+function gerarData() {
+    const dataAtual = new Date();
+    const diaDaSemana = dataAtual.toLocaleDateString("pt-BR", { weekday: "long" });
+    const dataCompleta = dataAtual.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" });
+    return `${diaDaSemana}, ${dataCompleta}`;
+}
+
+console.log(gerarData());
+//quarta-feira, 27/11/2024
+```
+
+Resposta do exercício 4
+
+Formatando o horário
+
+Dentro da função gerarData(), crie uma constante chamada hora. Esta constante vai receber a dataAtual e implementar o método toLocaleTimeString com os parâmetros "pt-Br" e { hour: "2-digit", minute: "2-digit" } para retornar o horário no formato português do Brasil e com o valor das horas e minutos com dois dígitos.
+
+```JavaScript
+function gerarData() {
+    const dataAtual = new Date();
+    const diaDaSemana = dataAtual.toLocaleDateString("pt-BR", { weekday: "long" });
+    const dataCompleta = dataAtual.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" });
+    const hora = dataAtual.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+}
+```
+
+Agora para exibir o resultado no console, você pode complementar o retorno da função da seguinte maneira:
+
+> return `${diaDaSemana}, ${dataCompleta} às ${hora}`;
+
+O código completo segue abaixo:
+
+```JavaScript
+function gerarData() {
+    const dataAtual = new Date();
+    const diaDaSemana = dataAtual.toLocaleDateString("pt-BR", { weekday: "long" });
+    const dataCompleta = dataAtual.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" });
+    const hora = dataAtual.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+    return `${diaDaSemana}, ${dataCompleta} às ${hora}`;
+}
+
+console.log(gerarData());
+```
+
+Resposta do exercício 5
+
+Implementando a data e horário dos itens na lista
+
+Na função adicionarItemNaLista(), na linha que insere um conteúdo de texto na constante novaTarefa, você precisa incluir a função gerarData() usando uma template string. O código ficaria assim:
+
+> novaTarefa.textContent = `${tarefa} - ${gerarData()}`;
+
+### Aula 5 - Projeto final do curso
+
+Caso queira revisar o código final do curso, disponibilizamos os códigos para [baixar nesse link](https://github.com/alura-cursos/4299-javascript/archive/refs/heads/aula-05.zip) ou veja nosso [repositório do Github](https://github.com/alura-cursos/4299-javascript/tree/aula-05).
+
+### Aula 5 - O que aprendemos?
+
+Nessa aula, você aprendeu como:
+
+- Encapsular a lógica de formatação de data e hora em uma função reutilizável, tornando o código mais modular e fácil de manter.
+- Utilizar template strings para formatar e exibir a data e hora de forma clara e concisa.
+- Reutilizar funções em diferentes partes do projeto para evitar duplicação de código e melhorar a organização.
+
+### Aula 5 - Conclusão - Vídeo 3
+
+Transcrição  
+Parabéns por concluir o curso! Estamos muito felizes por ter acompanhado você até aqui.
+
+Nessa trajetória, desenvolvemos a aplicação Lista de Compras, que possui uma função de verificação para saber se a lista está vazia ou não. Também implementamos um campo de digitação, onde podemos inserir qualquer item e clicar em "salvar item" para mostrá-lo na tela. Ao clicar no botão, ele gera um elemento HTML, que é o li, com as seguintes informações: o título, que é o que foi digitado no campo de digitação, as informações de data e hora em que o item foi inserido na lista, e um checkbox interativo que altera os estilos do título.
+
+Para isso, aprendemos sobre manipulação de DOM, que podemos visualizar no Visual Studio Code, dentro da pasta "Scripts", no arquivo criarItemDaLista.js. Nele, aprendemos a criar elementos, manipular classes, atributos e também anexar esse elemento na tela.
+
+Também abordamos o ouvinte de eventos, o addEventListener, que gera algumas situações a partir de interações do usuário na tela. Aprendemos a gerar o dia da semana e o horário através do objeto Date e seus métodos toLocaleDateString e toLocaleTimeString. Além disso, discutimos como modularizar o código através do export e import, e a diferença de usar o default ou não.
+
+Com tudo isso, desenvolvemos uma aplicação robusta, que é a lista de compras. Agora, você pode começar a transformar seus outros projetos em dinâmicos com os conhecimentos adquiridos até aqui.
+
+Não deixe de praticar, e lembre-se: conhecimento bom é conhecimento compartilhado. Compartilhe nas redes sociais tudo o que aprendeu. Nos vemos nas redes sociais e em outros cursos. Até breve!
