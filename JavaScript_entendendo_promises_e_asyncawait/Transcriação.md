@@ -2046,5 +2046,799 @@ Nessa aula, você aprendeu como:
 - Manipular elementos do DOM para exibir imagens e textos carregados pelos usuários na página.
 - Tratar erros em operações assíncronas usando try/catch em funções assíncronas.
 
-## Aula 3 - 
-### Aula 2 -  - Vídeo 1
+## Aula 3 - Manipulando Tags
+
+### Aula 3 - Inserir tags - Vídeo 1
+
+Transcrição  
+Implementamos a funcionalidade de leitura de arquivos e agora vamos continuar com a inserção das tags na aplicação. Por exemplo, temos uma tag fixa de front-end na tela. Como criar tags a partir do que a pessoa usuária digita no campo de entrada?
+
+Seleção do campo de entrada
+Primeiro, precisamos selecionar o campo de entrada onde as tags serão digitadas. No arquivo index.html, procuramos o campo de entrada de categoria. Nele, já temos um id categoria, então vamos substituí-lo pelo id input-tags.
+
+```html
+<label for="categoria">Tags</label>
+<input type="text" name="categoria" id="input-tags"/>
+```
+
+Criação de variável para o campo de entrada
+Agora, ao final do arquivo scripts.js, criamos uma variável chamada inputTags que recebe document.getElementById("input-tags").
+
+```JavaScript
+const inputTags = document.getElementById("input-tags");
+```
+
+Com isso, acessamos o campo de entrada e adicionamos um ouvinte de eventos para monitorar quando a pessoa usuária pressiona a tecla "Enter". Quando isso ocorrer, o texto digitado será inserido como uma tag.
+
+Adição do ouvinte de eventos  
+Para adicionar o ouvinte, usamos inputTags.addEventListener(). O primeiro argumento é o tipo de evento, "keypress", que monitorará as teclas pressionadas. Definimos uma função anônima como segundo argumento, que recebe o evento e executa a lógica necessária.
+
+```JavaScript
+inputTags.addEventListener("keypress", (evento) => {
+
+})
+```
+
+Verificação da tecla pressionada e prevenção do comportamento padrão
+Primeiro, detectamos qual tecla foi pressionada, pois queremos que a funcionalidade ocorra apenas com o "Enter". Usamos a condicional if (event.key === "Enter") para verificar isso. Quando a tecla "Enter" for pressionada, implementamos a funcionalidade.
+
+```JavaScript
+inputTags.addEventListener("keypress", (evento) => {
+    if (evento.key === "Enter") {
+    
+    }
+})
+```
+
+Agora, usamos event.preventDefault() para evitar o comportamento padrão de atualização da tela ao pressionar "Enter", garantindo que não perderemos o que foi digitado no formulário.
+
+```JavaScript
+inputTags.addEventListener("keypress", (evento) => {
+    if (evento.key === "Enter") {
+        evento.preventDefault();
+    }
+})
+```
+
+Captura do texto da tag  
+Para capturar o texto da tag, criamos uma constante tagTexto que recebe o valor do campo de entrada inputTags.value.trim(). O método trim() remove espaços em branco antes e depois do texto.
+
+```JavaScript
+inputTags.addEventListener("keypress", (evento) => {
+    if (evento.key === "Enter") {
+        evento.preventDefault();
+        const tagTexto = inputTags.value.trim();
+    }
+})
+```
+
+Criação do elemento de tag  
+Prosseguindo, verificamos se há algo digitado em tagTexto com a condição if (tagTexto !== ""). Se houver, criamos um novo item de lista para a tag com const tagNova = document.createElement("li").
+
+```JavaScript
+inputTags.addEventListener("keypress", (evento) => {
+    if (evento.key === "Enter") {
+        evento.preventDefault();
+        const tagTexto = inputTags.value.trim();
+        if (tagTexto !== "") {
+            const tagNova = document.createElement("li");
+    }
+})
+```
+
+Definição do conteúdo da tag  
+Definimos o conteúdo desse novo item de lista com tagNova.innerHTML e colocamos o valor da tag e a imagem de fechamento. Usaremos a tag <p> com um template string para inserir o texto da tag dentro do parágrafo (`<p>`${tagTexto}`</p>`). Depois, adicionamos uma imagem com `<img src="./img/close-black.svg" class="remove-tag">`. A imagem também recebe a classe remove-tag para permitir estilização futura.
+
+```JavaScript
+inputTags.addEventListener("keypress", (evento) => {
+    if (evento.key === "Enter") {
+        evento.preventDefault();
+        const tagTexto = inputTags.value.trim();
+        if (tagTexto !== "") {
+            const tagNova = document.createElement("li");
+            tagNova.innerHTML = `<p>${tagTexto}</p> <img src="./img/close-black.svg" class="remove-tag">`
+    }
+})
+```
+
+Adição da nova tag e limpeza do campo de entrada
+Depois de criar o elemento li, precisamos adicioná-lo à lista de tags. No arquivo index.html, verificamos que a lista de tags é um elemento ul com a classe lista-tags. Podemos adicionar um ID lista-tags a este elemento para facilitar a seleção.
+
+```html
+<ul class="lista-tags" id="lista-tags">
+```
+
+De volta ao scripts.js, depois de definir const inputTags, criamos const listaTags = document.getElementById("lista-tags").
+
+```JavaScript
+const inputTags = document.getElementById("input-tags");
+const listaTags = document.getElementById("lista-tags");
+```
+
+Agora, após tagNova.innerHTML, podemos usar listaTags.appendChild() para adicionar tagNova à lista de tags. Em seguida, limpamos o campo de entrada com inputTags.value = "".
+
+```JavaScript
+inputTags.addEventListener("keypress", (evento) => {
+    if (evento.key === "Enter") {
+        evento.preventDefault();
+        const tagTexto = inputTags.value.trim();
+        if (tagTexto !== "") {
+            const tagNova = document.createElement("li");
+            tagNova.innerHTML = `<p>${tagTexto}</p> <img src="./img/close-black.svg" class="remove-tag">`
+            listaTags.appendChild(tagNova);
+            inputTags.value = "";
+        }
+    }
+})
+```
+
+Teste da funcionalidade e próximos passos  
+Vamos salvar e testar isso no navegador, adicionando a tag "programação" à lista. Ao digitar "programação" e pressionar "Enter", a tag é adicionada corretamente à lista.
+
+Para melhorar ainda mais, seria interessante permitir a remoção das tags criadas. Vamos implementar essa funcionalidade no próximo vídeo.
+
+### Aula 3 - Para saber mais: delegação de eventos
+
+O que são Eventos?  
+Imagine que você está em uma festa (a página da web) e cada vez que algo acontece, como alguém apertando um botão (um evento), você (o JavaScript) quer ser notificado para poder reagir de alguma forma, talvez mudando a música ou as luzes. Em JavaScript, esses "algo acontece" são conhecidos como eventos. Eles podem ser qualquer coisa, desde clicar em um botão, passar o mouse sobre um link, até carregar a página.
+
+Quando um evento acontece, você pode querer fazer algo em resposta. Por exemplo, quando alguém clica em um botão, você pode querer exibir uma mensagem. Para fazer isso, você "escuta" o evento e então define uma função, chamada de "função de callback", que será executada quando o evento ocorrer.
+
+Exemplo Básico de Captura de Evento
+
+```JavaScript
+document.getElementById('meuBotao').addEventListener('click', function() {
+  alert('Olá, mundo!');
+});
+```
+
+Neste exemplo, estamos dizendo ao JavaScript para escutar por cliques no elemento com o ID meuBotao. Quando um clique acontece, ele executa a função que mostra um alerta dizendo "Olá, mundo!".
+
+Gerenciando Eventos Eficientemente  
+À medida que sua página da web cresce, você pode acabar tendo muitos elementos que precisam escutar por eventos. Adicionar um ouvinte de eventos a cada elemento individualmente pode tornar seu código lento e difícil de gerenciar. É aqui que a delegação de eventos se torna útil.
+
+O que é Delegação de Eventos?  
+Delegação de eventos é uma técnica para ouvir eventos onde você usa um único ouvinte de eventos para gerenciar todos os eventos de um tipo específico que ocorrem em seus elementos filhos. Em vez de adicionar um ouvinte de evento a cada elemento individual, você adiciona um ouvinte a um elemento pai e deixa esse ouvinte gerenciar todos os eventos que borbulham de seus elementos filhos.
+
+Por que usar a Delegação de Eventos?  
+
+- Performance: Menos ouvintes de eventos para gerenciar.
+- Manutenção: Facilita a adição, remoção ou alteração de elementos sem precisar reatribuir ouvintes de eventos.
+- Memória: Menos ouvintes de eventos significam menos uso de memória.
+
+Exemplo de Delegação de Eventos
+
+Imagine que você tem uma lista de itens e quer alertar o conteúdo do item quando ele for clicado. Em vez de adicionar um ouvinte de evento a cada item da lista, você pode adicionar um único ouvinte ao elemento pai.
+
+```html
+<ul id="minhaLista">
+  <li>Item 1</li>
+  <li>Item 2</li>
+  <li>Item 3</li>
+</ul>
+```
+
+```JavaScript
+document.getElementById('minhaLista').addEventListener('click', function(e) {
+  // Verifica se o clique veio de um <li>
+  if(e.target.tagName === 'LI') {
+    alert(e.target.textContent);
+  }
+});
+```
+
+Neste exemplo, e.target é o elemento que foi realmente clicado. Se esse elemento for um <li>, o código mostra um alerta com o texto desse item. Isso significa que, não importa quantos itens você adicione à sua lista, o ouvinte de eventos no elemento pai (<ul>) cuidará de todos eles.
+
+Conclusão  
+Eventos são fundamentais para interagir com os(as) usuários(as) em páginas da web, e saber como gerenciá-los eficientemente é uma habilidade essencial para qualquer desenvolvedor(a) JavaScript. A delegação de eventos é uma técnica poderosa que permite a você otimizar seu código e tornar suas aplicações web mais rápidas e responsivas. Experimente usar eventos e delegação de eventos em seus projetos para ver a diferença que eles podem fazer!
+
+### Aula 3 - Deletar tags - Vídeo 2
+
+Transcrição  
+Agora que implementamos a funcionalidade de adicionar novas tags, vamos possibilitar também a remoção de tags já existentes.
+
+Para isso, vamos detectar um clique nos itens da lista e procurar a imagem com o símbolo de X, onde a pessoa usuária vai clicar para remover o item.
+
+Adição do ouvinte de eventos para remoção
+Ao final do arquivo scripts.js, vamos pegar o listaTags e adicionar um ouvinte de eventos com .addEventListener(). O primeiro argumento será "click" e o segundo argumento será uma função que recebe o evento.
+
+```JavaScript
+listaTags.addEventListener("click", (evento) => {
+
+})
+```
+
+Verificação do clique no X  
+Queremos detectar onde ocorre o clique dentro da lista de tags. Para isso, vamos fazer uma condicional para que a ação só seja executada quando o X for clicado: if (evento.target.classList.contains("remove-tag")). Aqui, estamos verificando se o local onde clicamos possui a classe removeTag, que adicionamos ao X quando o criamos dinamicamente.
+
+```JavaScript
+listaTags.addEventListener("click", (evento) => {
+    if (evento.target.classList.contains("remove-tag")) {
+        
+    }
+})
+```
+
+Remoção da tag  
+Dentro dessa condicional, vamos fazer a remoção da tag. Primeiro, pegamos o elemento pai do X, que é o li, com const tagQueQueremosRemover. Depois, removemos esse li da lista de tags com listaTags.removeChild(tagQueQueremosRemover).
+
+```JavaScript
+listaTags.addEventListener("click", (evento) => {
+    if (evento.target.classList.contains("remove-tag")) {
+        const tagQueQueremosRemover = evento.target.parentElement;
+        listaTags.removeChild(tagQueQueremosRemover);
+    }
+})
+```
+
+Teste de funcionalidade e remoção de rags estáticas no index.html
+
+Vamos salvar e testar a funcionalidade de criar e remover tags no navegador. Primeiramente, clicamos no "X" para remover a tag "Programação", adicionada anteriormente.
+
+No entanto, ao tentar remover a primeira tag, "Front-end", não conseguimos, pois ela não possui a classe necessária dentro da imagem. Podemos resolver isso removendo as linhas de código que criam a tag estática no index.html, deixando apenas as tags dinâmicas em nosso projeto.
+
+Trecho de código a ser removido:
+
+```JavaScript
+<li>
+    <p>Front-end</p>
+    <img src="./img/close-black.svg">
+</li>
+```
+
+Conclusão e próximos passos  
+Com isso, conseguimos remover tags com sucesso. Mas seria interessante limitar as tags que podem ser adicionadas para manter a coerência do conteúdo.
+
+Imagine que nossa plataforma é uma rede social para pessoas desenvolvedoras. Não queremos que alguém adicione uma tag irrelevante, como "receita de bolo", porque a rede social não é sobre isso. Ao restringir as tags permitidas a termos como "Front-end", "Programação", "Banco de dados" e similares, facilitamos a categorização e entendimento do conteúdo compartilhado.
+
+Vamos continuar no próximo vídeo para implementar essa funcionalidade e aprimorar nosso projeto.
+
+### Aula 3 - Definir possíveis tags - Vídeo 3
+
+Transcrição  
+Agora que podemos inserir e apagar tags, vamos limitar as opções disponíveis para a pessoa usuária.
+
+Definição das tags permitidas  
+Primeiro, definimos as tags permitidas. Ao final do arquivo scripts.js, criaremos uma variável chamada tagsDisponiveis que será uma lista de tags permitidas, como "Front-end", "Programação", "Data Science", "Full-stack", "HTML", "CSS", "JavaScript", entre outras.
+
+> const tagsDisponiveis = ["Front-end", "Programação", "Data Science", "Full-stack", "HTML", "CSS", "JavaScript"];
+
+Função de verificação das tags disponíveis  
+Com essa lista, verificaremos se a tag digitada está entre as permitidas antes de adicioná-la. Vamos construir uma função assíncrona chamada verificaTagsDisponiveis(), que recebe tagTexto como parâmetro e retorna uma promessa (new Promise()).
+
+```JavaScript
+async function verificaTagsDisponiveis(tagTexto) {
+    return new Promise((resolve) => {
+        
+        }
+```
+
+Vamos simular uma requisição a um banco de dados para verificar a existência da tag, considerando um possível delay na resposta do servidor.
+
+Como mencionado anteriormente, quando não sabemos quanto tempo uma operação pode levar, e não queremos que o JavaScript continue executando código e esqueça a existência dessa funcionalidade, utilizamos uma promessa (Promise). Quando essa promessa é resolvida, retorna o resultado para a etapa correta.
+
+Para utilizar uma promessa, definimos a função como assíncrona. No nosso caso, como é uma simulação, não incluímos o reject, ou seja, a requisição nunca falhará.
+
+Agora, vamos trabalhar dentro do resolve para que, após um determinado tempo, a resposta seja retornada para quem estiver utilizando essa funcionalidade.
+
+Para isso, usamos setTimeout(), que permite definir o que deve acontecer e quando deve acontecer, após quantos milissegundos. Queremos que o resolve utilize tagsDisponiveis para verificar se tagTexto está presente. Fazemos isso com o método .includes(tagTexto), que percorre a lista e retorna true se encontrar a tag.
+
+```JavaScript
+async function verificaTagsDisponiveis(tagTexto) {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve(tagsDisponiveis.includes(tagTexto));
+        })
+    })
+}
+```
+
+Agora, após definir o resolve, podemos adicionar uma vírgula e especificar o tempo em milissegundos. Definiremos como 1000, o que corresponde a 1 segundo. Assim, a pesquisa será rápida, mas ainda lidará com a sincronicidade do setTimeout, que define um intervalo de tempo para a execução.
+
+```JavaScript
+async function verificaTagsDisponiveis(tagTexto) {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve(tagsDisponiveis.includes(tagTexto));
+        }, 1000)
+    })
+}
+```
+
+Conclusão e próximos passos  
+Tendo implementado essa funcionalidade, precisamos integrá-la a outra parte do código para que ela seja efetivamente utilizada. Ou seja, precisamos ativá-la quando a tag for digitada ou enviada. Vamos continuar o desenvolvimento na próxima etapa para garantir que essa verificação de tags funcione corretamente dentro do fluxo da aplicação.
+
+### Aula 3 - Funções dinâmicas
+
+No desenvolvimento do seu portfólio DEVSPOT, você decidiu implementar uma funcionalidade que permite aos visitantes filtrar seus projetos por tags, como "Front-end", "Back-end", "JavaScript", entre outras. Para tornar a experiência mais interativa, você implementou um sistema onde as tags podem ser adicionadas ou removidas dinamicamente. Utilizando JavaScript, você criou uma caixa de entrada para adicionar novas tags pressionando Enter e ícones de remoção em cada tag para facilitar a gestão. Agora, você deseja aprimorar essa funcionalidade, garantindo que apenas tags válidas sejam adicionadas e que as tags possam ser removidas eficientemente.
+
+Considerando as técnicas de manipulação do DOM e programação assíncrona aprendidas, como você pode aprimorar a funcionalidade de adição de tags para verificar se a tag inserida é válida antes de adicioná-la à lista, e qual seria a melhor forma de implementar a remoção de uma tag ao clicar no ícone de remoção?
+
+Resposta:
+
+Utilizar addEventListener para capturar o evento de clique no ícone de remoção e tagExistsAsync para verificar a validade da tag antes de adicioná-la.
+
+```JavaScript
+tagsInput.addEventListener('keypress', async (event) => {
+    if (event.key === 'Enter') {
+        const tagText = tagsInput.value.trim();
+        if (await tagExistsAsync(tagText)) {
+            // Adiciona a tag
+        }
+    }
+});
+tagsList.addEventListener('click', (event) => {
+    if (event.target.classList.contains('remove-tag')) {
+        // Remove a tag
+    }
+});
+```
+
+> Esta alternativa combina corretamente a verificação assíncrona da existência da tag antes de adicioná-la e a implementação eficiente da remoção de tags, seguindo as práticas ensinadas no curso.
+
+### Aula 3 - Faça como eu fiz: inserção e remoção de tags com validação
+
+Nesta aula, aprendemos como implementar a funcionalidade de leitura de arquivos e a inserção de tags baseadas no input do usuário, além de como remover tags já existentes e validar as tags inseridas. Vamos praticar essas funcionalidades no seu projeto.
+
+Agora é sua vez de praticar, fazendo o mesmo no seu projeto. Para isso:
+
+- Adicione a funcionalidade de inserir tags no seu projeto.
+- Implemente a funcionalidade de remover tags.
+- Adicione uma validação para permitir somente tags predefinidas.
+- Teste a inserção, remoção e validação de tags no navegador.
+
+Opinião do instrutor
+
+Abaixo, deixo um passo a passo detalhado de como pode realizar a atividade.
+
+Primeira ação detalhada: Adicionar funcionalidade de inserção de tags
+
+1. Selecione o input de tags no HTML:
+
+Adicione um id ao seu input de tags. No arquivo index.html, encontre o input onde as tags são digitadas e adicione id="input-tags".  
+`<input type="text" id="input-tags" placeholder="Digite uma tag">`
+
+2. Crie a variável para o input de tags no JavaScript:
+
+No arquivo script.js, selecione o input de tags pelo ID usando getElementById.
+const inputTags = document.getElementById('input-tags');
+
+3. Adicione um Event Listener para o input de tags:
+
+```JavaScript
+Adicione um ouvinte de eventos para detectar quando o usuário pressiona a tecla Enter.
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        const tagTexto = inputTags.value.trim();
+        if (tagTexto  !== "") {
+            // Adicione a tag à lista de tags
+        }
+    }
+});
+```
+
+4. Crie a tag e insira na lista:
+
+Dentro do Event Listener, crie um novo elemento li para a tag e adicione-o à lista de tags.
+
+```JavaScript
+const listaTags = document.getElementById("lista-tags");
+const tagNova = document.createElement("li");
+tagNova.innerHTML = `${tagTexto} <img src="img/close.svg" class="remove-tag" alt="Remove">`;
+listaTags.appendChild(tagNova);
+inputTags.value = "";
+```
+
+Segunda ação detalhada: Implementar funcionalidade de remoção de tags
+
+Adicione um Event Listener para a lista de tags:
+
+No script.js, adicione um ouvinte de eventos para detectar cliques na lista de tags.
+
+```JavaScript
+    if (event.target.classList.contains('remove-tag')) {
+        const tagQueQueremosRemover = event.target.parentElement;
+        listaTags.removeChild(tagQueQueremosRemover);
+    }
+```
+
+Terceira ação detalhada: Adicionar validação para tags predefinidas
+
+Defina a lista de tags disponíveis:
+
+Crie um array com as tags disponíveis no script.js.
+
+```JavaScript
+const tagsDisponiveis = ['front-end', 'programação', 'data science', 'full stack', 'HTML', 'CSS', 'JavaScript'];
+```
+
+Valide as tags antes de inseri-las:
+
+No Event Listener de inserção de tags, valide se a tag está na lista de tags disponíveis.
+
+```JavaScript
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        const tagTexto = inputTags.value.trim();
+        if (tagTexto !== "" && tagsDisponiveis.includes(tagTexto)) {
+            const tagNova = document.createElement('li');
+            tagNova.innerHTML = `${tagTexto} <img src="img/close.svg" class="remove-tag" alt="Remove">`;
+            listaTags.appendChild(tagNova);
+            inputTags.value = "";
+        } else {
+            alert('Tag inválida!');
+        }
+    }
+```
+
+Quarta ação detalhada: Testar a inserção, remoção e validação de tags no navegador
+
+- Abra o projeto no navegador:
+ Atualize a página para garantir que todas as mudanças foram aplicadas.
+
+- Teste a inserção de tags:
+Digite diferentes tags no campo de input e pressione Enter. Verifique se apenas as tags disponíveis são aceitas e adicionadas à lista.
+
+- Teste a remoção de tags:
+Clique no ícone de "x" ao lado de cada tag para removê-la da lista.
+
+- Verifique as mensagens de alerta:
+Digite uma tag não disponível e veja se a mensagem de alerta aparece corretamente.
+
+Ao seguir esses passos, você implementará e testará com sucesso a inserção, remoção e validação de tags no seu projeto. Boa sorte!
+
+### Aula 3 - Lista de exercícios da aula 3
+
+Exercício 1) Adicionando tags dinamicamente com JavaScript
+
+Conteúdo:
+
+Você trabalha em um projeto web onde precisa adicionar dinamicamente tags a partir do input do usuário. O objetivo é permitir que os usuários insiram novas tags pressionando a tecla Enter e que estas tags sejam exibidas em uma lista na tela. Vamos implementar essa funcionalidade.
+
+Exercício 2) Validação de formulário de cadastro com JavaScript
+
+Conteúdo:
+
+Você está desenvolvendo um sistema de cadastro de usuários e precisa validar os campos de um formulário antes de enviar os dados ao servidor. Os campos que precisam ser validados são: nome, e-mail e senha. A validação deve garantir que todos os campos estejam preenchidos e que o e-mail esteja em um formato válido.
+
+Exercício 3) Removendo tags ao clicar no "x"
+
+Conteúdo:
+
+Você trabalha em uma rede social para desenvolvedores e precisa implementar a funcionalidade de remoção de tags criadas pelos usuários. Para isso, você deve detectar o clique no ícone de "x" e remover a tag correspondente. Utilize o código fornecido abaixo e construa a funcionalidade de remoção de tags.
+
+```html
+<ul id="tagList">
+  <li>JavaScript <img src="x-icon.png" alt="remove tag" class="remove-tag"></li>
+</ul>
+```
+
+Exercício 4) Limitando as tags permitidas
+
+Conteúdo:
+
+Você precisa garantir que os usuários só possam adicionar tags pré-definidas para manter a relevância do conteúdo da rede social de desenvolvedores. Implemente uma verificação ao adicionar novas tags para permitir apenas tags específicas como "frontend", "programação", "banco de dados", etc.
+
+```html
+<input type="text" id="entradaTag" placeholder="Adicionar uma tag">
+<button id="btnAdicionarTag">Adicionar Tag</button>
+<ul id="listaTags"></ul>
+```
+
+Exercício 5) Verificando tags disponíveis
+
+Conteúdo:
+
+Você está desenvolvendo uma aplicação que permite aos usuários inserir e apagar tags, mas é necessário limitar as tags que eles podem usar. Para isso, você precisa criar uma lista de tags permitidas e uma função assíncrona que verifica se a tag digitada pelo usuário está nesta lista. A função deve simular uma requisição ao banco de dados, retornando o resultado após um breve atraso.
+
+Opinião do instrutor
+
+Resposta do exercício 1)
+
+Opinião da instrutora:
+
+Primeiro, vamos adicionar o código HTML necessário no arquivo index.html:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tag Input</title>
+</head>
+<body>
+    <!-- Input para adicionar tags -->
+    <input type="text" id="input-tags" placeholder="Digite uma tag e pressione Enter">
+    
+    <!-- Lista para exibir as tags adicionadas -->
+    <ul id="lista-tags"></ul>
+
+    <!-- Script JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>
+```
+
+Neste código:
+
+- Um `<input>` do tipo texto com id input-tags permite que os usuários digitem tags.
+- Uma `<ul>` com id lista-tags será usada para exibir as tags inseridas dinamicamente.
+
+2. Código JavaScript (script.js)
+
+Agora, vamos adicionar o código JavaScript no arquivo script.js para tornar o sistema de tags funcional:
+
+```JavaScript
+document.addEventListener('DOMContentLoaded', () => {
+    // Seleciona o input de tags e a lista de tags
+    const inputTags = document.getElementById('input-tags');
+    const listaTags = document.getElementById('lista-tags');
+
+    // Adiciona um ouvinte de evento para capturar a tecla Enter no input
+    inputTags.addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') { // Verifica se a tecla pressionada foi Enter
+            event.preventDefault(); // Evita o comportamento padrão do Enter (submeter o formulário)
+
+            const tagTexto = inputTags.value.trim(); // Obtém o texto da tag e remove espaços em branco extras
+            if (tagTexto !== '') { // Verifica se o texto da tag não está vazio
+                // Cria um novo elemento <li> para a nova tag
+                const novaTag = document.createElement('li');
+                novaTag.innerHTML = `${tagTexto} <img src="img/close.svg" class="remove-tag" alt="Remover Tag">`;
+                listaTags.appendChild(novaTag); // Adiciona a nova tag à lista de tags
+                inputTags.value = ''; // Limpa o input de tags para o próximo input
+            }
+        }
+    });
+
+    // Adiciona um ouvinte de evento para capturar cliques na lista de tags
+    listaTags.addEventListener('click', (event) => {
+        if (event.target.classList.contains('remove-tag')) { // Verifica se o elemento clicado é um botão de remoção de tag
+            event.target.parentElement.remove(); // Remove o pai do botão (ou seja, o <li> que contém a tag)
+        }
+    });
+});
+```
+
+Explicação do Código JavaScript  
+Evento DOMContentLoaded: Espera até que todo o DOM esteja carregado para iniciar a execução do JavaScript. Isso garante que todos os elementos HTML estejam disponíveis para manipulação.
+
+Seleção de Elementos: const inputTags = document.getElementById('input-tags'); seleciona o elemento de entrada de tags onde os usuários digitam as tags. const listaTags = document.getElementById('lista-tags'); seleciona a lista `<ul>` onde as tags serão exibidas.
+
+Evento keypress no Input de Tags: Adiciona um ouvinte de evento para capturar quando uma tecla é pressionada dentro do input de tags. event.key === 'Enter' verifica se a tecla pressionada foi Enter. event.preventDefault(); impede o comportamento padrão do Enter, que é submeter o formulário.
+
+Criação e Adição de Nova Tag: const tagTexto = inputTags.value.trim(); obtém o texto digitado no input de tags e remove espaços em branco extras. if (tagTexto !== '') { ... } verifica se o texto da tag não está vazio. const novaTag = document.createElement('li'); cria um novo elemento `<li>` para representar a nova tag. novaTag.innerHTML = ${tagTexto} `<img src="img/close.svg" class="remove-tag" alt="Remover Tag">`; define o HTML da nova tag, incluindo o texto da tag e um ícone de fechar. listaTags.appendChild(novaTag); adiciona a nova tag à lista de tags.
+
+Evento click na Lista de Tags para Remoção: Adiciona um ouvinte de evento para capturar cliques na lista de tags. event.target.classList.contains('remove-tag') verifica se o elemento clicado tem a classe remove-tag, que é atribuída ao ícone de fechar. event.target.parentElement.remove(); remove o elemento pai do ícone de fechar, ou seja, remove a tag da lista quando o ícone de fechar é clicado.
+
+Resposta do exercício 2)
+
+Opinião:
+
+Entendi! Vamos dividir o código em trechos menores e explicar cada parte separadamente.
+
+- Passo 1: Estrutura do HTML (index.html)
+- Primeiro, crie a estrutura básica do HTML para o formulário de cadastro:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário de Cadastro</title>
+</head>
+<body>
+    <form id="cadastro-form">
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" name="nome">
+        <span id="erro-nome" class="erro"></span>
+        
+        <label for="email">E-mail:</label>
+        <input type="text" id="email" name="email">
+        <span id="erro-email" class="erro"></span>
+        
+        <label for="senha">Senha:</label>
+        <input type="password" id="senha" name="senha">
+        <span id="erro-senha" class="erro"></span>
+        
+        <button type="submit">Cadastrar</button>
+    </form>
+
+    <script src="script.js"></script>
+</body>
+</html>
+```
+
+Selecione os elementos do formulário (nome, email, senha) e os spans de erro correspondentes (erroNome, erroEmail, erroSenha) usando document.getElementById.
+
+```JavaScript
+    const form = document.getElementById('cadastro-form');
+    const nome = document.getElementById('nome');
+    const email = document.getElementById('email');
+    const senha = document.getElementById('senha');
+    const erroNome = document.getElementById('erro-nome');
+    const erroEmail = document.getElementById('erro-email');
+    const erroSenha = document.getElementById('erro-senha');
+```
+
+Adicione um event listener para o evento submit do formulário, que executa uma função anônima quando o formulário é enviado.
+
+```JavaScript
+   form.addEventListener('submit', function(event) {
+})
+```
+
+Dentro da função do event listener, use event.preventDefault() para impedir o comportamento padrão de envio do formulário.
+
+```JavaScript
+  event.preventDefault();
+```
+
+Verifique se o campo nome está vazio. Se estiver, exibe uma mensagem de erro no span erroNome.
+
+```JavaScript
+    if (nome.value.trim() === '') {
+            erroNome.textContent = 'O nome é obrigatório.';
+            return; // Encerrar a função se houver erro
+        } else {
+            erroNome.textContent = '';
+        }
+```
+
+Verifique se o campo email está vazio. Se estiver, exibe uma mensagem de erro no span erroEmail. Você pode utilizar uma expressão regular (regexEmail) para validar o formato do e-mail.
+
+```JavaScript
+       const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (email.value.trim() === '') {
+            erroEmail.textContent = 'O e-mail é obrigatório.';
+            return; // Encerrar a função se houver erro
+        } else if (!regexEmail.test(email.value.trim())) {
+            erroEmail.textContent = 'O e-mail não é válido.';
+            return; // Encerrar a função se houver erro
+        } else {
+            erroEmail.textContent = '';
+        }
+```
+
+Verifique se o campo senha está vazio. Se estiver, exibe uma mensagem de erro no span erroSenha.
+
+```JavaScript
+        if (senha.value.trim() === '') {
+            erroSenha.textContent = 'A senha é obrigatória.';
+            return; // Encerrar a função se houver erro
+        } else {
+            erroSenha.textContent = '';
+        }
+```
+
+Se todos os campos estiverem preenchidos corretamente (sem mensagens de erro visíveis), o formulário é submetido usando form.submit().
+
+Resposta do exercício 3)
+
+Opinião:
+
+- Adicione um evento de clique ao elemento ul que contém a lista de tags.
+- Verifique se o alvo do clique é o ícone de "x" utilizando event.target.classList.contains('remove-tag')
+- Encontre o elemento li pai do ícone de "x" com event.target.parentElement
+- Remova o elemento li pai utilizando o método remove
+
+```JavaScript
+  document.getElementById('tagList').addEventListener('click', function(event) {
+    if (event.target.classList.contains('remove-tag')) {
+      const tagToRemove = event.target.parentElement;
+      tagToRemove.remove();
+    }
+  });
+</script>
+```
+
+Resposta do exercício 4)
+
+Opinião:
+
+Primeiro, crie uma lista de tags permitidas em uma constante chamada tagsPermitidas. Essas são as únicas tags que poderão ser adicionadas.
+
+```JavaScript
+const tagsPermitidas = ['frontend', 'programação', 'banco de dados', 'backend', 'devops'];
+```
+
+Obtenha os elementos do DOM que serão utilizados: o campo de entrada de tags, a lista onde as tags serão exibidas e o botão de adicionar tag.
+
+```JavaScript
+const entradaTag = document.getElementById('entradaTag');
+const listaTags = document.getElementById('listaTags');
+const btnAdicionarTag = document.getElementById('btnAdicionarTag');
+```
+
+Adicione um evento de clique ao botão de adicionar tag. Esse evento chamará uma função para processar a entrada de uma nova tag.
+
+```JavaScript
+btnAdicionarTag.addEventListener('click', function() {
+    const novaTag = entradaTag.value.trim().toLowerCase();
+    
+    // Passo 4 e 5 são realizados aqui
+    
+    entradaTag.value = '';
+});
+```
+
+Dentro da função de clique, verifique se a tag digitada está na lista de tags permitidas e se não é uma duplicata usando uma função auxiliar tagDuplicada.
+
+```JavaScript
+if (tagsPermitidas.includes(novaTag) && !tagDuplicada(novaTag)) {
+    // Passo 6 é realizado aqui
+}
+```
+
+Crie a função tagDuplicada para verificar se a tag já existe na lista de tags.
+
+```JavaScript
+function tagDuplicada(tag) {
+    const tagsExistentes = Array.from(listaTags.children).map(li => li.textContent.trim().toLowerCase());
+    return tagsExistentes.includes(tag);
+}
+```
+
+Se a tag for permitida e não duplicada, crie um novo elemento li para representá-la. Adicione um ícone de "x" ao li para permitir que a tag seja removida.
+
+```JavaScript
+const li = document.createElement('li');
+li.textContent = novaTag;
+
+const iconeRemover = document.createElement('img');
+iconeRemover.src = 'x-icon.png'; // Certifique-se de que este caminho esteja correto
+iconeRemover.alt = 'remover tag';
+iconeRemover.classList.add('remover-tag');
+
+li.appendChild(iconeRemover);
+listaTags.appendChild(li);
+```
+
+Adicione um evento de clique ao ícone de "x" para que a tag seja removida quando o ícone for clicado.
+
+```JavaScript
+listaTags.addEventListener('click', function(evento) {
+    if (evento.target.classList.contains('remover-tag')) {
+        const tagParaRemover = evento.target.parentElement;
+        tagParaRemover.remove();
+    }
+});
+```
+
+Resposta do exercício 5)
+
+Opinião:
+
+Crie a lista de tags permitidas:
+
+> const tagsDisponiveis = ["front-end", "programação", "data science", "full stack", "HTML", "CSS", "JavaScript"];
+
+Desenvolva a função assíncrona verificaTagsDisponiveis:
+
+```JavaScript
+async function verificaTagsDisponiveis(tagTexto) {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve(tagsDisponiveis.includes(tagTexto));
+        }, 1000);
+    });
+}
+```
+
+- A constante tagsDisponiveis contém a lista de tags permitidas.
+- A função verificaTagsDisponiveis é declarada como assíncrona e retorna uma Promise.
+- O setTimeout dentro da função simula um atraso de 1 segundo antes de verificar se a tag digitada está na lista de tags permitidas usando o método includes.
+- A função resolve a Promise com true ou false, dependendo do resultado da verificação.
+
+### Aula 3 - O que aprendemos?
+
+Nessa aula, você aprendeu como:
+
+- Manipular o Document Object Model (DOM) para adicionar e remover elementos dinamicamente usando JavaScript.
+- Usar listeners de eventos para capturar ações do(a) usuário(a), como pressionar a tecla Enter e clicar em ícones de remoção.
+- Criar elementos HTML dinamicamente e inseri-los na página.
+- Usar funções assíncronas, async/await e Promises para realizar verificações assíncronas antes de adicionar tags.
+- A delegação de eventos pode tornar nosso código mais eficiente, adicionando um único event listener a um elemento pai para gerenciar eventos em seus filhos.
+
+### Aula 3 -  - Vídeo 7

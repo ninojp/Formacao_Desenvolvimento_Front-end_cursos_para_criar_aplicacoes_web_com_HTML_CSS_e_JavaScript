@@ -30,6 +30,46 @@ document.getElementById('image-upload').addEventListener('change', async (evento
 });
 //==============================================================================================
 
+document.getElementById('tagsCategoria').addEventListener('keypress', (evento) => {
+    if (evento.key === 'Enter') {
+        evento.preventDefault();
+        const novaTag = evento.target.value.trim();
+        if (novaTag !== '') {
+            const liTagElemento = document.createElement('li');
+            const pTagElemento = document.createElement('p');
+            pTagElemento.textContent = novaTag;
+            const btnRemover = document.createElement('img');
+            btnRemover.src = './img/close-black.svg';
+            btnRemover.classList.add('remove-tag');
+            liTagElemento.appendChild(pTagElemento);
+            liTagElemento.appendChild(btnRemover);
+            document.querySelector('.lista-tags').appendChild(liTagElemento);
+            evento.target.value = ''; // Limpa o campo de entrada
+        };
+    };
+});
+//==============================================================================================
+
+document.querySelector('.lista-tags').addEventListener('click', (evento) => {
+    if (evento.target.classList.contains('remove-tag')) {
+        const liTagElementoAtual = evento.target.parentElement;
+        // document.querySelector('.lista-tags').removeChild(liTagElementoAtual);//Professora fez assim
+        liTagElementoAtual.remove();
+    };
+});
+//==============================================================================================
+
+const tagsDisponiveis = ["Front-end", "Programação", "Data Science", "Full-stack", "HTML", "CSS", "JavaScript"];
+async function verificaTagsDisponiveis(tagTexto) {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve(tagsDisponiveis.includes(tagTexto));
+        })
+    });
+    
+}
+//==============================================================================================
+
 //Lendo e exibindo um aqruivo texto
 document.getElementById("upload-txt-btn").addEventListener("click", () => {
     document.getElementById("txt-upload").click();
