@@ -2841,4 +2841,1526 @@ Nessa aula, você aprendeu como:
 - Usar funções assíncronas, async/await e Promises para realizar verificações assíncronas antes de adicionar tags.
 - A delegação de eventos pode tornar nosso código mais eficiente, adicionando um único event listener a um elemento pai para gerenciar eventos em seus filhos.
 
-### Aula 3 -  - Vídeo 7
+## Aula 4 - Coletando dados do Formulário
+
+### Aula 4 - Limitar tags inseridas - Vídeo 1
+
+Transcrição  
+Construímos uma funcionalidade para verificar as tags que a pessoa usuária consegue digitar no campo de tags. Agora, precisamos utilizá-la no momento em que os dados forem inseridos no input.
+
+Para isso, vamos mover a função do input tags do addEventListener, para abaixo da nossa nova função verificaTagsDisponíveis(). Isso evitará o risco de erro de tentarmos utilizar uma funcionalidade antes de ela ser construída.
+
+Agora, o ouvinte de definição de tags já existe. Precisamos adicionar novas funcionalidades para verificar se a tag já existe ou não.
+
+Abaixo da linha if (tagTexto !=="") vamos utilizar uma constante tagExiste para verificar se ela está na lista ou não. Para isso, vamos utilizar o await verificaTagsDisponiveis(tagTexto).
+
+Se passarmos o mouse sobre o await, ele vai nos avisar que precisamos utilizar o await sempre em funções assíncronas. Então, precisamos adicionar a palavra-chave async antes da criação dessa funcionalidade dentro do ouvinte de eventos.
+
+```JavaScript
+inputTags.addEventListener("keypress", async (evento) => {
+    if (evento.key === "Enter") {
+        evento.preventDefault();
+        const tagTexto = inputTags.value.trim();
+        if (tagTexto !== "") {
+        const tagExiste = await verificaTagsDisponiveis(tagTexto);
+// código omitido
+```
+
+No momento em que enviarmos, ele vai chamar aquela função, vai enviar o valor e vai retornar true ou false. Se retornar true, queremos imprimir a tag na tela.
+
+Queremos tentar ver se conseguimos colocar na tela, a partir do retorno daquela promise. Podemos utilizar um try antes do tagExiste, que terá o fechamento no final do input tags. Depois, precisamos adicionar um catch(error){}. Agora, ele vai tentar executar aquela funcionalidade de verificar se a tag existe, e se não funcionar, ele vai retornar algum erro.
+
+Dentro do catch, podemos adicionar um console.error que vai retornar a mensagem "Erro ao verificar a existência da tag".
+
+Também podemos adicionar um alerta, para ficar ainda mais claro para a pessoa usuária. Sempre que ocorrer um erro, ele vai fazer isso.
+
+Mas esse erro é, por exemplo, quando ocorre um erro na requisição para aquela funcionalidade. Não é um erro, por exemplo, que a tag não existe. Precisamos nos preocupar com essa situação também.
+
+Depois do tagExiste, precisamos adicionar um mapa condicional. If tagExiste, então ele vai construir o elemento. Senão, ele vai alertar que a tag não foi encontrada.
+
+Estamos lidando com dois tipos de situações que podem dar problema. Tanto na requisição, quanto quando a tag não existe. São situações diferentes, mas ambas retornariam algum feedback para a pessoa usuária.
+
+```JavaScript
+inputTags.addEventListener("keypress", async (evento) => {
+    if (evento.key === "Enter") {
+        evento.preventDefault();
+        const tagTexto = inputTags.value.trim();
+        if (tagTexto !== "") {
+            try {
+                const tagExiste = await verificaTagsDisponiveis(tagTexto);
+                if (tagExiste) {
+                    const tagNova = document.createElement("li");
+                    tagNova.innerHTML = `<p>${tagTexto}</p> <img src="./img/close-black.svg" class="remove-tag">`
+                    listaTags.appendChild(tagNova);
+                    inputTags.value = "";
+                } else {
+                    alert("Tag não foi encontrada.");
+                }
+            } catch (error) {
+                console.error("Erro ao verificar a existência da tag");
+                alert("Erro ao verificar a existência da tag. Verifique o console.")
+            }
+        }
+    }
+})
+```
+
+Testando a aplicação  
+Vamos testar. Se inserirmos "teste" e pressionarmos "Enter", ele nos avisa que a tag não foi encontrada. Se inserirmos "front-end", ele aceita, faz a verificação e adiciona a tag "front-end" ao nosso projeto. Então, a nossa funcionalidade está funcionando com sucesso!
+
+Utilizamos vários conceitos de assincronicidade do JavaScript, que são o try-catch, o async-await. Utilizamos o setTimeout, onde definimos um tempo para aquela função ser executada.
+
+No próximo vídeo, daremos continuidade no projeto, pois ainda temos muitas funções para serem construídas!
+
+### Aula 4 - Verificação assíncrona
+
+No desenvolvimento do seu portfólio DEVSPOT, você decidiu implementar uma funcionalidade que permite aos usuários(as) adicionar tags relacionadas às tecnologias utilizadas em seus projetos. Para melhorar a experiência do(a) usuário(a) e a consistência dos dados, você implementou uma verificação assíncrona que confirma se as tags inseridas estão em uma lista predefinida de tags válidas. Utilizando JavaScript, você aplicou técnicas de manipulação de erros, ação condicional e operações assíncronas com async/await e try...catch.
+
+Considerando a necessidade de verificar a validade de uma tag de forma assíncrona antes de adicioná-la à lista de tags do projeto, qual trecho de código melhor representa a implementação dessa funcionalidade?
+
+Resposta:
+
+```JavaScript
+tagsInput.addEventListener('keypress', async (event) => {
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        const tagText = tagsInput.value.trim();
+        if (tagText !== '') {
+            try {
+                const tagExists = await tagExistsAsync(tagText);
+                if (tagExists) {
+                    const newTag = document.createElement('li');
+                    newTag.innerHTML = `<p>${tagText}</p><img src="./img/close-black.svg" class="remove-tag">`;
+                    tagsList.appendChild(newTag);
+                    tagsInput.value = '';
+                } else {
+                    alert('Tag não encontrada. Por favor, insira uma tag válida.');
+                }
+            } catch (error) {
+                console.error('Erro ao verificar a existência da tag:', error);
+                alert('Erro ao verificar a existência da tag. Verifique o console para mais detalhes.');
+            }
+        }
+    }
+});
+```
+
+> Este código segue corretamente a abordagem async/await para operações assíncronas, utiliza try...catch para manipulação de erros e implementa a lógica condicional para verificar a existência da tag antes de adicioná-la, alinhando-se com a solução proposta no contexto.
+
+### Aula 4 - Dados do formulário - Vídeo 2
+
+Transcrição  
+Já implementamos várias funcionalidades na inserção de tags e na inserção de imagens dentro do projeto.
+
+Agora, é importante termos acesso a tudo o que for inserido dentro do formulário, como o nome do projeto, descrição e lista de tags.
+
+Para isso, precisamos selecionar o botão de publicar do formulário. Então, vamos no index.html e ver se existe algum identificador desse botão.
+
+Temos a classe botão-publicar. Podemos usar ela. No scripts.js, vamos criar uma variável const botaoPublicar, que vai receber um document.querySelector(".botao-publicar").
+
+Tendo acesso a esse botão, queremos detectar o clique dentro dele. Esse async vai ser utilizado no futuro, explicaremos no momento que for conveniente o motivo do uso dele.
+
+Precisamos tirar aquele evento padrão de envio de formulário. Vamos utilizar o evento.preventDefault().
+
+const botaoPublicar = document.querySelector(".botao-publicar");
+
+```JavaScript
+botaoPublicar.addEventListener("click", async (evento) => {
+    evento.preventDefault();
+```
+
+Agora, ele não vai atualizar a página no envio desse formulário, e podemos começar a selecionar os campos de digitação dentro dele.
+
+```JavaScript
+const botaoPublicar = document.querySelector(".botao-publicar");
+
+botaoPublicar.addEventListener("click", async (evento) => {
+    evento.preventDefault();
+
+    const nomeDoProjeto = document.getElementById("nome");
+    const descricaoDoProjeto = document.getElementById("descricao");
+    
+```
+
+Agora, como pegar uma lista de tags? Até o momento, todos os locais estamos querendo acessar somente o conteúdo que tem dentro dele. Para isso, vamos utilizar um const tagsProjetocom um array, ou seja, uma lista de informações com todos os elementos "p" que encontrar. Para pegar somente o texto, vamos usar .map((tag) => tag.textContent.
+
+```JavaScript
+const botaoPublicar = document.querySelector(".botao-publicar");
+
+botaoPublicar.addEventListener("click", async (evento) => {
+    evento.preventDefault();
+
+    const nomeDoProjeto = document.getElementById("nome").value;
+    const descricaoDoProjeto = document.getElementById("descricao").value;
+    const tagsProjeto = Array.from(listaTags.querySelectorAll("p")).map((tag) => tag.textContent);
+```
+
+Agora, dentro do tags-projeto, teremos uma lista com todas as tags, e dentro das nossas variáveis nomeDoProjeto e descricaoDoProjeto, estamos recebendo elementos. E para receber o valor, vamos precisar colocar .value no final deles.
+
+Testando a aplicação  
+Agora podemos testar, e para testar, vamos utilizar três console.logs.
+
+```JavaScript
+const botaoPublicar = document.querySelector(".botao-publicar");
+
+botaoPublicar.addEventListener("click", async (evento) => {
+    evento.preventDefault();
+
+    const nomeDoProjeto = document.getElementById("nome").value;
+    const descricaoDoProjeto = document.getElementById("descricao").value;
+    const tagsProjeto = Array.from(listaTags.querySelectorAll("p")).map((tag) => tag.textContent);
+
+    console.log(nomeDoProjeto);
+    console.log(descricaoDoProjeto);
+    console.log(tagsProjeto);
+})
+```
+
+Vamos verificar o que vai retornar tudo isso que capturamos dentro dessas variáveis.
+
+Vamos abrir o inspecionar elemento no navegador, clicando no botão direito do mouse, e abrir o console, que é a segunda opção do menu superior.
+
+Vamos colocar o nome do projeto, a descrição e as tags de front-end e programação. Em seguida, vamos clicar no botão "Publicar".
+
+Ele retornou para nós três console.log dentro do nosso console. Retornou os textos que inserimos nos campos:
+
+Gato bonifácio
+
+Projeto de portfólio do gato
+
+(2) ['Front-end', 'Programação']
+
+Conseguimos com sucesso resgatar todos os valores de dentro desse formulário! Agora precisamos simular o envio dele para um banco de dados. Faremos isso no próximo vídeo.
+
+### Aula 4 - Simulação de envio - Vídeo 3
+
+Transcrição  
+Agora que conseguimos capturar os dados de dentro do nosso formulário, podemos implementar uma funcionalidade de simulação de envio dos dados para um back-end, ou seja, para um banco de dados.
+
+Para isso, no script.js vamos construir uma função que vai se chamar publicarProjeto.
+
+Vamos retornar uma promessa, porque como é uma simulação de um envio para o banco de dados, é o mesmo caso dos outros. Não temos como garantir que vai dar certo e nem garantir que vai dar errado. Precisamos esperar esse processo de envio ser resolvido para retornar essa informação.
+
+Então, como vamos simular, vamos utilizar um return new Promise(resolve, reject). Depois, vamos definir o que vai ser feito dentro dessa promessa.
+
+Vamos simular um intervalo de tempo com o setTimeout. E esse timeout vai receber uma arrow function, que vai receber uma variável const deuCerto, que vai receber um número aleatório.
+
+Conseguiremos esse número aleatório através de Math.random() > 0.5. Então, ele vai retornar a verdade quando um número aleatório, que foi retornado do Math.random, for maior do que 0.5. Senão, ele vai retornar essa promessa como errado.
+
+```JavaScript
+async function publicarProjeto(nomeDoProjeto, descricaoProjeto, tagsProjeto) {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            const deuCerto = Math.random() > 0.5;
+    })
+}
+```
+
+Está bem simulada essa situação, por isso que colocamos o Math.random, porque não vamos definir somente se deu certo ou não, vai acontecer algum fator externo para retornar essa resposta da promise. Não vamos colocar manualmente se deu certo ou não, vai ter um fator externo que vai dar essa resposta para nós. E aqui vai ser baseado na sorte.
+
+Então, dando sequência, faremos uma condicional. E precisamos ainda colocar quanto tempo queremos que demore essa nossa promessa. Então, vamos colocar 2000 milissegundos (2 segundos), só para dar um tempo de isso acontecer e simular, então, a demora da internet da pessoa usuária.
+
+O código de function publicarProjeto vai ficar assim:
+
+```JavaScript
+async function publicarProjeto(nomeDoProjeto, descricaoProjeto, tagsProjeto) {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            const deuCerto = Math.random() > 0.5;
+            if (deuCerto) {
+                resolve("Projeto publicado com sucesso.")
+            } else {
+                reject("Erro ao publicar o projeto.")
+            }
+        }, 2000)
+    })
+}
+```
+
+Agora, precisamos utilizar essa funcionalidade que foi construída dentro do envio do formulário. Mas faremos isso na próxima aula!
+
+### Aula 4 - Para saber mais: Event Loop, Call Stack e Task Queue
+
+Agora que estamos explorando a assincronicidade com o JavaScript, é essencial entender como ele gerencia as operações, especialmente aquelas que não acontecem instantaneamente, como as ações que estamos criando durante este curso.
+
+Aqui, vamos desvendar o mistério por trás do Event Loop, Call Stack e Task Queue, e como eles trabalham juntos para fazer o JavaScript parecer multitarefa.
+
+JavaScript é Síncrono, mas...  
+Por padrão, o JavaScript executa código linha por linha, de forma síncrona. Isso significa que ele precisa terminar uma linha antes de passar para a próxima. Mas e se uma linha de código leva muito tempo para ser executada, como uma requisição de rede? É aí que entram os conceitos de código assíncrono, Event Loop, Call Stack e Task Queue.
+
+Call Stack: O Gerente de Tarefas  
+Imagine a Call Stack (Pilha de Chamadas) como uma pilha de bandejas. Cada vez que você chama uma função, você coloca uma bandeja nesta pilha. Quando a função termina, você tira a bandeja de cima. Isso mantém tudo organizado, sabendo sempre qual função deve retornar depois.
+
+```JavaScript
+function primeiraFuncao() {
+  segundaFuncao();
+  console.log("Olá da primeira função!");
+}
+
+function segundaFuncao() {
+  console.log("Olá da segunda função!");
+}
+
+primeiraFuncao();
+```
+
+Neste exemplo, a segundaFuncao() é chamada dentro da primeiraFuncao(). Então, a Call Stack fica assim:
+
+primeiraFuncao()  
+segundaFuncao()  
+
+Quando segundaFuncao() termina, ela é removida da pilha, seguida pela primeiraFuncao().
+
+Task Queue: A Fila de Espera  
+Quando o JavaScript executa código assíncrono, como setTimeout, ele não espera que a operação termine para continuar. Em vez disso, ele coloca essa operação em uma fila chamada Task Queue (Fila de Tarefas), e continua executando o resto do código síncrono.
+
+```JavaScript
+console.log("Início");
+
+setTimeout(() => {
+  console.log("Processado no timeout");
+}, 2000);
+
+console.log("Fim");
+```
+
+Neste caso, "Fim" é impresso antes de "Processado no timeout", porque setTimeout é assíncrono e vai para a Task Queue, esperando a Call Stack ficar vazia.
+
+Event Loop: O Maestro  
+Agora, como o JavaScript sabe quando executar o código da Task Queue? Aqui entra o Event Loop (Laço de Eventos). O trabalho do Event Loop é simples: ele verifica se a Call Stack está vazia. Se estiver, ele pega o primeiro item da Task Queue e o move para a Call Stack para ser executado. Esse processo continua, permitindo que o JavaScript execute código assíncrono, como callbacks e promessas, no momento certo.
+
+Exemplo Prático
+
+```JavaScript
+console.log("Início");
+
+setTimeout(() => {
+  console.log("Timeout 1");
+}, 3000);
+
+setTimeout(() => {
+  console.log("Timeout 2");
+}, 2000);
+
+console.log("Fim");
+```
+
+Neste exemplo, a execução ocorre da seguinte forma:
+
+- "Início" é impresso.
+- "Fim" é impresso logo depois.
+- Após 2000ms, "Timeout 2" é executado primeiro, pois sua espera é menor.
+- Após 3000ms, "Timeout 1" é executado.
+
+Isso mostra como o Event Loop gerencia a execução assíncrona, garantindo que o código seja executado na ordem correta, baseado no tempo de espera.
+
+Conclusão  
+Entender o Event Loop, junto com a Call Stack e a Task Queue, é fundamental para trabalhar eficientemente com JavaScript, especialmente ao lidar com operações assíncronas. Isso não apenas ajuda a escrever código mais eficiente e a evitar erros comuns, como também abre portas para explorar recursos avançados do JavaScript, tornando suas aplicações mais rápidas e responsivas.
+
+### Aula 4 - Faça como eu fiz: verificação de tags e publicação de projeto
+
+Nesta aula, aprendemos como verificar se as tags digitadas pelo usuário são válidas e como capturar dados do formulário para simular um envio a um banco de dados.
+
+Agora é sua vez de praticar, fazendo o mesmo no seu projeto. Para isso:
+
+- Mova a função inputTags para baixo da função verificaTagsDisponiveis.
+- Adicione a verificação assíncrona das tags no momento de inserção.
+- Capture os dados do formulário ao clicar no botão de publicar.
+- Simule o envio desses dados para um backend.
+
+Opinião do instrutor
+
+Abaixo, deixo um passo a passo detalhado de como pode realizar a atividade.
+
+- Primeira ação detalhada:
+- Mover a função inputTags
+- Abra o arquivo script.js.
+- Localize a função inputTags que está entre as linhas 43 a 54.
+- Recorte essa função e cole abaixo da função verificaTagsDisponiveis para evitar erros de execução.
+
+Segunda ação detalhada:
+
+Adicionar a verificação assíncrona das tags
+
+No evento de criação de tags, adicione uma condicional para verificar se a tag existe:
+
+```JavaScript
+if (tagTexto !== "") {
+    try {
+        const tagExiste = await verificaTagsDisponiveis(tagText);
+        if (tagExiste) {
+            // Código para adicionar a tag
+        } else {
+            alert("Tag não foi encontrada.");
+        }
+    } catch (error) {
+        console.error("Erro ao verificar a existência da tag", error);
+        alert("Erro ao verificar a existência da tag. Verifique o console.");
+    }
+}
+```
+
+Lembre-se de adicionar a palavra-chave async antes da definição da função do ouvinte de eventos.
+
+Terceira ação detalhada:
+
+Capturar dados do formulário
+
+No arquivo script.js, na linha 85, adicione:
+
+```JavaScript
+botaoPublicar.addEventListener("click", async (evento) => {
+    evento.preventDefault();
+
+    const nomeProjeto = document.getElementById("nome").value;
+    const descricaoProjeto = document.getElementById("descricao").value;
+    
+    const tagsProjeto = Array.from(document.querySelectorAll(".tagList p"))
+        .map(tag => tag.textContent);
+
+    console.log(nomeProjeto);
+    console.log(descricaoProjeto);
+    console.log(tagsProjeto);
+});
+```
+
+Quarta ação detalhada:
+
+Simular o envio dos dados
+
+1. Crie a função publicarProjeto no arquivo script.js, na linha 99:
+
+```JavaScript
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            const deuCerto = Math.random() > 0.5;
+            if (deuCerto) {
+                resolve("Projeto publicado com sucesso.");
+            } else {
+                reject("Erro ao publicar o projeto.");
+            }
+        }, 2000);
+    });
+}
+```
+
+2. Utilize essa função dentro do evento de clique do botão de publicar:
+
+```JavaScript
+    evento.preventDefault();
+
+    const nomeProjeto = document.getElementById("nome").value;
+    const descricaoProjeto = document.getElementById("descricao").value;
+    const tagsProjeto = Array.from(document.querySelectorAll(".tagList p"))
+        .map(tag => tag.textContent);
+
+    try {
+        const mensagem = await publicarProjeto(nomeProjeto, descricaoProjeto, tagsProjeto);
+        console.log(mensagem);
+        alert(mensagem);
+    } catch (error) {
+        console.error(error);
+        alert(error);
+    }
+});
+```
+
+Pronto! Agora você tem as instruções detalhadas para replicar a funcionalidade de verificação de tags e simulação de envio dos dados no seu projeto. Boa prática!
+
+### Aula 4 - Lista de exercícios da aula 4
+
+Exercício 1) Validação de E-mail em Formulário de Cadastro
+
+Conteúdo:
+
+Você está desenvolvendo um formulário de cadastro de usuários para um site. Um dos requisitos é validar se o e-mail inserido pelo usuário já está registrado no sistema antes de permitir o envio do formulário. A validação deve ser feita de forma assíncrona, consultando uma lista de e-mails previamente cadastrados.
+
+Exercício 2) Validação de Nome de Usuário em Plataforma de Jogos
+
+Conteúdo:
+
+Você está desenvolvendo uma plataforma de jogos online e precisa implementar uma funcionalidade para validar se o nome de usuário escolhido está disponível. A validação deve ocorrer de forma assíncrona, consultando uma lista de nomes de usuários já registrados, antes de permitir que o usuário finalize o cadastro.
+
+Implemente a funcionalidade de validação de nome de usuário em um formulário de cadastro. A função de validação deve verificar se o nome de usuário digitado já existe em uma lista de nomes registrados e fornecer feedback em tempo real.
+
+Exercício 3) Capturando dados do formulário e simulando envio para o banco de dados
+
+Conteúdo:
+
+Você trabalha com desenvolvimento web e precisa capturar as informações inseridas em um formulário, incluindo o nome do projeto, descrição e lista de tags, e simular o envio desses dados para um banco de dados.
+
+Selecione o botão de publicar do formulário.
+Capture os dados do formulário quando o botão for clicado.
+Simule o envio dos dados para um banco de dados.
+Exercício 4) Enviando feedback do usuário via formulário
+
+Conteúdo:
+
+Você trabalha com desenvolvimento web e precisa criar um formulário de feedback para os usuários do site. O formulário deve capturar o nome do usuário, seu e-mail e a mensagem de feedback. Depois, esses dados devem ser enviados para um servidor quando o botão de enviar for clicado.
+
+Selecione o botão de enviar do formulário.
+Capture os dados do formulário quando o botão for clicado.
+Simule o envio dos dados para um servidor.
+Exercício 5) Simulando envio de formulário para um backend
+
+Conteúdo:
+
+Você trabalha com desenvolvimento web e precisa simular o envio de dados de um formulário para um backend. Crie uma função assíncrona que simule esse envio utilizando uma promessa (Promise). A função deve receber três parâmetros: nome do projeto, descrição do projeto e tags do projeto. A simulação deve ter um tempo de espera e um retorno aleatório para o sucesso ou falha do envio.
+
+Implemente a função publicarProjeto que simula o envio de dados do formulário.
+Utilize setTimeout para simular um tempo de resposta de 2 segundos.
+Use Math.random para determinar aleatoriamente se o envio foi bem-sucedido ou falhou.
+A função deve retornar uma mensagem de sucesso ou falha com base na simulação.
+Ver opinião do instrutor
+Opinião do instrutor
+
+Resposta do exercício 1)
+
+Opinião
+
+Primeiro, crie uma estrutura HTML básica com um campo de entrada para o e-mail e um local para exibir o feedback ao usuário.
+
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificação de E-mail</title>
+    <style>
+        #email-feedback {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <form id="cadastro-form">
+        <label for="email-input">E-mail:</label>
+        <input type="email" id="email-input" placeholder="Digite seu e-mail">
+        <div id="email-feedback"></div>
+    </form>
+</body>
+</html>
+```
+
+Crie uma função verificaEmailDisponivel que simula a verificação assíncrona se o e-mail já está cadastrado. Esta função deve retornar uma promessa que resolve com true ou false.
+
+```JavaScript
+async function verificaEmailDisponivel(email) {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            const emailsCadastrados = ['user1@example.com', 'user2@example.com', 'user3@example.com'];
+            resolve(!emailsCadastrados.includes(email));
+        }, 1000);
+    });
+}
+```
+
+Adicione um ouvinte de eventos ao campo de entrada de e-mail que dispara a verificação quando o campo perde o foco (evento blur). Utilize async/await para lidar com a chamada assíncrona.
+
+```JavaScript
+document.getElementById('email-input').addEventListener('blur', async function (event) {
+    const email = event.target.value;
+
+    if (email.trim() !== "") {
+        try {
+            const emailDisponivel = await verificaEmailDisponivel(email);
+            exibirFeedback(emailDisponivel, email);
+        } catch (error) {
+            console.error('Erro ao verificar a disponibilidade do e-mail:', error);
+            exibirFeedbackErro();
+        }
+    }
+});
+```
+
+Crie funções para fornecer feedback ao usuário sobre a disponibilidade do e-mail, exibindo mensagens de sucesso ou erro.
+
+```JavaScript
+function exibirFeedback(disponivel, email) {
+    const feedbackElemento = document.getElementById('email-feedback');
+    if (disponivel) {
+        feedbackElemento.textContent = `O e-mail ${email} está disponível.`;
+        feedbackElemento.style.color = "green";
+    } else {
+        feedbackElemento.textContent = `O e-mail ${email} já está cadastrado.`;
+        feedbackElemento.style.color = "red";
+    }
+}
+
+function exibirFeedbackErro() {
+    const feedbackElemento = document.getElementById('email-feedback');
+    feedbackElemento.textContent = "Erro ao verificar a disponibilidade do e-mail. Verifique o console.";
+    feedbackElemento.style.color = "red";
+}
+```
+
+Resposta do exercício 2)
+
+Opinião:
+
+Primeiro, crie uma estrutura HTML básica com um campo de entrada para o nome de usuário e um local para exibir o feedback ao usuário.
+
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificação de Nome de Usuário</title>
+    <style>
+        #username-feedback {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <form id="cadastro-form">
+        <label for="username-input">Nome de Usuário:</label>
+        <input type="text" id="username-input" placeholder="Digite seu nome de usuário">
+        <div id="username-feedback"></div>
+    </form>
+</body>
+</html>
+```
+
+Crie uma função verificaNomeUsuarioDisponivel que simula a verificação assíncrona se o nome de usuário já está registrado. Esta função deve retornar uma promessa que resolve com true ou false.
+
+```JavaScript
+async function verificaNomeUsuarioDisponivel(username) {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            const usuariosRegistrados = ['player1', 'gamer2024', 'champion'];
+            resolve(!usuariosRegistrados.includes(username));
+        }, 1000);
+    });
+}
+```
+
+Adicione um ouvinte de eventos ao campo de entrada de nome de usuário que dispara a verificação quando o campo perde o foco (evento blur). Utilize async/await para lidar com a chamada assíncrona.
+
+```JavaScript
+document.getElementById('username-input').addEventListener('blur', async function (event) {
+    const username = event.target.value;
+
+    if (username.trim() !== "") {
+        try {
+            const usernameDisponivel = await verificaNomeUsuarioDisponivel(username);
+            exibirFeedback(usernameDisponivel, username);
+        } catch (error) {
+            console.error('Erro ao verificar a disponibilidade do nome de usuário:', error);
+            exibirFeedbackErro();
+        }
+    }
+});
+```
+
+Crie funções para fornecer feedback ao usuário sobre a disponibilidade do nome de usuário, exibindo mensagens de sucesso ou erro.
+
+```JavaScript
+function exibirFeedback(disponivel, username) {
+    const feedbackElemento = document.getElementById('username-feedback');
+    if (disponivel) {
+        feedbackElemento.textContent = `O nome de usuário ${username} está disponível.`;
+        feedbackElemento.style.color = "green";
+    } else {
+        feedbackElemento.textContent = `O nome de usuário ${username} já está registrado.`;
+        feedbackElemento.style.color = "red";
+    }
+}
+
+function exibirFeedbackErro() {
+    const feedbackElemento = document.getElementById('username-feedback');
+    feedbackElemento.textContent = "Erro ao verificar a disponibilidade do nome de usuário. Verifique o console.";
+    feedbackElemento.style.color = "red";
+}
+```
+
+Resposta do exercício 3)
+
+Opinião:
+
+Crie um formulário HTML com campos para o nome do projeto, descrição e tags, além de um botão para publicar.
+
+```html
+<body>
+    <form id="projeto-form">
+        <label for="nome-projeto">Nome do Projeto:</label>
+        <input type="text" id="nome-projeto" placeholder="Digite o nome do projeto"><br>
+        
+        <label for="descricao-projeto">Descrição:</label>
+        <textarea id="descricao-projeto" placeholder="Digite a descrição"></textarea><br>
+        
+        <label for="tag-input">Tags:</label>
+        <input type="text" id="tag-input" placeholder="Digite uma tag e pressione Enter">
+        <ul id="lista-tags"></ul><br>
+        
+        <button type="button" id="publicar-btn">Publicar</button>
+        <div id="feedback" class="feedback"></div>
+    </form>
+```
+
+Adicione um ouvinte de eventos ao botão de publicar para capturar os dados do formulário quando o botão for clicado.
+
+```JavaScript
+publicarBtn.addEventListener('click', capturarEEnviarDados);
+```
+
+Crie a função enviarDadosParaBanco para simular o envio dos dados para um banco de dados. Esta função usa um setTimeout para simular a latência de uma chamada de rede.
+
+```JavaScript
+async function enviarDadosParaBanco(dados) {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            console.log('Dados enviados para o banco de dados:', dados);
+            resolve('Sucesso');
+        }, 1000);
+    });
+}
+```
+
+A função capturarEEnviarDados captura os dados do formulário e chama enviarDadosParaBanco para simular o envio. Ela também fornece feedback ao usuário sobre o status do envio.
+
+```JavaScript
+async function capturarEEnviarDados() {
+    const nomeProjeto = document.getElementById('nome-projeto').value.trim();
+    const descricaoProjeto = document.getElementById('descricao-projeto').value.trim();
+
+    if (!nomeProjeto || !descricaoProjeto) {
+        feedback.textContent = "Nome do projeto e descrição são obrigatórios.";
+        feedback.style.color = "red";
+        return;
+    }
+
+    const dados = {
+        nome: nomeProjeto,
+        descricao: descricaoProjeto,
+        tags: tags
+    };
+
+    try {
+        const resultado = await enviarDadosParaBanco(dados);
+        feedback.textContent = `Dados enviados com sucesso: ${resultado}`;
+        feedback.style.color = "green";
+    } catch (error) {
+        feedback.textContent = "Erro ao enviar os dados.";
+        feedback.style.color = "red";
+    }
+}
+```
+
+Resposta do exercício 4)
+
+Opinião:
+
+Primeiro, precisamos criar um formulário.
+
+```JavaScript
+    <form id="feedback-form">
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" placeholder="Digite seu nome"><br>
+        
+        <label for="email">E-mail:</label>
+        <input type="email" id="email" placeholder="Digite seu e-mail"><br>
+        
+        <label for="mensagem">Mensagem:</label><br>
+        <textarea id="mensagem" rows="4" placeholder="Digite sua mensagem"></textarea><br>
+        
+        <button type="button" id="enviar-btn">Enviar</button>
+        <div id="feedback" class="feedback"></div>
+    </form>
+```
+
+Adicione um ouvinte de eventos ao botão de enviar para capturar os dados do formulário quando o botão for clicado.
+
+```JavaScript
+enviarBtn.addEventListener('click', capturarEEnviarDados);
+```
+
+Crie a função enviarDadosParaServidor para simular o envio dos dados para um servidor. Esta função utiliza setTimeout para simular a latência de uma chamada de rede.
+
+```JavaScript
+async function enviarDadosParaServidor(dados) {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            console.log('Dados enviados para o servidor:', dados);
+            resolve('Sucesso');
+        }, 1000);
+    });
+}
+```
+
+A função capturarEEnviarDados captura os dados do formulário e chama enviarDadosParaServidor para simular o envio. Ela também fornece feedback ao usuário sobre o status do envio.
+
+```JavaScript
+async function capturarEEnviarDados() {
+    const nome = document.getElementById('nome').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const mensagem = document.getElementById('mensagem').value.trim();
+
+    if (!nome || !email || !mensagem) {
+        feedback.textContent = "Por favor, preencha todos os campos.";
+        feedback.style.color = "red";
+        return;
+    }
+
+    const dados = {
+        nome: nome,
+        email: email,
+        mensagem: mensagem
+    };
+
+    try {
+        const resultado = await enviarDadosParaServidor(dados);
+        feedback.textContent = `Mensagem enviada com sucesso: ${resultado}`;
+        feedback.style.color = "green";
+        // Limpar formulário após envio bem-sucedido (opcional)
+        form.reset();
+    } catch (error) {
+        feedback.textContent = "Erro ao enviar a mensagem.";
+        feedback.style.color = "red";
+    }
+}
+```
+
+Simulação de Envio: A função enviarDadosParaServidor simula o envio dos dados usando setTimeout. Esta função imprime os dados no console e resolve a promessa após 1 segundo.
+Captura e Envio: A função capturarEEnviarDados coleta os dados do formulário e chama enviarDadosParaServidor. Ela também exibe feedback ao usuário sobre o sucesso ou falha do envio.
+Resposta do exercício 5)
+
+Opinião da instrutora:
+
+Para resolver o problema de simular o envio de dados de um formulário para um backend utilizando uma função assíncrona com Promises em JavaScript, vamos seguir os passos abaixo:
+
+- Construa a função publicarProjeto que deve ser assíncrona, recebendo três parâmetros: nomeProjeto, descricaoProjeto e tagsProjeto. Dentro da função publicarProjeto:
+- Utilize setTimeout para simular um tempo de resposta de 2 segundos.
+- Utilize Math.random() para determinar aleatoriamente se o envio foi bem-sucedido ou falhou (50% de chance para cada caso).
+
+A função deve retornar uma promessa (Promise) que:
+
+- Resolve com uma mensagem de sucesso caso o envio seja bem-sucedido.
+- Rejeita com um erro caso o envio falhe.
+
+```JavaScript
+async function publicarProjeto(nomeProjeto, descricaoProjeto, tagsProjeto) {
+    return new Promise((resolve, reject) => {
+        // Simulação de tempo de resposta de 2 segundos
+        setTimeout(() => {
+            // Simulação de sucesso ou falha aleatória (50% de chance de sucesso)
+            if (Math.random() < 0.5) {
+                resolve(`Projeto '${nomeProjeto}' publicado com sucesso!`);
+            } else {
+                reject(new Error(`Falha ao publicar o projeto '${nomeProjeto}'. Tente novamente.`));
+            }
+        }, 2000); // Tempo de espera de 2 segundos
+    });
+}
+```
+
+Agora, precisamos utilizar essa função, primeiramente definindo as variáveis que serão aplicadas nessa funcionalidade.
+
+```JavaScript
+// Exemplo de uso da função publicarProjeto
+const nome = "Meu Projeto";
+const descricao = "Descrição do meu projeto...";
+const tags = ["frontend", "web", "javascript"];
+
+await publicarProjeto(nome, descricao, tags)
+```
+
+### Aula 4 - O que aprendemos?
+
+Nessa aula, você aprendeu como:
+
+- Verificar a validade de uma tag de forma assíncrona antes de adicioná-la à lista, usando JavaScript.
+- Usar try...catch para capturar e tratar erros durante operações assíncronas.
+- Capturar os dados de um formulário, incluindo nome, descrição e tags do projeto, preparando-os para envio.
+- Simular uma requisição de publicação de projeto usando Promises para alternar entre sucesso e falha.
+- Usar event.preventDefault() para controlar o fluxo de envio de formulários e manipular os dados de forma personalizada.
+
+## Aula 5 - Gerando interações com o formulário
+
+### Aula 5 - Envio do formulário - Vídeo 1
+
+Transcrição  
+Implementamos uma simulação de envio de formulário. No entanto, atualmente, ao enviarmos o formulário, apenas chamamos os consoles. Removemos esses consoles no arquivo scripts.js, das linhas 94 a 97, para utilizar a funcionalidade publicarProjeto() que foi construída.
+
+Trecho removido de scripts.js:
+
+```JavaScript
+// código omitido
+
+console.log(nomeDoProjeto);
+console.log(descricaoDoProjeto);
+console.log(tagProjeto);
+
+// código omitido
+```
+
+Substituiremos o local onde a função de envio está ocorrendo, recortando-a das linhas 87 a 94 e colocando-a após a função publicarProjeto.
+
+scripts.js
+
+```JavaScript
+// código omitido
+
+const botaoPublicar = document.querySelector(".botao-publicar");
+
+async function publicarProjeto(nomeDoProjeto, descricaoProjeto, tagsProjeto) {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            const deuCerto = Math.random() > 0.5;
+            if (deuCerto) {
+                resolve("Projeto publicado com sucesso.")
+            } else {
+                reject("Erro ao publicar o projeto.")
+            }
+        }, 2000)
+    })
+}
+
+botaoPublicar.addEventListener("click", async (evento) => {
+    evento.preventDefault();
+
+    const nomeDoProjeto = document.getElementById("nome").value;
+    const descricaoDoProjeto = document.getElementById("descricao").value;
+    const tagsProjeto = Array.from(listaTags.querySelectorAll("p")).map((tag) => tag.textContent);
+
+// código omitido
+```
+
+Fazemos isso para evitar chamar uma funcionalidade construída após o chamado, o que resultaria em um erro. Dessa forma, resolvemos essa questão.
+
+Na linha 107, dentro do ouvinte do botaoPublicar, utilizamos o try{} para tentar chamar a funcionalidade de simulação de publicação. Dentro do bloco try{}, chamamos const resultado = await publicarProjeto(), enviando como parâmetros o nomeDoProjeto, a descricaoDoProjeto e as tagsProjeto.
+
+Utilizamos console.log() para imprimir o resultado e verificar a mensagem do resolve. Exibimos um alerta com alert(), passando a mensagem "Deu tudo certo!" para que a pessoa não precise abrir o console. Se ocorrer um problema, utilizamos o catch para capturar o erro.
+
+Dentro do bloco catch(error), exibimos "Deu errado: " seguido do error no console e no alerta com a mensagem "Deu tudo errado!".
+
+```JavaScript
+// código omitido
+
+    try {
+        const resultado = await publicarProjeto(nomeDoProjeto, descricaoDoProjeto, tagsProjeto);
+        console.log(resultado);
+        alert("Deu tudo certo!")
+    } catch (error) {
+        console.log("Deu errado: ", error)
+        alert("Deu tudo errado!");
+    }
+
+})
+```
+
+Dessa forma, tanto o erro quanto a mensagem definida no project são exibidos adequadamente.
+
+Teste do Formulário  
+Preenchemos o formulário no navegador (127.0.0.1:5500/index.html) para testar se funcionou. Inserimos "teste" no campo "Nome do projeto", "teste 1" na descrição, e "front-end" em "Tags". Ao apertar "Publicar" na parte inferior direita, o sistema espera dois segundos e exibe a mensagem "Deu tudo errado" na parte superior central.
+
+Como o resultado é aleatório, podemos continuar clicando em "Publicar" e eventualmente receber uma mensagem de erro, mesmo que tudo tenha funcionado corretamente.
+
+Conceitos assíncronos  
+Confirmamos que a função que construímos é assíncrona, pois aguarda dois segundos para ser concluída. Usamos uma promise() para simular esse comportamento e definimos a função como assíncrona com async. Para obter o resultado da função assíncrona, empregamos await.
+
+Dica para aprofundamento: explore mais sobre esses conceitos nas atividades "Para Saber Mais" e assim aprofundar seu conhecimento.
+
+Próximos passos  
+Na sequência, implementaremos uma melhoria de usabilidade no projeto: remover os dados digitados no formulário após o envio. Acompanhe o próximo vídeo para realizar essa alteração!
+
+### Aula 5 - Feedback de publicação
+
+Após semanas de trabalho árduo, Alex, um desenvolvedor web entusiasta, finalizou seu mais recente projeto de portfólio, uma aplicação web interativa que destaca suas habilidades e projetos anteriores. Antes de adicionar este projeto ao seu portfólio DEVSPOT, Alex quer garantir que a funcionalidade de publicação esteja funcionando perfeitamente, mesmo sem uma conexão real com o servidor. Para isso, Alex implementou uma simulação de publicação que captura os dados do formulário e exibe uma mensagem de sucesso ou erro, dependendo do resultado da simulação. No entanto, Alex está enfrentando um dilema sobre como melhor estruturar o código para lidar com possíveis erros de forma eficaz e fornecer feedback apropriado ao usuário(a).
+
+Considerando as práticas de programação assíncrona e manipulação de erros, qual das seguintes abordagens Alex deveria adotar para aprimorar a simulação de publicação do projeto e por quê?
+
+Resposta:
+
+Utilizar try...catch no evento do botão "Publicar" e diferenciar o feedback para o usuário com alert para sucesso e erro.
+
+> Esta abordagem permite a Alex capturar e lidar com erros de forma eficaz no ponto de chamada da função publicarProjeto, utilizando async/await. Além disso, fornece um meio direto de informar o usuário sobre o sucesso ou falha da operação, alinhando-se com as melhores práticas de experiência do usuário.
+
+### Aula 5 - Limpeza do formulário - Vídeo 2
+
+Transcrição  
+Agora que definimos todas as funcionalidades da aplicação, incluindo referência, publicação e pré-visualização, podemos implementar a funcionalidade do botão "Descartar".
+
+Funcionalidade do botão "Descartar"  
+O botão "Descartar" limpa todos os campos do projeto no formulário, retornando ao estado em que estavam na primeira vez que a pessoa usuária acessou a tela. Para isso, no arquivo scripts (linha 118), selecionamos o botão descartar. Declaramos const botaoDescartar, que receberá document.querySelector().
+
+O querySelector() será a classe do botão descartar, encontrada na linha 83 do index.html, que é botao-descartar. No querySelector(), inserimos entre parênteses e aspas o ponto botao-descartar.
+
+Selecionamos esse botão e adicionamos um ouvinte para detectar o clique. Utilizamos botaoDescartar.addEventListener(), com os parênteses abertos e fechados, e o evento que colocamos é o click, entre aspas, seguido por uma vírgula. Em seguida, inserimos (evento) => {} entre parênteses.
+
+Dentro dessas chaves, primeiro inserimos evento.preventDefault() para evitar que o formulário execute seu comportamento padrão. Em seguida, selecionamos o próprio formulário para que possamos manipular seus campos conforme necessário.
+
+Para isso, criamos uma variável const formulario que recebe o resultado de document.querySelector("form"). Isso faz com que o código busque o elemento form dentro de todo o documento HTML.
+
+Estamos usando seletor de elemento, não de um específico. Como o projeto contém apenas um formulário, esse seletor básico é suficiente para encontrá-lo corretamente.
+
+Resetando os campos do formulário
+Para resetar todos os campos do formulário, utilizamos a funcionalidade formulario.reset(). Esse método reseta todos os campos de digitação do formulário, deixando-os vazios.
+
+scripts.js
+
+```JavaScript
+// código omitido
+botaoDescartar.addEventListener("click", (evento) => {
+    evento.preventDefault();
+
+    const formulario = document.querySelector("form");
+    formulario.reset();
+
+})
+```
+
+A imagem de prévia não faz parte do formulário e precisa ser tratada separadamente. Precisamos acessar essa imagem para alterá-la.
+
+Já temos a imagem principal e seu texto definidos em uma variável. Acessamos a variável imagemPrincipal.src e definimos o caminho da imagem padrão exibida no site ao carregá-lo.
+
+Para verificar o caminho, consultamos a linha 55 do index.html.
+
+Confirmamos que o diretório correto é a imagem1.png dentro da pasta img. Em seguida, alteramos o texto que faz referência ao nome da imagem, que está armazenado na variável nomeDaImagem, encontrada na linha 24 do script.
+
+Voltamos para a linha 127 e utilizamos a variável nomeDaImagem, que receberá o .textContent de "image_projeto.png", como definido anteriormente na linha 60 do index.html.
+
+Agora, limpamos a lista de tags. A lista de tags é um caso diferente, pois os itens são construídos com base no conteúdo do formulário, mas não fazem parte dos campos de digitação e, portanto, não são resetados pelo reset(). Para limpar a lista, definimos o innerHTML da listaTags como uma string vazia, "".
+
+```JavaScript
+// código omitido
+botaoDescartar.addEventListener("click", (evento) => {
+    evento.preventDefault();
+
+    const formulario = document.querySelector("form");
+    formulario.reset();
+
+    imagemPrincipal.src = "./img/imagem1.png";
+    nomeDaImagem.textContent = "image_projeto.png";
+
+    listaTags.innerHTML = "";
+})
+```
+
+Com isso, podemos testar.
+
+Testando a funcionalidade  
+No navegador, escolhemos uma imagem clicando em "Carregar imagem", inserimos o nome do projeto como "Portfólio da Moni", adicionamos a descrição "Tem todos os meus projetos" e colocamos a tag "Front-end". Teclamos "Enter".
+
+Em vez de clicarmos em "Publicar", clicamos em "Descartar". Ao clicar em descartar, todos os dados inseridos nos campos são apagados, e a imagem retorna ao estado inicial.
+
+Conclusão  
+Assim, implementamos várias funcionalidades na página de upload.
+
+Personalização e Recursos Adicionais: caso deseje personalizar a página ou adicionar mais recursos, sinta-se à vontade para fazê-lo. Mas a função principal foi definida com base na assincronicidade.
+
+### Aula 5 - Para saber mais: tratamento de erros em JavaScript
+ Próxima Atividade
+
+Quando você está aprendendo a programar em JavaScript, uma das coisas mais importantes que você vai encontrar pelo caminho são os erros. Eles podem parecer assustadores no início, mas na verdade, são apenas uma forma de o seu programa dizer: "Ei, algo não está certo aqui!". Entender como lidar com esses erros pode tornar seu código mais robusto e confiável. Vamos explorar algumas estratégias para um tratamento eficaz de erros em JavaScript.
+
+Entendendo os Erros
+Antes de mergulharmos nas estratégias, é importante entender o que são os erros. Em JavaScript, quando o código encontra um problema, ele "lança" um erro. Isso pode acontecer por várias razões, como tentar acessar uma variável que não existe, chamar uma função de maneira errada, entre outros.
+
+Uso de try...catch
+Uma das maneiras mais comuns de lidar com erros em JavaScript é usando a estrutura try...catch. Você coloca o código que pode gerar um erro dentro do bloco try, e se um erro ocorrer, o controle é passado para o bloco catch, onde você pode lidar com o erro ou mostrar uma mensagem para o usuário.
+
+try {
+  // Código que pode gerar erro
+  console.log(minhaFuncao());
+} catch (erro) {
+  // O que fazer se um erro ocorrer
+  console.log("Um erro ocorreu: ", erro.message);
+}
+```
+
+Error Objects
+Quando um erro ocorre, JavaScript cria um objeto de erro contendo informações sobre o que deu errado. Esse objeto pode ser muito útil para entender a causa do erro. Ele contém propriedades como name (o nome do erro) e message (uma mensagem descrevendo o erro).
+
+Você também pode criar seus próprios objetos de erro usando o construtor Error e lançá-los usando a palavra-chave throw.
+
+throw new Error("Algo deu errado!");
+```
+
+Motivação
+Tratar erros de forma eficaz é crucial para desenvolver aplicativos confiáveis. Usando try...catch, Error objects, você pode garantir que seu aplicativo lide com erros de maneira elegante, melhorando a experiência do usuário e facilitando a depuração durante o desenvolvimento.
+
+Lembre-se, erros são parte do processo de aprendizado e desenvolvimento. Com as estratégias certas, você pode transformá-los em oportunidades para criar um código mais forte e confiável.
+
+### Aula 5 - Faça como eu fiz: implementando funcionalidades de publicação e descarte
+
+Nesta aula, aprendemos como implementar a funcionalidade de envio de formulários utilizando funções assíncronas e a função de descarte para limpar o formulário.
+
+Agora é sua vez de praticar, fazendo o mesmo no seu projeto. Para isso:
+
+- Remova os consoles e ajuste a função de envio do formulário.
+- Implemente o tratamento assíncrono do envio do formulário.
+- Adicione a funcionalidade de limpar o formulário ao clicar no botão de descarte.
+- Teste as funcionalidades no navegador.
+
+Opinião do instrutor
+
+Abaixo, deixo um passo a passo detalhado de como pode realizar a atividade.
+
+Primeira ação detalhada:
+
+Remover consoles e ajustar a função de envio
+
+- No arquivo .js, vá até as linhas 94 e 97 e remova os comandos console.log.
+- Recorte o bloco de código de envio do formulário entre as linhas 87 e 94.
+- Cole esse bloco após a função publicarProjeto.
+
+Segunda ação detalhada:
+
+Implementar tratamento assíncrono do envio
+
+Na linha 107, dentro do ouvinte do botão "Publicar", adicione um bloco try...catch para capturar e lidar com erros.
+No bloco try, chame a função publicarProjeto passando os parâmetros necessários: nome do projeto, descrição e tags.
+No caso de sucesso, exiba o resultado usando console.log e um alert para a pessoa usuária.
+No caso de erro, capture o erro no bloco catch, exiba a mensagem de erro no console.log e também em um alert.
+
+```JavaScript
+document.querySelector("#botaoPublicar").addEventListener("click", async (event) => {
+    event.preventDefault();
+    try {
+        const resultado = await publicarProjeto(nomeProjeto, descricaoProjeto, tagsProjeto);
+        console.log(resultado);
+        alert("Tudo certo!");
+    } catch (error) {
+        console.log("Deu errado: ", error);
+        alert("Deu tudo errado!");
+    }
+});
+```
+
+Terceira ação detalhada:
+
+Adicionar funcionalidade de limpar o formulário
+
+Na linha 118, selecione o botão "Descartar" usando querySelector.
+
+> const botaoDescartar = document.querySelector(".botaoDescartar");
+
+Adicione um ouvinte de eventos para o clique no botão "Descartar".
+
+```JavaScript
+botaoDescartar.addEventListener("click", (event) => {
+    event.preventDefault();
+    const formulario = document.querySelector("form");
+    formulario.reset();
+    document.querySelector(".imagemPrincipal").src = "./img/imagem1.png";
+    document.querySelector(".nomeImagem").textContent = "imagem1.png";
+    document.querySelector(".listaTags").innerHTML = "";
+});
+```
+
+Quarta ação detalhada:
+
+Testar as funcionalidades no navegador
+
+- Preencha o formulário com dados de teste.
+- Clique no botão "Publicar" para verificar o envio e os alertas.
+- Clique no botão "Descartar" para garantir que todos os campos do formulário são limpos e a imagem retorna ao estado inicial.
+
+Essa atividade permitirá que você pratique o uso de funções assíncronas e manipulação do DOM para melhorar a usabilidade do seu projeto. Boa sorte!
+
+### Aula 5 - Compartilhando o aprendizado
+
+Se você chegou até aqui, espero que tenha seu projeto pronto (e se precisar de alguma ajuda, não deixe de abrir um tópico no fórum ou mandar mensagem no discord da Alura) e tenha adquirido muitos conhecimentos novos.
+
+Que tal compartilhar seu certificado, seu aprendizado até aqui ou até mesmo o seu projeto comigo? Para isso, você pode:
+
+Marcar a Alura nas redes sociais. Você pode encontrar os [nossos perfis por aqui](https://beacons.ai/aluraonline/);
+
+Me marcar através das minhas redes sociais, que podem ser visualizadas por aqui;
+
+Enviar mensagem no [Discord de alunos(as) da Alura](https://discord.gg/QeBdgAjXnn).
+
+### Aula 5 - Projeto final do curso
+
+Caso queira revisar o código final do curso, disponibilizamos os códigos para [baixar nesse link](https://github.com/alura-cursos/3802-javascript-assincrono/archive/refs/heads/aula-05.zip) ou veja nosso [repositório do Github](https://github.com/alura-cursos/3802-javascript-assincrono/tree/aula-05).
+
+### Aula 5 - Lista de exercícios da aula 5
+
+Exercício 1) Implementando tratamento de dados
+
+Conteúdo:
+
+Você foi convocado para uma missão especial: validar os dados dos projetos antes que sejam publicados! Sua tarefa é garantir que todos os campos obrigatórios (nome e descrição) estejam preenchidos e que pelo menos uma tag seja adicionada. Se tudo estiver certo, você liberará o projeto para o mundo!
+
+Exercício 2) Formulário de busca
+
+Conteúdo:
+
+Prepare-se para uma expedição emocionante! Você deve desenvolver um radar de tags que permita aos exploradores encontrar projetos específicos digitando as tags corretas. Explore os projetos e exiba apenas aqueles que correspondem à tag buscada. Boa sorte, explorador!
+
+Exercício 3) Limpando formulário
+
+Conteúdo:
+
+Imagine que você, como desenvolvedor(a), está construindo uma aplicação de gerenciamento de projetos. Nesta aplicação, você implementou um botão "Limpar" que permite aos usuários descartar todas as alterações feitas em um formulário, restaurando-o ao estado inicial. Vamos explorar como esse recurso pode ser implementado de forma eficaz para proporcionar uma experiência de usuário fluida e intuitiva. O estado inicial dessa aplicação é:
+
+```JavaScript
+<form id="projeto-form">
+        <label for="nome">Nome do Projeto:</label>
+        <input type="text" id="nome" name="nome" required><br><br>
+
+        <label for="descricao">Descrição:</label><br>
+        <textarea id="descricao" name="descricao" rows="4" cols="50" required></textarea><br><br>
+
+        <label for="imagem">Imagem do Projeto:</label><br>
+        <input type="file" id="imagem" name="imagem"><br>
+        <img id="imagem-preview" src="./img/imagem1.png" alt="Imagem do Projeto"><br><br>
+
+        <label for="tags">Tags:</label><br>
+        <input type="text" id="tags" name="tags" placeholder="Adicione tags separadas por vírgula"><br><br>
+        <div id="tags-list">
+            <!-- Lista de tags será preenchida dinamicamente -->
+        </div>
+
+        <button type="submit">Salvar Projeto</button>
+        <button type="button" class="botao-limpar">Limpar</button>
+    </form>
+
+    <h2>Projetos</h2>
+    <div id="lista-projetos">
+        <!-- Lista de projetos será preenchida dinamicamente -->
+    </div>
+```
+
+Exercício 4) Exibindo detalhes de um pedido
+
+Conteúdo:
+
+Você está desenvolvendo uma aplicação de gerenciamento de pedidos online. Em sua aplicação, há uma função que processa e exibe detalhes de um pedido. É essencial garantir que a função maneje corretamente situações onde os dados do pedido possam estar incompletos ou incorretos.
+
+Implemente uma função exibirDetalhesPedido que recebe um objeto pedido como parâmetro. Utilize o try...catch para capturar e tratar possíveis erros que possam ocorrer ao acessar propriedades inexistentes ou inválidas do objeto pedido.
+
+Exercício 5) Tratamento de Erros com try...catch
+
+Conteúdo:
+
+Você está desenvolvendo um sistema de gerenciamento de uma biblioteca que lê informações de livros de um objeto JavaScript. É importante garantir que sua aplicação seja capaz de lidar com diferentes cenários de erro ao acessar e processar esses dados.
+
+Implemente uma função lerDadosBiblioteca que simule a leitura de dados de uma biblioteca a partir de um objeto JavaScript. Utilize try...catch para capturar e tratar possíveis erros que possam ocorrer durante a leitura e processamento dos dados.
+
+Opinião do instrutor
+
+Resposta do exercício 1)
+
+Opinião da instrutora:
+
+Vamos detalhar o passo a passo para o evento de clique no botão "Publicar" em JavaScript:
+
+- Seleção e Evento do Botão "Publicar":
+- Utilize document.querySelector('.botao-publicar') para selecionar o elemento HTML que possui a classe "botao-publicar".
+- Adicione um ouvinte de evento addEventListener para capturar o evento de clique (click).
+
+```JavaScript
+document.querySelector('.botao-publicar').addEventListener('click', async (event) => {
+```
+
+Prevenção do Comportamento Padrão:
+
+- Use event.preventDefault() para evitar o comportamento padrão do formulário, que é o envio após o clique no botão.
+
+```JavaScript
+event.preventDefault(); // Previne o envio padrão do formulário
+```
+
+Captura dos Valores dos Campos de Entrada:
+
+- Utilize document.getElementById('nome').value para capturar o valor do campo com id "nome".
+- Utilize document.getElementById('descricao').value para capturar o valor do campo com id "descricao".
+
+```JavaScript
+const nomeProjeto = document.getElementById('nome').value;
+const descricaoProjeto = document.getElementById('descricao').value;
+```
+
+Captura dos Textos das Tags da Lista:
+
+- Se houver uma lista de tags representadas por elementos <p> dentro de um elemento com id "tagsList", utilize Array.from(tagsList.querySelectorAll('p')).map(tag => tag.textContent) para obter um array com os textos de todas as tags.
+
+```JavaScript
+const tagsList = document.getElementById('tagsList');
+const tagsProjeto = Array.from(tagsList.querySelectorAll('p')).map(tag => tag.textContent);
+```
+
+Função de Validação do Formulário:
+
+- Defina uma função validarFormulario que recebe os parâmetros nome, descricao e tags.
+- Dentro desta função, verifique se nome e descricao estão preenchidos.
+- Verifique também se a array tags possui pelo menos um elemento.
+
+```JavaScript
+function validarFormulario(nome, descricao, tags) {
+    if (!nome || !descricao) {
+        throw new Error('Por favor, preencha todos os campos obrigatórios (nome e descrição).');
+    }
+    if (tags.length === 0) {
+        throw new Error('Adicione pelo menos uma tag ao projeto.');
+    }
+}
+```
+
+Bloco Try...Catch para Gerenciar Erros:
+
+- Envolve a chamada para validarFormulario e a função publicarProjeto dentro de um bloco try...catch para lidar com exceções.
+- Se a validação e a publicação forem bem-sucedidas, exiba uma mensagem de sucesso.
+- Se ocorrer um erro, capture o erro, exiba no console e mostre uma mensagem de erro para o usuário.
+
+```JavaScript
+try {
+    validarFormulario(nomeProjeto, descricaoProjeto, tagsProjeto);
+
+    const result = await publicarProjeto(nomeProjeto, descricaoProjeto, tagsProjeto);
+    console.log(result);
+    alert('Projeto publicado com sucesso!');
+} catch (error) {
+    console.error('Erro ao publicar projeto:', error);
+    alert('Erro ao publicar projeto: ' + error.message);
+}
+```
+
+Resposta do exercício 2)
+
+Opinião da instrutora:
+
+Captura do Valor Digitado no Campo de Busca:
+
+event.target.value.trim().toLowerCase() captura o valor digitado no campo de busca, removendo espaços em branco extras no início e no final (trim()) e convertendo para minúsculas (toLowerCase()).
+
+```JavaScript
+const busca = event.target.value.trim().toLowerCase();
+```
+
+Seleção dos Projetos a Serem Filtrados:
+
+document.querySelectorAll('.projeto') seleciona todos os elementos HTML que possuem a classe "projeto". Isso retorna uma NodeList contendo todos os elementos que correspondem à classe "projeto".
+
+```JavaScript
+const projetos = document.querySelectorAll('.projeto');
+```
+
+Bloco try...catch para Iteração e Filtragem:
+
+try { ... } catch (error) { ... } envolve o código dentro de um bloco try para capturar quaisquer erros que possam ocorrer durante a iteração e filtragem dos projetos.
+
+```JavaScript
+try {
+    projetos.forEach(projeto => {
+        // Iteração pelos projetos e suas tags
+        const tags = projeto.querySelectorAll('.tag');
+        let mostrar = false;
+
+        tags.forEach(tag => {
+            if (tag.textContent.trim().toLowerCase().includes(busca)) {
+                mostrar = true; // Define mostrar como true se a tag contém a busca
+            }
+        });
+
+        // Define a exibição do projeto com base na variável mostrar
+        if (mostrar) {
+            projeto.style.display = 'block'; // Exibe o projeto
+        } else {
+            projeto.style.display = 'none'; // Oculta o projeto
+        }
+    });
+} catch (error) {
+    console.error('Erro ao filtrar projetos:', error); // Registra o erro no console
+    alert('Ocorreu um erro ao filtrar os projetos. Verifique o console para mais detalhes.'); // Exibe uma mensagem de erro ao usuário
+}
+```
+
+Exibição ou Ocultação dos Projetos:
+
+Dentro do forEach, projeto.style.display é definido para 'block' se mostrar for true, caso contrário é definido para 'none', controlando assim a visibilidade dos projetos na página.
+
+Resposta do exercício 3)
+
+Opinião
+
+- Implemente um evento de clique para o botão "Limpar" (botao-limpar) presente na interface da sua aplicação.
+- Utilize event.preventDefault() para evitar que o botão cause um comportamento padrão de envio de formulário ou recarregamento da página.
+- Utilize form.reset() para limpar todos os campos do formulário, deixando-os prontos para novas entradas como se o usuário estivesse começando do zero.
+
+```JavaScript
+   const form = document.querySelector('form');
+   form.reset(); // Limpa todos os campos do formulário
+```
+
+Restaure a imagem padrão associada ao projeto, definindo o src de mainImage de volta para o caminho da imagem inicial.
+
+```JavaScript
+   const mainImage = document.getElementById('imagem');
+   mainImage.src = './img/imagem1.png'; // Define o caminho da imagem padrão
+```
+
+Atualize o texto exibido para o nome padrão da imagem no elemento imageName, assegurando que todas as informações voltem ao estado inicial.
+
+```JavaScript
+   const imageName = document.getElementById('nome-imagem');
+   imageName.textContent = 'image_projeto.png'; // Define o nome padrão da imagem
+```
+
+Limpe a lista de tags (tagsList.innerHTML = ''), removendo todas as tags adicionadas ao projeto anteriormente.
+
+```JavaScript
+   const tagsList = document.getElementById('tags-list');
+   tagsList.innerHTML = ''; // Remove todas as tags da lista
+```
+
+Implemente blocos try...catch para capturar e lidar com quaisquer erros que possam ocorrer durante o processo de limpeza e restauração.
+
+```JavaScript
+   try {
+       // Código de limpeza e restauração aqui
+   } catch (error) {
+       console.error('Erro ao limpar o formulário:', error); // Registra o erro no console
+       alert('Ocorreu um erro ao limpar o formulário. Verifique o console para mais detalhes.'); // Exibe uma mensagem de erro ao usuário
+   }
+```
+
+Resposta do exercício 4)
+
+Opinião:
+
+Implementação da Função:
+
+- Crie uma função exibirDetalhesPedido que recebe um objeto pedido como parâmetro.
+- Dentro da função, utilize try...catch para envolver o código que acessa propriedades do objeto pedido.
+- Uso do try...catch:
+
+No bloco try, tente acessar propriedades específicas do objeto pedido.
+
+- Em caso de sucesso, exiba os detalhes do pedido.
+- Em caso de erro (por exemplo, propriedade inexistente), lance um erro com throw new Error().
+- Chamada da Função e Tratamento de Erros:
+
+Fora da função exibirDetalhesPedido, crie um objeto pedido com dados simulados.
+
+- Chame a função exibirDetalhesPedido passando o objeto pedido como argumento.
+- Utilize um bloco catch para capturar e exibir o erro lançado pela função.
+
+Exemplo de Implementação:
+
+```JavaScript
+// Função que simula a exibição de detalhes de um pedido
+function exibirDetalhesPedido(pedido) {
+    try {
+        // Simula o acesso a propriedades do objeto pedido
+        const id = pedido.id;
+        const produto = pedido.produto;
+        const quantidade = pedido.quantidade;
+
+        // Verifica se todas as propriedades necessárias estão presentes
+        if (!id || !produto || !quantidade) {
+            throw new Error('Pedido incompleto. Verifique os dados fornecidos.');
+        }
+
+        // Exibe os detalhes do pedido
+        console.log(`Detalhes do Pedido - ID: ${id}, Produto: ${produto}, Quantidade: ${quantidade}`);
+    } catch (error) {
+        // Captura e trata o erro
+        console.error('Erro ao exibir detalhes do pedido:', error.message);
+        // Poderia exibir uma mensagem para o usuário ou realizar outra ação apropriada
+    }
+}
+
+// Objeto pedido com dados simulados
+const pedido1 = {
+    id: '123',
+    produto: 'Camiseta',
+    quantidade: 2
+};
+
+// Chamada da função e tratamento de erros
+exibirDetalhesPedido(pedido1);
+```
+
+Tarefas Adicionais:
+
+- Modifique o objeto pedido para simular diferentes cenários, como propriedades ausentes ou valores inválidos.
+- Experimente diferentes tipos de erros dentro da função exibirDetalhesPedido, como tentar acessar uma propriedade que não existe no objeto pedido.
+
+Resposta do exercício 5)
+
+Opinião da instrutora:
+
+Implementação da Função:
+
+- Crie uma função lerDadosBiblioteca que simule a leitura de dados de uma biblioteca a partir de um objeto JavaScript.
+- Dentro da função, utilize try...catch para envolver o código de leitura e processamento dos dados.
+- Uso do try...catch:
+
+No bloco try, tente acessar e processar os dados do objeto.
+
+- Em caso de sucesso, exiba os dados dos livros.
+- Em caso de erro (por exemplo, dados ausentes ou inválidos), lance um erro com throw new Error().
+- Chamada da Função e Tratamento de Erros:
+
+- Fora da função lerDadosBiblioteca, chame-a e utilize um bloco catch para capturar e exibir o erro lançado pela função.
+- No bloco catch, exiba uma mensagem apropriada para o usuário ou realize outra ação para lidar com o erro.
+
+Exemplo de Implementação:
+
+```JavaScript
+// Função que simula a leitura de dados de uma biblioteca a partir de um objeto JavaScript
+function lerDadosBiblioteca() {
+    try {
+        // Simulação de acesso aos dados da biblioteca (pode ser substituído por dados reais)
+        const biblioteca = {
+            livros: [
+                { id: 1, titulo: "Dom Quixote", autor: "Miguel de Cervantes", ano: 1605 },
+                { id: 2, titulo: "A Metamorfose", autor: "Franz Kafka", ano: 1915 },
+                { id: 3, titulo: "1984", autor: "George Orwell", ano: 1949 }
+            ]
+        };
+
+        // Verifica se os dados são válidos
+        if (!biblioteca || !biblioteca.livros || biblioteca.livros.length === 0) {
+            throw new Error('Dados da biblioteca inválidos. Verifique os dados fornecidos.');
+        }
+
+        // Exibe os dados dos livros
+        console.log('Dados da Biblioteca:');
+        biblioteca.livros.forEach(livro => {
+            console.log(`ID: ${livro.id}, Título: ${livro.titulo}, Autor: ${livro.autor}, Ano: ${livro.ano}`);
+        });
+
+    } catch (error) {
+        // Captura e trata o erro
+        console.error('Erro ao ler dados da biblioteca:', error.message);
+        // Poderia exibir uma mensagem para o usuário ou realizar outra ação apropriada
+    }
+}
+// Chamada da função e tratamento de erros
+lerDadosBiblioteca();
+```
+
+### Aula 5 - Conclusão - Vídeo 3
+
+Transcrição  
+Parabéns pela conclusão deste curso! Estou muito feliz por ter acompanhado você até aqui.
+
+O que aprendemos?  
+Durante o curso, exploramos vários conceitos de programação assíncrona para desenvolver a página de upload de arquivos do CodeConnect. Visualizaremos o resultado no navegador.
+
+> 127.0.0.1:5500
+
+Selecionamos o botão "Carregar Imagem", escolhemos uma imagem específica e definimos o "Nome do projeto", que pode ser "portfólio do gato". Em seguida, preenchemos o campo de descrição com mais informações sobre o projeto, como: "Para este projeto foram usados HTML, CSS e JavaScript".
+
+Logo após, inserimos algumas tags no campo designado, como front-end, que servirão como palavras-chave para o projeto. Pressionando "Enter", adicionamos um novo item à lista de tags, conforme o que digitamos no campo.
+
+Também temos a opção de descartar essas informações ao clicarmos no botão "Descarte" ou "Publicar" as informações. Clicando em "Publicar", exibimos um feedback em um alerta.
+
+Deu tudo certo!
+
+O que usamos?  
+Para desenvolver este projeto, utilizamos HTML, CSS, JavaScript e, especificamente em JavaScript, aplicamos promises, async-await, try-catch e set-timeout. Praticamos diferentes funções, variáveis e seletores de HTML.
+
+Compartilhe seu aprendizado! Esses conceitos são essenciais para pessoas desenvolvedoras. Mostrar para todos que sabemos utilizá-los é uma boa maneira de evidenciar nosso conhecimento.
+
+Utilizaremos as redes sociais para compartilhar nosso progresso: use a hashtag #AprendiNaAlura e publique no LinkedIn, Instagram e Discord. Assim, veremos todos por lá!
+
+Nos vemos nos próximos cursos. Até breve!

@@ -30,26 +30,6 @@ document.getElementById('image-upload').addEventListener('change', async (evento
 });
 //==============================================================================================
 
-document.getElementById('tagsCategoria').addEventListener('keypress', (evento) => {
-    if (evento.key === 'Enter') {
-        evento.preventDefault();
-        const novaTag = evento.target.value.trim();
-        if (novaTag !== '') {
-            const liTagElemento = document.createElement('li');
-            const pTagElemento = document.createElement('p');
-            pTagElemento.textContent = novaTag;
-            const btnRemover = document.createElement('img');
-            btnRemover.src = './img/close-black.svg';
-            btnRemover.classList.add('remove-tag');
-            liTagElemento.appendChild(pTagElemento);
-            liTagElemento.appendChild(btnRemover);
-            document.querySelector('.lista-tags').appendChild(liTagElemento);
-            evento.target.value = ''; // Limpa o campo de entrada
-        };
-    };
-});
-//==============================================================================================
-
 document.querySelector('.lista-tags').addEventListener('click', (evento) => {
     if (evento.target.classList.contains('remove-tag')) {
         const liTagElementoAtual = evento.target.parentElement;
@@ -66,38 +46,117 @@ async function verificaTagsDisponiveis(tagTexto) {
             resolve(tagsDisponiveis.includes(tagTexto));
         })
     });
-    
-}
+};
 //==============================================================================================
 
-//Lendo e exibindo um aqruivo texto
-document.getElementById("upload-txt-btn").addEventListener("click", () => {
-    document.getElementById("txt-upload").click();
-});
-function lerConteudoDoArquivoTexto(arquivo) {
-    return new Promise((resolve, reject) => {
-        const leitor = new FileReader();
-        leitor.onload = () => resolve({ texto: leitor.result });
-        leitor.onerror = () => reject(leitor.error);
-        leitor.readAsText(arquivo);
-    });
-};
-document.getElementById('txt-upload').addEventListener('change', async (evento) => {
-    const arquivoTexto = evento.target.files[0]; // Pegando o arquivo selecionado pelo usuário
-    console.log(arquivoTexto);
-    if (arquivoTexto) {
-        try {
-            const conteudoArquivoTexto = await lerConteudoDoArquivoTexto(arquivoTexto);
-            console.log(conteudoArquivoTexto.texto);
-            
-            document.getElementById('textoPrevia').textContent = conteudoArquivoTexto.texto; 
-            // document.querySelector('.container-imagem-nome p').textContent = conteudoArquivoTexto.nome;
-        } catch (error) {
-            console.error('Erro! na Leitura do arquivo', error);
-            throw error;
+document.getElementById('tagsCategoria').addEventListener('keypress', async (evento) => {
+    if (evento.key === 'Enter') {
+        evento.preventDefault();
+        const novaTag = evento.target.value.trim();
+        if (novaTag !== '') {
+            try {
+                const tagExiste = await verificaTagsDisponiveis(novaTag);
+                if (tagExiste) {
+                    const liTagElemento = document.createElement('li');
+                    const pTagElemento = document.createElement('p');
+                    pTagElemento.textContent = novaTag;
+                    const btnRemover = document.createElement('img');
+                    btnRemover.src = './img/close-black.svg';
+                    btnRemover.classList.add('remove-tag');
+                    liTagElemento.appendChild(pTagElemento);
+                    liTagElemento.appendChild(btnRemover);
+                    document.querySelector('.lista-tags').appendChild(liTagElemento);
+                    evento.target.value = '';
+                } else {
+                    console.error('Erro! na verificação da tag');
+                    alert("Tag não foi encontrada.");
+                }
+            } catch (error) {
+                console.error('Erro! na verificação da tag', error);
+                alert("Erro ao verificar a existência da tag. Verifique o console.")
+                throw error;                
+            };
         };
     };
 });
+//==============================================================================================
+
+async function publicarProjeto(novoProjeto){
+    try {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                const deuCerto = Math.random() > 0.5;
+                if (deuCerto) {
+                    resolve("Projeto publicado com sucesso.")
+                } else {
+                    reject("Erro ao publicar o projeto.")
+                }
+            }, 1000);
+        });
+    } catch (error) {
+        console.error('Erro! ao publicar o projeto', error);
+        alert("Erro ao publicar o projeto. Verifique o console.")
+        throw error;
+    };
+};
+//==============================================================================================
+
+document.querySelector('.botao-publicar').addEventListener('click', async (evento) => {
+    evento.preventDefault();
+    const nomeProjeto = document.getElementById('nome').value;
+    const descricaoProjeto = document.getElementById('descricao').value;
+    const tagsSelecionadas = Array.from(document.querySelectorAll('.lista-tags li p')).map((tag) => tag.textContent);
+    const novoProjeto = { nome: nomeProjeto, descricao: descricaoProjeto, tags: tagsSelecionadas };
+    console.log(novoProjeto);
+    // Aqui você pode fazer o que quiser com o novo projeto, como enviá-lo para um servidor ou armazená-lo localmente
+    try {
+        const resultado = await publicarProjeto(novoProjeto);
+        console.log(resultado);
+        alert("Deu tudo certo!")
+    } catch (error) {
+        console.log("Deu errado: ", error)
+        alert("Deu tudo errado!");
+    }
+});
+//==============================================================================================
+
+document.querySelector('.botao-descartar').addEventListener('click', (evento) => {
+    evento.preventDefault();
+    document.querySelector('form').reset(); // Reseta o formulário
+    document.querySelector('.main-imagem').src = './img/imagem1.png'; // Reseta a imagem
+    document.querySelector('.container-imagem-nome p').textContent = "image_projeto.png"; // Reseta o nome do arquivo
+    document.querySelector('.lista-tags').innerHTML = ''; // Limpa as tags
+});
+//==============================================================================================
+
+//Lendo e exibindo um aqruivo texto
+// document.getElementById("upload-txt-btn").addEventListener("click", () => {
+//     document.getElementById("txt-upload").click();
+// });
+// function lerConteudoDoArquivoTexto(arquivo) {
+//     return new Promise((resolve, reject) => {
+//         const leitor = new FileReader();
+//         leitor.onload = () => resolve({ texto: leitor.result });
+//         leitor.onerror = () => reject(leitor.error);
+//         leitor.readAsText(arquivo);
+//     });
+// };
+// document.getElementById('txt-upload').addEventListener('change', async (evento) => {
+//     const arquivoTexto = evento.target.files[0]; // Pegando o arquivo selecionado pelo usuário
+//     console.log(arquivoTexto);
+//     if (arquivoTexto) {
+//         try {
+//             const conteudoArquivoTexto = await lerConteudoDoArquivoTexto(arquivoTexto);
+//             console.log(conteudoArquivoTexto.texto);
+            
+//             document.getElementById('textoPrevia').textContent = conteudoArquivoTexto.texto; 
+//             // document.querySelector('.container-imagem-nome p').textContent = conteudoArquivoTexto.nome;
+//         } catch (error) {
+//             console.error('Erro! na Leitura do arquivo', error);
+//             throw error;
+//         };
+//     };
+// });
 //==============================================================================================
 
 //Lendo e exibindo um aqruivo JSON
