@@ -5,6 +5,8 @@ document.getElementById("upload-btn").addEventListener("click", () => {
 });
 function lerConteudoDoArquivo(arquivo) {
     return new Promise((resolve, reject) => {
+        //FileReader é uma API do JavaScript que permite ler o conteúdo de arquivos de forma assíncrona
+        //O FileReader é usado para ler o conteúdo de arquivos armazenados no cliente, como imagens, textos, etc.
         const leitor = new FileReader();
         leitor.onload = () => {
             resolve({url: leitor.result, nome: arquivo.name});
@@ -105,6 +107,7 @@ document.querySelector('.botao-publicar').addEventListener('click', async (event
     evento.preventDefault();
     const nomeProjeto = document.getElementById('nome').value;
     const descricaoProjeto = document.getElementById('descricao').value;
+    //Array.from() é usado para converter um objeto semelhante a um array (como NodeList) em um array real
     const tagsSelecionadas = Array.from(document.querySelectorAll('.lista-tags li p')).map((tag) => tag.textContent);
     const novoProjeto = { nome: nomeProjeto, descricao: descricaoProjeto, tags: tagsSelecionadas };
     console.log(novoProjeto);
