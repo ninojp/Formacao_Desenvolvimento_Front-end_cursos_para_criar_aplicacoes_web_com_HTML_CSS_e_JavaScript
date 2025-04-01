@@ -86,6 +86,13 @@ const api = {
           console.error('Erro! Ao Filtrar Pensamentos! ', error);
             throw error;
         };
-    }
+    },
+    // async atualizarPensamentos(id, favorito) {
+    //     try {
+    //         const response = await 
+    //     } catch (error) {
+    //         //vou continuar no apiAxios.js
+    //     }
+    // }
 };
 export default api;

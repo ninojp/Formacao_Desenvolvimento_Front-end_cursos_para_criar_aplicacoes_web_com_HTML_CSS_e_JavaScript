@@ -52,12 +52,30 @@ const ui = {
             divIcones.classList.add('icones');
             liPensamento.appendChild(divIcones);
 
+            const botaoFavorito = document.createElement("button")
+            botaoFavorito.classList.add("botao-favorito")
+
+            botaoFavorito.addEventListener('click', async () => {
+                try {
+                    await apiAxios.atualizarFavorito(pensamento.id, !pensamento.favorito);
+                    this.renderizarPensamentos();
+                } catch (error) {
+                    console.error('Erro! adicionarPensamentoNaLista(), Linha 62');
+                    throw error
+                };
+            } );
+            const iconeFavorito = document.createElement("img");
+            iconeFavorito.src = pensamento.favorito ? "assets/imagens/icone-favorito.png" : "assets/imagens/icone-favorito_outline.png";
+            iconeFavorito.alt = "Ícone de favorito";
+            botaoFavorito.appendChild(iconeFavorito);
+
             const btnEditar = document.createElement('button');
             btnEditar.classList.add('botao-editar');
             btnEditar.onclick = () => { ui.preencherFormulario(pensamento.id) };
             const imgEdit = document.createElement('img');
             imgEdit.setAttribute('src', 'assets/imagens/icone-editar.png');
             imgEdit.setAttribute('alt', 'Editar pensamento');
+            divIcones.appendChild(botaoFavorito)
             btnEditar.appendChild(imgEdit);
             divIcones.appendChild(btnEditar);
 
@@ -91,7 +109,7 @@ const ui = {
     },
     //===================================================================================================
 
-    async renderizarPensamentos(pensamentosFiltrados=null) {
+    async renderizarPensamentos(pensamentosFiltrados = null) {
         const listaPensamentos = document.getElementById("lista-pensamentos");//não sei pra que a Professora fez essa linha
         const mensagemVazia = document.getElementById("mensagem-vazia");//não sei pra que a Professora fez essa linha
         listaPensamentos.innerHTML = "";

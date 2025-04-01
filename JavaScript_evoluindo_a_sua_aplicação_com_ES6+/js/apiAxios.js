@@ -69,6 +69,18 @@ const apiAxios = {
           console.error('Erro! buscarPensamentosPorTermo(termo) ', error);
             throw error;
         };
+    },
+    //=============================================================================
+
+    async atualizarFavorito(id, favorito) {
+        try {
+            const response = await axios.patch(`${URL_BASE}pensamentos/${id}`, { favorito });
+            return response.data;
+        } catch (error) {
+            console.error('Erro! atualizarFavorito()');
+            alert('Erro! ao tentar atualizar o favorito')
+            throw error;
+        };
     }
 };
 export default apiAxios;

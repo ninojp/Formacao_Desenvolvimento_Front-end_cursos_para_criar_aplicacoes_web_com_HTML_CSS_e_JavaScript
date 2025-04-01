@@ -1162,15 +1162,15 @@ Procure-nos no fórum ou Discord se precisar de ajuda!
 
 ### Aula 2 - Adaptando o back-end e a interface para a funcionalidade de favoritar - Vídeo 1
 
-Transcrição
+Transcrição  
 Sabe quando você está navegando em uma aplicação com centenas de itens, sejam produtos ou fotos em uma rede social, e quer destacar ou marcar alguns deles? No caso de produtos, seria adicionar a uma lista para acompanhar o preço, por exemplo. Essa funcionalidade de "favoritar" é bastante comum e muito útil para acompanhar dados de interesse, mas ainda não está disponível no nosso mural. Que tal implementá-la?
 
-Implementando o ícone favoritar
+Implementando o ícone favoritar  
 No Figma, podemos ver que, ao lado dos ícones de editar e excluir, existe um ícone de coração, que geralmente utilizamos para favoritar cards, produtos, ou itens semelhantes. Nossa tarefa agora é implementar a funcionalidade de favoritar. Temos o ícone de coração vazio e também a versão preenchida, quando for favoritado. Podemos dividir essa implementação em várias etapas para facilitar o processo.
 
 Primeiro, precisamos adicionar o ícone de coração ao lado dos ícones de editar e excluir, representados pelo lápis e pela lixeira. Além disso, também devemos programar o comportamento desse botão: ao clicar no coração, ele deve mudar visualmente, ficando preenchido, e, ao mesmo tempo, enviar a informação para a API, indicando que o item foi marcado como favorito. Começaremos a implementar isso agora.
 
-Alterações no back-end
+Alterações no back-end  
 No VS Code, no menu lateral esquerdo, acessamos backend > db.json. Estamos utilizando o jsonServer, que serve como nossa API fictícia. Como somos responsáveis tanto pelo front-end quanto pelo back-end, será necessário fazer uma alteração nesse arquivo.
 
 Um pensamento possui algumas características, como id, conteudo e autoria. A implementação da funcionalidade para marcar um item como favorito adiciona uma nova característica a ele, tornando-o uma propriedade. Para podermos enviar essa informação corretamente, o back-end deve estar preparado para recebê-la. Não adianta apenas modificar a interface e adicionar essa nova característica se o back-end não estiver configurado para processar e armazenar essas informações.
@@ -1179,11 +1179,12 @@ Essa parte ficaria a cargo do time de back-end, mudar esse pensamento, adicionar
 
 A primeira coisa que precisamos fazer é ajustar esse arquivo, adicionando a propriedade. Como são vários pensamentos, para não dar erro adicionaremos a propriedade em todos os pensamentos que já existem. Nisso, quando adicionarmos a funcionalidade, os próximos virão com essa propriedade setada.
 
-Atualização no JSON Server
+Atualização no JSON Server  
 Como todo pensamento tem a mesma estrutura, então selecionamos "id": e com o "Ctrl + D", você pode selecionar todas as outras ocorrências do termo. Outra forma de fazer isso é utilizando o atalho "Ctrl + Shift + L", assim, selecionamos de uma só vez todos os ids.
 
 Feito isso, pressionamos a tela de seta para direita até chegar na vírgula. Após, pressionamos "Enter" para pular para a linha abaixo. Após, escrevemos entre aspas duplas favorito: false,.
 
+```JavaScript
   "pensamentos": [
     {
       "id": "2a56",
@@ -1259,12 +1260,15 @@ Feito isso, pressionamos a tela de seta para direita até chegar na vírgula. Ap
     }
 
 //Código omitido
-Copiar código
+```
+
 Modificamos o back-end adicionando essa propriedade de favorito, que vai ser inerente a todos os pensamentos e colocamos todos como false. Para não dar nenhum erro, você pode abrir o terminal com o "Ctrl + J" e acessar a aba em que estávamos executando o back-end. Repare que deu um erro, pois estávamos modificando. Para corrigir, paramos a execução com "Ctrl + C" e executar novamente passando o comando npm start.
 
+```JavaScript
 npm start
-Copiar código
-Adicionando o botão de favoritar na interface
+```
+
+Adicionando o botão de favoritar na interface  
 Assim, não temos mais erros. Essa foi a primeira alteração, agora, fechamos esse arquivo e abrimos o arquivo de interface ui.js. O que faremos é adicionar esse novo botão e ícone ao lado dos outros que já existem. Então, depois do .appendChild(iconeExcluir), pulamos uma linha.
 
 Para criar o botão, próximo à linha 86, criamos uma const botaoFavorito = document.createElement(). Nos parênteses, entre aspas duplas, passamos button.
@@ -1281,6 +1285,7 @@ Então, na mesma linha de código, após a barra, passamos icone-favorito_outlin
 
 Onde estamos criando esses cards dinamicamente, estamos adicionando na div de ícones, que está na linha 94, o botaoEditar e o botaoExcluir. Também adicionaremos, na linha 96, icones.appendChild(botaoFavorito).
 
+```JavaScript
     iconeExcluir.alt = "Excluir"
     botaoExcluir.appendChild(iconeExcluir)
 
@@ -1297,17 +1302,419 @@ Onde estamos criando esses cards dinamicamente, estamos adicionando na div de í
     icones.appendChild(botaoFavorito)
     icones.appendChild(botaoEditar)
     icones.appendChild(botaoExcluir)
-Copiar código
+```
+
 Após realizar essas alterações, abrimos a aplicação e verificamos que o ícone de coração apareceu corretamente. Primeiro, ajustamos o back-end, adicionando uma nova propriedade ao pensamento no JSON Server. Em seguida, atualizamos a interface, criando um botão com o ícone de coração que, ao ser clicado, provoca uma mudança visual e altera a propriedade correspondente.
 
 Por enquanto, a funcionalidade ainda não está completa, mas nos próximos vídeos, mostraremos como implementar a lógica necessária para que essa funcionalidade esteja totalmente operacional.
 
 Até lá!
 
-### Aula 2 -  - Vídeo 2
-### Aula 2 -  - Vídeo 3
-### Aula 2 -  - Vídeo 4
-### Aula 2 -  - Vídeo 5
-### Aula 2 -  - Vídeo 6
-### Aula 2 -  - Vídeo 7
-### Aula 2 -  - Vídeo 8
+### Aula 2 - Criando requisição com patch para o botão de favoritar pensamentos - Vídeo 2
+
+Transcrição  
+A interface está preparada e adaptada para a nossa funcionalidade de favoritar e o back-end também está pronto para receber essa atualização. Agora, precisamos enviar essa informação para a API.
+
+Modificando a propriedade pensamento  
+No VS Code, vamos editar o pensamento, porque pegaremos as informações que temos nesse pensamento específico e modificar uma das propriedades desse pensamento. Precisamos editá-lo, semelhante ao que fizemos no editarPensamento(), só que dessa vez terá um detalhe diferente. Entenderemos o que acontecerá.
+
+Criando a função atualizarFavorito()  
+No arquivo api.js, onde encontramos essa lógica das requisições, próximo à linha 74, criamos a função async atualizarFavorito().
+
+É importante ter um código organizado. Imagine se tivéssemos todo esse JavaScript em arquivo só. Seria mais complicado para conseguirmos nos localizar e adicionar essas novas funcionalidades.
+
+Talvez você possa estar pensando, será que não é preciso criar uma função para marcar o pensamento como favorito e outra função para desmarcar esse pensamento, para marcá-lo como não favorito?
+
+Na verdade, não é necessário fazer isso. Podemos concentrar essa lógica de mudança da propriedade em uma função só. Por isso colocamos atualizarFavorito e não favoritar ou desfavoritar. Faremos essa lógica, tanto de mudar a propriedade de true para false ou de false para true, em uma única função. Isso é mais eficiente.
+
+Para conseguir fazer isso, precisaremos de algumas informações. Então, nos parênteses, passamos id, favorito. Adicionamos chaves para abrir o bloco de código. Dentro dela, escrevemos try {} catch (error) {}.
+
+Como queremos fazer uma edição, nas chaves de try, passamos const response = await axios.patch. Esse método patché a novidade. Já vimos get, post, put, delete, mas para fazer essa edição, usaremos o método patch.
+
+Para esse método, passaremos entre crases a concatenação. Então, escrevemos ${URL_BASE/}/pensamentos/${id}. Temos a URL e pensamentos. Adicionamos vírgula e passamos a propriedade favorito entre chaves. Na linha abaixo, escrevemos retun response.data. Dentro de catch (error) {} passamos alert("Erro ao atualizar favorito") e na linha abaixo throw error.
+
+```JavaScript
+      alert("Erro ao filtrar pensamentos")
+      throw error
+    }
+  },
+  async atualizarFavorito(id, favorito) {
+    try {
+      const response = await axios.patch(`${URL_BASE}/pensamentos/${id}`, { favorito })
+      return response.data
+    } catch (error) {
+      alert("Erro ao atualizar favorito")
+      throw error
+    }
+  }
+}
+export default api
+```
+
+Diferença entre put e patch  
+Criamos uma função na API que acessa um pensamento com id específico e atualiza a propriedade favorito. Mas, você pode estar se perguntando, na função de editar, na linha 37, também queríamos modificar o pensamento, mas utilizamos o método put. Qual a diferença entre eles?
+
+O método put é utilizado para fazer uma alteração de várias propriedades do pensamento. Para ele, precisamos passar o recurso inteiro, o dado, por completo. Perceba que no editarPensamento(), como parâmetro, estamos passando o pensamento por completo. No parâmetro, para requisição, também. Nesse caso, poderíamos editar o conteúdo, a autoria e outras propriedades, se houvesse.
+
+No caso de atualizar uma propriedade específica, não seria necessário passar o pensamento por completo, já que o nosso intuito é atualizar apenas essa propriedade. Então, utilizamos o patch, porque ele é responsável por fazer a atualização parcialmente. Esse método utilizamos e passamos como parâmetro as propriedades que queremos modificar.
+
+Então, utilizamos o patch, passamos o endpoint e também a propriedade específica que queremos atualizar. Isso acaba sendo mais eficiente. Disponibilizamos um Para Saber Mais com um link para você estudar sobre as diferenças entre o método put e o patch.
+
+Próximos passos  
+Criamos a requisição, mas se voltarmos na aplicação e clicarmos no ícone de coração, nada acontece. Isso, pois precisamos adicionar comportamento a esse botão e também fazer essa mudança visual. Vamos fazer isso no próximo vídeo.
+
+### Aula 2 - Para saber mais: diferenças entre PATCH e PUT
+
+Nesta aula, utilizamos o PATCH para fazer a funcionalidade de favoritar pensamentos.
+
+Vamos conhecê-lo um pouco mais?
+
+1. O que são PATCH e PUT?  
+PATCH e PUT são métodos HTTP usados para atualizar recursos em um servidor, mas eles funcionam de maneiras diferentes.
+
+O PUT é utilizado para substituir um recurso existente ou criar um novo recurso se ele não existir. Quando você usa PUT, você deve enviar a representação completa do recurso que está sendo atualizado ou criado. Isso significa que o recurso no servidor é substituído pela versão fornecida na requisição PUT. Por exemplo, utilizamos o PUT quando editamos um pensamento por completo, em suas várias propriedades, como autoria e conteúdo.
+
+Por sua vez, o PATCH é usado para fazer atualizações parciais em um recurso existente. Em vez de enviar o recurso completo, você envia apenas as mudanças que deseja aplicar. PATCH é útil quando você precisa atualizar apenas uma parte de um recurso sem afetar o restante. No nosso caso, só podemos favoritar um pensamento que já existe no projeto e, além disso, apenas atualizamos o status de “favorito” ou “não-favorito” — ou seja, uma parte do pensamento; não o pensamento por completo.
+
+2. Quando usar PUT?  
+Substituição completa: use PUT quando você precisa substituir um recurso inteiro. Por exemplo, se você tiver um objeto de usuário com várias propriedades e quiser atualizar todas as propriedades, você enviaria o objeto completo com PUT;
+Criação de recurso: se o recurso ainda não existir no servidor, PUT pode ser usado para criá-lo com a representação fornecida.
+
+3. Quando usar PATCH?  
+Atualização parcial: utilize o PATCH quando você precisar modificar apenas algumas partes de um recurso. Isso economiza largura de banda e evita o envio de dados que não foram alterados;
+Atualizações específicas: ideal para alterações específicas, como atualizar apenas o endereço de e-mail, enquanto mantém outras informações inalteradas.
+
+4. Principais diferenças  
+Vamos resumir tudo o que vimos da seguinte forma:
+
+Abrangência da atualização:
+
+- PUT: atualiza ou substitui o recurso completo;
+- PATCH: atualiza apenas os campos especificados.
+
+Uso de dados:
+
+- PUT: envia todos os dados do recurso;
+- PATCH: envia apenas as alterações.
+
+Agora que você compreendeu as diferenças entre PUT e PATCH, poderá escolher o método mais apropriado para atualizar recursos em uma API. Logo, seu código ficará mais eficiente ao interagir com um servidor.
+
+### Aula 2 - Gerenciamento de favoritos com Axios
+
+Você está desenvolvendo o aplicativo de culinária Cookin'UP.
+
+Para criar a funcionalidade de favoritar receitas, você precisa implementar uma função que atualize o estado de favorito de uma receita no servidor usando uma requisição com Axios.
+
+Como você pode atualizar o estado “favorito” de uma receita?
+
+Resposta:
+
+```JavaScript
+async function atualizarFavorito(id, favorito) {
+  try {
+    const response = await axios.patch(`${URL_BASE}/receitas/${id}`, { favorito });
+    return response.data;
+  } catch (error) {
+    alert("Erro ao atualizar o estado de favorito", error);
+    throw error;
+  }
+}
+```
+
+> PATCH é o método ideal para atualizações parciais. Usamos PATCH porque queremos atualizar apenas o campo favorito sem alterar os outros dados da receita.
+
+### Aula 2 - Adicionando o comportamento e ajustando o ícone de favorito - Vídeo 3
+
+Transcrição  
+Ajustamos a interface e criamos a função na API responsável por atualizar o pensamento. Agora, precisamos adicionar comportamento ao botão e fazer com que haja uma mudança visual ao clicá-lo.
+
+Mudando a aparência do botão  
+Para isso, acessamos o VS Code. Começaremos pelas mudanças visuais. Passamos de forma fixa, na linha 90, o src do ícone favorito como favorito_outline.png, ou seja, como o ícone de coração vazio. Mas, na verdade, esse ícone precisa variar de forma dinâmica conforme a propriedade pensamentoFavorito. Uma forma de resolver isso é utilizando um operador ternário que verificará se esse pensamento é ou não favorito e vai mudar o ícone de acordo com esse valor.
+
+Para esse src, passamos após o sinal de igual pensamento.favorito ?. Feito isso, pressionamos "Enter" para dar uma quebra de linha. Se esse pensamento for favorito, queremos renderizar o ícone favorito.
+
+Então, passamos o caminho "assets/imagens/icone-favorito.png". Se o pensamento for favorito, ou seja, se essa propriedade for true, será renderizado esse primeiro valor do coração preenchido. Se não, então passamos : será renderizado o coração vazio.
+
+```JavaScript
+//Código omitido
+
+const icone Favorito = document.createElement("img")
+icone Favorito.src = pensamento.favorito ?
+"assets/imagens/icone-favorito.png" :
+"assets/imagens/icone-favorito_outline.png"
+
+//Código omitido
+```
+
+Vamos testar se essa abordagem funcionou. Lembra que colocamos no db.json essa propriedade como false em todos os pensamentos. Então, teoricamente, eles devem continuar assim.
+
+Como ainda não adicionamos esse comportamento, para testar se está funcionando, podemos ir ao arquivo db.json e fazer essa mudança manualmente. Então, na linha 11, mudamos de false para true.
+
+db.json
+
+```JavaScript
+//Código omitido
+{
+"id": "4c7d",
+"favorito": true,
+"conteudo": "Da vida reclama, mas sem ela não vive!",
+"autoria": "Mestre Yoda"
+},
+
+//Código omitido
+```
+
+Feito isso, ao abrir a aplicação, notamos que o coração fica realmente com a cor preenchida. A abordagem que utilizamos com o operador ternário do JavaScript funcionou.
+
+Como sempre, na programação, existem diversas formas de fazer a mesma coisa. A que utilizamos deu certo.
+
+Porém, se clicarmos no coração, o ícone não muda para o coração vazio. Esse comportamento ainda precisa ser adicionado. Então, fechamos e voltamos ao VS Code.
+
+Adicionando comportamento ao botão  
+Agora, precisamos adicionar comportamento a esse botão. No arquivo ui.js, em const botaoFavorito, próximo à linha 88, escrevemos botaoFavorito.onclick = async () => {}. Nas chaves, passamos try {} cat (error){}.
+
+Nas chaves de try, chamaremos a função atualizarFavorito(), que criamos na API.js. Para isso, escrevemos await.api.atualizarFavorito(). Essa função recebe dois parâmetros, então passamos pensamento.id, pensmento.favorito.
+
+Após, queremos renderizar os pensamentos. Então, na linha de baixo, escrevemos ui.renderizarPensamentos(), para vermos essa atualização na interface. Dentro do catch (erro) {}, passamos alert("Erro ao atualizar pensamento").
+
+```JavaScript
+//Código omitido
+const botaoFavorito = document.createElement("button")
+    botaoFavorito.classList.add("botao-favorito")
+    botaoFavorito.onclick = async () => {
+      try {
+        await api.atualizarFavorito(pensamento.id, pensamento.favorito)
+        ui.renderizarPensamentos()
+      } catch (error) {
+        alert("Erro ao atualizar pensamento")
+      }
+    }
+//Código omitido
+```
+
+Vamos verificar se está funcionando. Para isso, abrimos a aplicação. Ao clicar no coração, a página recarrega, mas nada acontece. Para entendermos o que está acontecendo, abrimos o arquivo db.js.
+
+Perceba que a lógica que utilizamos, passando esses parâmetros, está um pouco equivocada. Estamos adicionando um manipulador, um evento de onclick no botão favorito seguido do id e a propriedade favorito. Mas, na verdade, precisamos passar a informação negando essa propriedade. Isso, pois, ao clicarmos, queremos que automaticamente essa propriedade mude. Se ela é true, queremos que fique false. Se é false, queremos que fique true.
+
+Então, passamos o operador de negação ! antes de pensamento.favorito. Assim, sempre que clicarmos, haverá essa mudança de true para false ou de false para true.
+
+```JavaScript
+//Código omitido
+const botaoFavorito = document.createElement("button")
+    botaoFavorito.classList.add("botao-favorito")
+    botaoFavorito.onclick = async () => {
+      try {
+        await api.atualizarFavorito(pensamento.id, !pensamento.favorito)
+        ui.renderizarPensamentos()
+      } catch (error) {
+        alert("Erro ao atualizar pensamento")
+      }
+    }
+//Código omitido
+```
+
+Feito isso, abrimos a interface novamente. Ao clicar no coração ele fica preenchido, ao clicar novamente, fica vazio. Então, na interface, está dando tudo certo a nossa funcionalidade.
+
+Agora, verificaremos no db.json se está havendo essas modificações. Perceba que, além daquela modificação que fizemos no pensamento do mestre Yoda, houve várias outras, conforme fomos clicando. Então, conseguimos implementar a funcionalidade e está havendo essa mudança, tanto visual como também na propriedade do pensamento.
+
+Agora, nossa aplicação ficou mais completa e interativa. Com certeza a experiência da pessoa usuária será melhor com essa possibilidade de dar destaque aos pensamentos que ela mais gosta.
+
+Na próxima aula, esperamos você para continuarmos evoluindo a aplicação MemoTeca.
+
+### Aula 2 - Faça como eu fiz: favoritando um pensamento da lista
+
+Nesta aula, continuamos evoluindo o projeto e adicionamos a funcionalidade que permite marcar pensamentos como favoritos.
+
+Se ainda não fez, é importante que você coloque em prática o conhecimento adquirido em aula para que o seu aprendizado seja eficaz! Siga os passos abaixo:
+
+- Adapte o back-end para receber a nova propriedade de favorito;
+- Crie o layout do botão;
+- Implemente a lógica e comportamento da funcionalidade, incluindo uma requisição HTTP.
+
+O resultado final esperado é que os pensamentos tenham um botão de favoritar ou desfavoritar. Além disso, clicar no botão vazio “favorita” um pensamento; clicar no botão preenchido “desfavorita” o pensamento.
+
+Vamos lá?
+
+Para implementar o que foi visto na aula, clique abaixo em “ver opinião da instrutora” para seguir o passo a passo.
+
+Opinião do instrutor
+
+Para ver detalhes do código implementado, acesse o repositório no GitHub.
+
+Nesta aula, adicionamos um novo campo chamado "favorito" com o valor "false" para cada pensamento no arquivo "backend/db.json". Além disso, no arquivo "js/ui.js", produzimos um botão de favorito para cada pensamento exibido na interface.
+
+No arquivo “backend/db.json”:
+
+- Adicione o campo "favorito" com o valor "false" para cada pensamento.
+
+No arquivo “js/ui.js”:
+
+- Crie um botão de favorito para cada pensamento na interface;
+- Adicione um ícone de favorito ao botão de favorito.
+
+Para criar a requisição, escrevemos um novo método chamado atualizarFavorito na classe api, que faz uma requisição PATCH para atualizar o campo favorito de um pensamento específico. Para replicar as alterações feitas no arquivo “js/api.js”, siga os passos abaixo:
+
+No arquivo “js/api.js”:
+
+- Crie um novo método assíncrono chamado atualizarFavorito dentro da classe api;
+- Utilize a palavra-chave async antes da declaração do método;
+- No corpo do método, faça uma requisição PATCH, utilizando o axios para a URL ${URL_BASE}/pensamentos/${id}, passando o objeto { favorito } como parâmetro;
+- Retorne os dados da resposta da requisição utilizando response.data;
+- Em caso de erro, exiba um alerta com a mensagem "Erro ao atualizar favorito" e lance o erro novamente com throw error.
+
+No arquivo “js/ui.js”:
+
+- Crie um botão de favorito para cada pensamento renderizado;
+- Ao clicar no botão de favorito, faça uma requisição assíncrona para atualizar o estado de favorito do pensamento;
+- Renderize novamente os pensamentos após a atualização do favorito;
+- Se ocorrer algum erro durante a atualização, exiba um alerta com a mensagem "Erro ao atualizar pensamento";
+- Altere o ícone do favorito para "assets/imagens/icone-favorito.png" se o pensamento for favorito, caso contrário, utilize "assets/imagens/icone-favorito_outline.png".
+
+Se sobrar alguma dúvida, chame a gente no fórum ou Discord!
+
+### Aula 2 - Lista de exercícios
+
+Vamos praticar o que vimos nesta aula com alguns exercícios?
+
+Para isso, continuaremos a trabalhar com o projeto da lista de filmes que vimos na aula anterior! Utilize o seu editor de código para fazer os exercícios.
+
+1. Adicionando botão de favoritar na interface  
+Você foi encarregado(a) de adicionar a funcionalidade de favoritar um filme da lista de filmes. Para construí-la, no arquivo "ui.js", escreva o código necessário para criar o botão de favoritar com o ícone de coração vazio na pasta "assets/imagens".
+
+Dica:
+
+Você pode se basear nos códigos dos botões de excluir e editar para criar essa funcionalidade.
+Vamos lá?
+
+2. Salvando a atualização de favoritos no back-end  
+Agora, você precisa garantir que a ação de favoritar um filme seja registrada no back-end. Logo, é necessário criar uma função assíncrona que utiliza a biblioteca Axios para enviar uma requisição do tipo Patch ao servidor, atualizando o estado de favorito no filme desejado assim que o botão for clicado.
+
+Dicas:
+
+Lembre-se de usar o id do filme para favoritar apenas o filme que for clicado.
+Use try e catch para caso haja algum erro, ele ser informado para a pessoa usuária.
+Vamos lá?
+
+3. Alterando o ícone do botão favorito  
+Você precisa produzir a lógica que altera o ícone do botão conforme o status de favorito do filme. O ícone deve ser preenchido quando o filme for favoritado e deve mostrar apenas o contorno quando não for favoritado.
+
+Dica:
+
+Uma opção seria adicionar um evento de click ao botaoFavorito no arquivo "ui.js".
+Vamos lá?
+
+Opinião do instrutor
+
+1. Adicionando botão de favoritar na interface
+
+- Abra o arquivo "ui.js";
+- Crie o botão de favoritar com o código document.createElement("button"):
+
+```JavaScript
+const botaoFavorito = document.createElement("button")
+```
+
+Adicione a classe botao-favorito ao botão usando classList.add:
+
+```JavaScript
+botaoFavorito.classList.add("botao-favorito")
+```
+
+Crie o ícone de coração usando document.createElement("img"):
+
+```JavaScript
+const iconeFavorito = document.createElement("img")
+```
+
+Defina o caminho da imagem e o texto alternativo.
+
+```JavaScript
+iconeFavorito.src = "../assets/imagens/icone-favorito_outline.png"
+iconeFavorito.alt = "Ícone de favorito"
+```
+
+Anexe o ícone ao botão com appendChild:
+
+```JavaScript
+botaoFavorito.appendChild(iconeFavorito)
+```
+
+Anexe o botão ao elemento icones. Lembre-se que isso precisa ser feito após o elemento ter sido criado.
+
+```JavaScript
+icones.appendChild(botaoFavorito)
+```
+
+2. Salvando a atualização de favoritos no back-end
+
+- Abra o arquivo "api.js";
+- Adicione uma vírgula após a função anterior que busca um filme por termo;
+- Crie uma função assíncrona que vai atualizar os itens favoritos (dê o nome de sua preferência para a função). Ela deve aceitar dois parâmetros ide favorito;
+- Abra um bloco try e use axios.patch para enviar a requisição ao back-end, atualizando a propriedade favorito;
+- Retorne os dados da resposta em caso de sucesso;
+- Após fechar o bloco try abra um bloco catch para capturar os possíveis erros;
+- Retorne os dados da resposta em caso de sucesso, capture erros e mostre uma mensagem de alerta em caso de falha.
+
+```JavaScript
+  async atualizarFavorito(id, favorito) {
+    try {
+        const response = await axios.patch(`${url}/filmes/${id}`, {favorito})
+        return response.data
+    } catch (error) {
+        alert("Erro ao atualizar o estado de favorito", error)
+        throw error
+    }
+  }
+```
+
+3. Alterando o ícone do botao favorito
+
+- Abra o arquivo "ui.js";
+- Adicione um manipulador de eventos onclick ao botão de favoritar.;
+- No evento de onclick, chame a função que atualiza os itens de favorito, passando o id do filme e o estado oposto de favorito;
+- Atualize a interface chamando ui.renderizarFilmes() após a atualização;
+- Ajuste o caminho da imagem do ícone com base no estado de favorito.
+
+O código poderá ficar parecido com isto:
+
+```JavaScript
+    botaoFavorito.onclick = async () => {
+      try {
+        await api.atualizarFavorito(filme.id, !filme.favorito)
+        ui.renderizarFilmes()
+      } catch (error) {
+        alert("Erro ao atualizar favorito")
+      }
+    }
+
+    iconeFavorito.src = filme.favorito ? "../assets/imagens/icone-favorito.png" : "../assets/imagens/icone-favorito_outline.png"
+```
+
+Você concluiu mais uma lista de exercícios! Muito bem!
+
+Procure-nos no fórum ou Discord se precisar de ajuda!
+
+### Aula 2 - O que aprendemos?
+
+Nesta aula, você aprendeu como:
+
+- Adicionar a funcionalidade de "favoritar" pensamentos, incluindo a atualização do back-end para armazenar o estado de favorito;
+- Criar e estilizar um botão de favoritar na interface;
+- Implementar uma função usando o método PATCH para atualizar o estado de favorito no backend;
+- Adicionar comportamento ao botão de favoritar para alternar o estado de favorito e atualizar a interface;
+- Ajustar o ícone do botão para refletir visualmente o estado de favorito (preenchido ou vazio).
+
+Espero você na próxima aula!
+
+## Aula 3 - Trabalhando com datas em JavaScript
+
+### Aula 3 - Criando e validando inputs de data - Vídeo 1
+
+
+### Aula 3 -  - Vídeo 2
+### Aula 3 -  - Vídeo 3
+### Aula 3 -  - Vídeo 4
+### Aula 3 -  - Vídeo 5
+### Aula 3 -  - Vídeo 6
+### Aula 3 -  - Vídeo 7
+### Aula 3 -  - Vídeo 8
