@@ -4,91 +4,120 @@
       "id": "2a56",
       "favorito": true,
       "conteudo": "Vc faz TI? Conserta meu celular!",
-      "autoria": "Grupo da família"
+      "autoria": "Grupo da família",
+      "data": "2025-04-01T10:00:00.000Z"
     },
     {
       "id": "4c7d",
       "favorito": true,
       "conteudo": "Da vida reclama, mas sem ela não vive!",
-      "autoria": "Mestre Yoda"
+      "autoria": "Mestre Yoda",
+      "data": "2025-04-01T10:05:00.000Z"
     },
     {
       "id": "5b8a",
       "favorito": true,
       "conteudo": "Na minha máquina funciona!",
-      "autoria": "Dev"
+      "autoria": "Dev",
+      "data": "2025-04-01T10:10:00.000Z"
     },
     {
       "id": "68uy",
       "favorito": false,
       "conteudo": "Esse é de laranja que parece de limão, mas tem gosto de tamarindo!",
-      "autoria": "Chaves"
+      "autoria": "Chaves",
+      "data": "2025-04-01T10:15:00.000Z"
     },
     {
       "id": "b807",
       "favorito": true,
       "conteudo": "Melhor professor, o fracasso é!",
-      "autoria": "Mestre Yoda"
+      "autoria": "Mestre Yoda",
+      "data": "2025-04-01T10:20:00.000Z"
     },
     {
       "id": "9f3c",
       "favorito": false,
       "conteudo": "Você não é todo mundo!",
-      "autoria": "Mãe"
+      "autoria": "Mãe",
+      "data": "2025-04-01T10:25:00.000Z"
     },
     {
       "id": "6a2b",
       "favorito": false,
       "conteudo": "Foi sem querer querendo!",
-      "autoria": "Chaves"
+      "autoria": "Chaves",
+      "data": "2025-04-01T10:30:00.000Z"
     },
     {
       "id": "7e2a",
       "favorito": false,
       "conteudo": "Que a força esteja com você!",
-      "autoria": "Mestre Yoda"
+      "autoria": "Mestre Yoda",
+      "data": "2025-04-01T10:35:00.000Z"
     },
     {
       "id": "5c8f",
       "favorito": false,
       "conteudo": "Resolver o bug não consegue? Esfriar a cabeça vc deve.",
-      "autoria": "Mestre Yoda"
+      "autoria": "Mestre Yoda",
+      "data": "2025-04-01T10:40:00.000Z"
     },
     {
       "id": "2d6e",
       "favorito": false,
       "conteudo": "Não faça drama, faça café! :)",
-      "autoria": "Dev"
+      "autoria": "Dev",
+      "data": "2025-04-01T10:45:00.000Z"
     },
     {
       "id": "3f1a",
       "favorito": false,
       "conteudo": "Conserta minha impressora?",
-      "autoria": "Grupo da família"
+      "autoria": "Grupo da família",
+      "data": "2025-04-01T10:50:00.000Z"
     },
     {
       "id": "8b4c",
       "favorito": false,
       "conteudo": "A vingança nunca é plena... mata a alma e a envenena...",
-      "autoria": "Seu Madruga"
+      "autoria": "Seu Madruga",
+      "data": "2025-04-01T10:55:00.000Z"
     },
     {
       "id": "4d2e",
       "favorito": false,
       "conteudo": "Se eu for aí e achar, eu esfrego na sua cara!",
-      "autoria": "Mãe"
+      "autoria": "Mãe",
+      "data": "2025-04-01T11:00:00.000Z"
     },
     {
       "id": "c02b",
       "favorito": false,
       "conteudo": "Um dia de cada vez, mais um hoje",
-      "autoria": "eu"
+      "autoria": "eu",
+      "data": "2025-04-01T11:05:00.000Z"
     },
     {
       "id": "1e6b",
       "favorito": false,
       "conteudo": "Mais um pensamento sem pensar!",
-      "autoria": "Eu"
+      "autoria": "Eu",
+      "data": "2025-04-01T11:10:00.000Z"
+    },
+    {
+      "id": "c1c7",
+      "conteudo": "Pensamento",
+      "autoria": "Eu",
+      "data": "2025-04-01T11:15:00.000Z",
+      "favorito": true
+    },
+    {
+      "id": "c381",
+      "conteudo": "testando o input data",
+      "autoria": "eu",
+      "data": "2025-03-31",
+      "favorito": false
     }
   ]
 }

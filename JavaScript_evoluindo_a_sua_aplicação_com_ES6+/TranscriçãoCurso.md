@@ -1710,11 +1710,674 @@ Espero você na próxima aula!
 
 ### Aula 3 - Criando e validando inputs de data - Vídeo 1
 
+Transcrição  
+Nosso projeto já possui as funcionalidades de busca e de favoritar. Agora, vamos começar a entender como manipular algo muito importante em várias aplicações: as datas.
 
-### Aula 3 -  - Vídeo 2
-### Aula 3 -  - Vídeo 3
-### Aula 3 -  - Vídeo 4
-### Aula 3 -  - Vídeo 5
-### Aula 3 -  - Vídeo 6
-### Aula 3 -  - Vídeo 7
+Criando e validando inputs de data  
+Imagine uma rede social com uma linha do tempo sem o registro de datas, ou mesmo uma aplicação de agendamento de consultas sem essa informação. Precisamos entender como manipular datas, isto é, como inseri-las, buscá-las, alterá-las e formatá-las em JavaScript na nossa aplicação.
+
+Começaremos a fazer isso nesta aula, pois o nosso projeto ainda não tem a opção de registrar uma data junto com o pensamento. Faremos todo o passo a passo para enviar a data para a API e conseguir manipular, formatar e exibir na aplicação efetivamente.
+
+Criando o campo pensamento-data  
+Primeiramente, vamos adicionar um campo onde a pessoa conseguirá selecionar uma data para o pensamento. Para isso, vamos acessar o arquivo index.html e, abaixo da label para pensamento-autoria, criaremos uma nova label para (for) pensamento-data, que nomearemos como "Data".
+
+Feito isso, criaremos logo abaixo um input do tipo (type) date. Não precisaremos do atributo name, mas o id será o que passamos anteriormente para a label, ou seja, pensamento-data.
+
+Ao final, passamos o required para adicionar uma validação e esse campo ser obrigatório.
+
+index.html:
+
+```html
+<!-- código omitido -->
+
+<input 
+  type="text" 
+  id="pensamento-autoria" 
+  placeholder="Insira a autoria ou fonte" 
+  required />
+  <label for="pensamento-data">Data</label>
+  <input 
+    type="date" 
+    id="pensamento-data"
+    required>
+
+<!-- código omitido -->
+```
+
+Após salvar, podemos retornar à aplicação e ir ao início do formulário, onde teremos o novo campo de data ("Data"), no qual podemos selecionar uma data clicando no ícone de calendário à direita.
+
+Declarando a constante data
+Agora, vamos voltar para o arquivo main.js no Visual Studio Code, onde começaremos a manipular a data. Na função manipularSumissaoFormulario(), buscaremos o valor da data para enviar à API.
+
+Sendo assim, após a declaração de const autoria, vamos criar uma nova constante chamada data, onde iremos usar p método document.getElementById(), passando o ID pensamento-data entre parênteses e aspas duplas, seguido de .value ao final do código.
+
+main.js:
+
+```JavaScript
+// código omitido
+
+async function manipularSubmissaoFormulario(event) {
+  event.preventDefault()
+  const id = document.getElementById("pensamento-id").value
+  const conteudo = document.getElementById("pensamento-conteudo").value
+  const autoria = document.getElementById("pensamento-autoria").value
+  const data = document.getElementById("pensamento-data").value
+
+// código omitido
+```
+
+Utilizando a constante data  
+Uma vez com acesso a esse valor de data, no bloco try logo abaixo, onde temos as funções editarPensamento() e salvarPensamento(), passamos primeiro id, conteudo e autoria na de edição, depois conteudo e autoria na de salvar. Agora, passaremos também data em ambas.
+
+```JavaScript
+// código omitido
+try {
+  if (id) {
+    await api.editarPensamento({ id, conteudo, autoria, data })
+  } else {
+    await api.salvarPensamento({ conteudo, autoria, data })
+  }
+  ui.renderizarPensamentos()
+} catch {
+  alert("Erro ao salvar pensamento")
+}
+// código omitido
+```
+
+Criando a função validarData()  
+Agora, temos um requisito na nossa aplicação: ao clicar no calendário do campo "Data", podemos selecionar qualquer data, seja uma data passada ou até mesmo futura.
+
+No entanto, para a nossa aplicação, foi solicitado não permitir a inclusão de datas futuras. Criamos esse requisito para entender como validar as datas, mas pensando em uma aplicação de agendamento de consultas. O requisito poderia ser não permitir o agendamento de consultas com datas passadas, o que faria mais sentido para esse contexto.
+
+Sendo assim, antes de enviar a data, precisaremos fazer uma validação se a data é futura ou não. Para isso, vamos criar uma função (function) chamada validarData() ao final do arquivo main.js. Entre parênteses, passaremos data, que já conseguimos obter com o valor criado.
+
+```JavaScript
+// código omitido
+function validarData(data) {
+
+}
+```
+
+Para validar essa data, precisamos saber:
+
+Qual é a data atual;
+
+E qual data a pessoa escolheu.
+
+Para saber qual é a data atual (dataAtual), basta utilizar uma classe do JavaScript responsável por lidar e manipular com datas: a Date (new Date()). Utilizando esse construtor de datas, podemos manipular datas. Ao criar uma data sem nenhum parâmetro em Date(), ele retorna a data atual.
+
+Logo abaixo, vamos declarar outra constante chamada dataInserida. Como vamos comparar a data selecionada no calendário, que irá retornar uma string, com o formato Date, também precisamos criar um new Date(), mas dessa vez, passaremos como parâmetro a data que a pessoa inseriu.
+
+Agora, precisamos fazer uma verificação: queremos saber, com o retorno (return), se a dataInserida é menor ou igual (<=) à dataAtual.
+
+```JavaScript
+// código omitido
+function validarData(data) {
+  const dataAtual = new Date()
+  const dataInserida = new Date(data)
+  return dataInserida <= dataAtual
+}
+```
+
+Criando um bloco condicional if  
+Para validar a data, antes de fazer as requisições no arquivo main.js — isto é, antes do bloco try —, vamos adicionar um bloco condicional if. Entre parênteses, usaremos o operador de negação (!) seguido de validarData (ou seja, se a data não for validada), passando como parâmetro a data.
+
+No escopo do bloco if, iremos enviar um alerta para a pessoa usuária. Com alert(), passaremos uma mensagem dizendo que "Não é permitido o cadastro de datas futuras. Selecione outra data.".
+
+```JavaScript
+// código omitido
+if(!validarData(data)) {
+    alert("Não é permitido o cadastro de datas futuras. Selecione outra data")
+    return
+}
+// código omitido
+```
+
+Testando o código na aplicação, podemos digitar caracteres aleatórios em "Pensamento" e "Autoria ou Fonte", e selecionar uma data futura em "Data". Ao clicar em "Salvar", aparece o alerta na parte superior da página dizendo que não é permitido o cadastro de datas futuras.
+
+Conclusão  
+Assim, finalizamos o primeiro passo de adicionar um campo onde a pessoa usuária consegue escolher a data, bem como de realizar uma primeira validação. Nos encontramos no próximo vídeo!
+
+### Aula 3 - Entendendo o objeto Date - Vídeo 2
+
+Transcrição  
+No vídeo anterior, começamos a entender como manipular datas no JavaScript. Para isso, no arquivo main.js, criamos uma nova data utilizando um construtor com new Date().
+
+Às vezes, passamos parâmetros, e outras vezes não (por exemplo, quando obtivemos a data atual). Porém, como será que a data é retornada? Neste vídeo, vamos entender um pouco mais sobre isso.
+
+Entendendo o objeto Date
+
+Testando códigos no console  
+Com a aplicação no navegador, vamos abrir o console com o atalho "Ctrl + Shift + J", onde criaremos uma constante chamada dataAtual, da mesma forma que fizemos anteriormente. Passaremos para ela o new Date() sem parâmetros. Abaixo, faremos um console.log() em dataAtual.
+
+```JavaScript
+const dataAtual = new Date()
+console.log(dataAtual)
+```
+
+Ao executar o código, a data será retornada de forma bem completa:
+
+Mon Aug 12 2024 15:36:33 GMT-0300 (Horário Padrão de Brasília)
+
+Primeiro, temos a abreviação do nome do dia da semana em inglês (abreviação de Monday, segunda-feira em português). Depois, temos a abreviação do nome do mês (abreviação de August, agosto em português). Em seguida, temos o dia 12 e o ano 2024.
+
+Além disso, temos informações sobre a hora, em horas, minutos e segundos. Por fim, temos a informação do fuso horário (GMT-0300), que seria 3 horas a menos em relação ao horário de Greenwich. Trata-se de uma informação bastante completa e local do navegador.
+
+Não imaginamos apresentar isso na interface para a pessoa usuária, correto? Nesse caso, queremos conseguir manipular a data para apresentá-la de forma mais amigável.
+
+Agora, vamos limpar o console clicando no segundo ícone da barra de menu superior, e criar uma constante chamada data, passando para ela um new Date(), mas dessa vez com o parâmetro de data. Nesse caso, usaremos a data atual: '12-08-2024'.
+
+Por fim, daremos um console.log() em data.
+
+```JavaScript
+const data = new Date('12-08-2024')
+console.log(data)
+```
+
+Como retorno, ele traz o seguinte resultado:
+
+Sun Dec 08 2024 00:00:00 GMT-0300 (Horário Padrão de Brasília)
+
+Novamente, recebemos o nome do dia da semana abreviado em inglês (Sunday, domingo em português). Só que hoje é segunda; depois a abreviação do nome do mês (December, dezembro em português); o dia 08; o ano 2024; e as informações sobre hora e fuso horário.
+
+No entanto, queríamos que o retorno fosse 12 de agosto de 2024, enquanto recebemos 8 de dezembro de 2024. Assim, começamos a perceber que existe um formato específico que precisamos passar para o construtor de datas, de modo que ele consiga interpretar e retornar o que queremos.
+
+Definindo um formato específico  
+O formato específico que queremos é: ano — mês — dia. Se quisermos a data dessa forma, precisamos declarar a const data, que receberá o new Date(), e aplicar algumas formas específicas de passar os parâmetros. Podemos passar entre parênteses, por exemplo, 2024, 8, 12, ou seja, o ano, depois o mês, e depois o dia.
+
+Ao final, usaremos console.log() de data para conferir o resultado.
+
+```JavaScript
+const data = new Date(2024, 8, 12)
+console.log(data)
+```
+
+Agora, temos um retorno diferente dos anteriores:
+
+Thu Sep 12 2024 00:00:00 GMT-0300 (Horário Padrão de Brasília)
+
+Ele retornou o dia 12, em 2024, mas com a abreviação Sep de September (setembro em português). Portanto, mesmo com o número 8 como parâmetro, ele identifica setembro em vez de agosto.
+
+No JavaScript, os meses são representados de 0 a 11. Funciona como no array, em que o índice do primeiro elemento é 0, não 1. Sendo assim, ao lidar com meses, precisamos fazer uma conversão: se quisermos o mês de agosto, precisamos passar 7 para que o construtor retorne o mês correto.
+
+Conclusão  
+Essa é apenas uma das várias peculiaridades quando lidamos com datas. No início, pode ser um pouco mais desafiador, mas temos a documentação e diversos métodos que nos auxiliam na manipulação das datas e no envio para a API conforme desejado, bem como a exibir na interface de forma amigável e compreensível para todas as pessoas.
+
+Entenderemos como fazer isso no próximo vídeo!
+
+### Aula 3 - Para saber mais: formatando o objeto Date
+
+O objeto Date em JavaScript é fundamental para manipular datas e horários. Criado para lidar com uma ampla gama de operações relacionadas a datas, o objeto Date cria instâncias de datas com precisão, bem como modifica e formata essas datas de diversas maneiras.
+
+Ao instanciar um objeto Date, você pode usar diferentes construtores: sem parâmetros para obter a data e hora atual, ou passando parâmetros específicos, como ano, mês e dia. Por exemplo: new Date(2024, 7, 19) cria um objeto Date para 19 de agosto de 2024. É importante notar que os meses são indexados a partir de 0, então agosto é o mês 7. Portanto, janeiro é o mês 0 e dezembro é o mês 11.
+
+O Date oferece uma variedade de métodos para obter e ajustar partes da data. Métodos como getFullYear(), getMonth(), e getDate() são usados para extrair o ano, mês e dia, respectivamente. Para ajustar a data, você pode usar setDate(), setMonth(), entre outros. Isso permite que você ajuste datas e horas com precisão.
+
+Também, o objeto Date facilita operações matemáticas com datas. Métodos como getTime() retornam a data em milissegundos, permitindo cálculos diretos entre datas. Por exemplo, você pode calcular a diferença em dias entre duas datas, subtraindo seus valores em milissegundos e convertendo o resultado.
+
+Para saber mais como formatar datas, horas e moedas em JavaScript, confira o [artigo Formatar datas](https://www.alura.com.br/artigos/formatar-datas-horas-moedas-javascript), horas e moedas em javaScript, que fornece diferentes técnicas e abordagens para lidar com a formatação de dados no seu código.
+
+### Aula 3 - Salvando datas no formato UTC - Vídeo 3
+
+Transcrição  
+Começamos a estudar datas no JavaScript e percebemos que existem algumas formas diferentes de representar datas e horas. Já criamos o campo para inserir a data, mas assim como o pensamento e a autoria, ela também é uma propriedade do pensamento. Sendo assim, precisaremos ajustar o back-end para que ele esteja apto a receber a informação enviada pelo front-end.
+
+Salvando datas no formato UTC  
+Como lidamos tanto com front-end quanto com back-end, através do JSON Server com a nossa API fictícia, temos a responsabilidade de ajustar a API para receber a informação necessária.
+
+Começaremos o processo ajustando o arquivo db.json. Pode surgir a seguinte dúvida:
+
+Qual formato de data a API poderá receber?
+
+Esse é um acordo feito entre o front-end e o back-end. Nesse caso, o time de back-end informa para o time de front-end em qual formato ele quer receber a data.
+
+Podemos receber, por exemplo, somente a data; ou a data e as horas, caso seja necessário; informações de fuso horário; e até mesmo o formato da data, como: com hífen, sem hífen, com barra, e assim em diante. Tudo isso precisa ser ajustado.
+
+Seria muito útil se houvesse um formato universal para lidar com as datas. Neste vídeo, aprenderemos que esse formato existe!
+
+Acessando a documentação MDN Web Docs
+
+Na documentação do MDN Web Docs, vamos até a página Date.UTC().
+
+O método UTC() é justamente o formato global que podemos utilizar para manipular datas. Trata-se de um padrão global muito utilizado, pois ele não muda de acordo com os diferentes fusos horários do mundo. Da mesma forma, ele não é afetado pelo horário de verão.
+
+Precisamos pensar em tudo isso ao trabalhar com datas. Esse formato é muito utilizado por conta dos fatores já citados, e o horário universal é o que vamos utilizar como formato para a nossa API.
+
+Na documentação, a sintaxe do método UTC() é a seguinte:
+
+```JavaScript
+Date.UTC(ano, mês[, dia[, hora[, minuto[, segundo[, milisegundo]]]]])
+```
+
+Primeiro, recebemos o ano, depois o mês, depois dia, hora, minuto, segundo, e por último, milissegundos. Portanto, são diversas as informações que serão enviadas.
+
+Utilizando o ChatGPT 
+Com o VS Code aberto, vamos acessar o arquivo db.json para inserir a propriedade data em cada pensamento, bem como o horário específico em cada data adicionada.
+
+Como é um formato completo, bastante específico, e temos diversos pensamentos para alterar na lista, seria uma tarefa muito repetitiva para realizar manualmente. Dito isso, por que não utilizamos o ChatGPT para nos auxiliar com o processo?
+
+Podemos usar o atalho "Ctrl + A" para selecionar todo o código do arquivo db.sjon, e depois o atalho "Ctrl + C" para copiar. Feito isso, vamos acessar uma aba do ChatGPT, onde enviaremos um prompt explicando o nosso problema e o que queremos.
+
+GPT, tenho um arquivo de dados de pensamentos e quero adicionar a propriedade data em todos eles. Preciso que o formato da data seja em UTC. Adicione datas diferentes para cada pensamento.
+"db.json":
+
+```JavaScript
+(Inserir código do arquivo `db.json`, localizado na pasta "backend" do projeto.)
+```
+
+Como retorno, recebemos a seguinte resposta e o código solicitado:
+
+Para adicionar a propriedade data em formato UTC a cada pensamento no seu arquivo db.json, você pode seguir o modelo abaixo. Aqui estão as datas adicionadas e formatadas em UTC para cada pensamento:
+
+```JavaScript
+{
+  "pensamentos": [
+    {
+      "id": "2a56",
+      "favorito": true,
+      "conteudo": "Vc faz TI? Conserta meu celular!",
+      "autoria": "Grupo da família",
+      "data": "2024-08-01T00:00:00Z"
+    },
+
+    // código omitido
+
+    {
+      "id": "3e67",
+      "conteudo": "fdsfafdgf",
+      "autoria": "gsdfgsdfg",
+      "data": "2024-08-15T00:00:00Z"
+    }
+  ]
+}
+```
+
+Perceba que ele adicionou a propriedade data no formato UTC, então temos o ano, depois o mês seguido do dia, e logo na sequência, o T que separa a data do horário. Em seguida, temos hora, minutos e segundos, sem os milissegundos. Ao final, um Z que representa que o formato UTC.
+
+Nesse caso, vamos pedir para retornar também os milissegundos, buscando uma informação mais completa. Para isso, basta enviar um novo prompt no mesmo chat:
+
+> Me retorne também os milissegundos
+
+Vamos copiar o código final retornado, clicando em "" no canto superior direito, e voltar para o VS Code. Feito isso, podemos substituir o conteúdo de db.json pelo que copiamos.
+
+db.json:
+
+```JavaScript
+{
+  "pensamentos": [
+    {
+      "id": "2a56",
+      "favorito": true,
+      "conteudo": "Vc faz TI? Conserta meu celular!",
+      "autoria": "Grupo da família",
+      "data": "2024-08-01T00:00:00.000Z"
+    },
+
+    // código omitido
+
+    {
+      "id": "3e67",
+      "conteudo": "fdsfafdgf",
+      "autoria": "gsdfgsdfg",
+      "data": "2024-08-15T00:00:00.000Z"
+    }
+  ]
+}
+```
+
+Testando o código  
+Agora, vamos acessar o terminal. Essa manipulação pode gerar algum erro na API. Nesse caso, basta parar com o atalho "Ctrl + C" e executar o comando npm start novamente.
+
+```JavaScript
+npm start
+```
+
+Com a API fictícia preparada para receber a data específica, podemos testar o código salvando um novo pensamento, para conferir se o resultado terá o formato esperado.
+
+Na aplicação, após recarregar a página do navegador, criaremos o seguinte pensamento:
+
+Pensamento: Testando formato de data;  
+Autoria ou Fonte: Dev;  
+Data: 01/08/2024.
+
+Ao final, basta clicar no botão "Salvar". Não conseguiremos visualizar no card da aplicação ainda, pois não ajustamos a interface, mas podemos verificar a mudança no próprio arquivo db.json.
+
+De volta ao VS Code, ao final do arquivo, temos o pensamento criado na aplicação com a propriedade data, mas com um formato diferente do que queríamos. Ele está em um formato mais simples, uma string com o ano, o mês e o dia separados por hífens, não no formato UTC.
+
+db.json
+
+```JavaScript
+// código omitido
+    {
+      "id": "c724",
+      "conteudo": "Testando formato de data",
+      "autoria": "Dev",
+      "data": "2024-08-01"
+    }
+  ]
+}
+```
+
+Nesse caso, precisaremos manipular a data para converter no formato desejado, pois quando selecionamos a data diretamente no calendário, é retornada uma data simples em formato. Sendo assim, é necessária uma conversão antes de enviar para a API.
+
+Conclusão  
+Entendemos que a forma como a data é selecionada e enviada não segue o formato que a API está apta a receber: o formato UTC. Dito isso, aprenderemos a fazer essa conversão no próximo vídeo!
+
+### Aula 3 - Manipulação de datas no javaScript
+
+Você está desenvolvendo uma funcionalidade de calendário para um sistema de gestão de eventos.
+
+Durante o desenvolvimento, percebeu que, ao criar uma data no JavaScript, o mês fornecido como parâmetro para o construtor Date não corresponde ao mês esperado. Para fazer um teste, você pretende criar uma data correspondente a 15 de julho de 2024.
+
+Como você pode implementar o código dessa função?
+
+```JavaScript
+function criarData() {
+    // Sua implementação aqui
+}
+```
+
+Resposta:
+
+```JavaScript
+function criarData() {
+    return new Date(2024, 6, 15);
+}
+```
+
+> Em JavaScript, o mês é representado por um índice de 0 a 11. Portanto, 6 corresponde a julho, que é o mês desejado. O resto da implementação está correto!
+
+### Aula 3 - Faça como eu fiz: manipulando datas
+
+Nesta aula, evoluímos um pouco mais o projeto e permitimos a adição de datas no cadastro dos pensamentos.
+
+Se ainda não fez, é importante que você coloque em prática o conhecimento adquirido em aula para que o seu aprendizado seja eficaz! Siga os passos abaixo:
+
+- Implemente um campo de data no formulário do Memoteca;
+- Adicione uma validação para garantir que apenas datas passadas ou atuais sejam permitidas;
+- Ajuste o back-end para suportar a nova informação de data.
+
+O resultado final esperado é que o formulário do projeto possua um campo tipo Date que permite a seleção de uma data. Com a validação, não é permitida a seleção de datas futuras.
+
+Vamos lá?
+
+Para implementar o que foi visto na aula, clique abaixo em “ver opinião da instrutora” para seguir o passo a passo.
+
+Opinião do instrutor
+
+Para ver detalhes do código implementado, acesse o repositório no GitHub.
+
+Nesta aula, adicionamos um novo campo de data no formulário de pensamentos, juntamente com a validação para impedir o cadastro de datas futuras. Além disso, alteramos o arquivo "main.js" para incluir a data no envio do formulário e a função de validação da data.
+
+No arquivo “index.html”:
+
+- Adicione um novo campo de data no formulário com a label "Data";
+- Defina o tipo do input como "date" e adicione o id "pensamento-data";
+- Torne o campo obrigatório para preenchimento.
+
+No arquivo “js/main.js”:
+
+- Crie a função validarData(data) para verificar se a data inserida é anterior ou igual à data atual;
+- Dentro da função manipularSubmissaoFormulario(event), antes de salvar ou editar o pensamento, verifique se a data é válida;
+- Caso a data seja futura, exiba um alerta informando que não é permitido cadastrar datas futuras e retorne da função;
+- Adicione a data no objeto enviado para a API ao salvar ou editar um pensamento.
+
+Para ajustar o back-end e adaptá-lo à nova propriedade, implementamos o campo "data" em formato de data e hora para cada citação no arquivo "backend/db.json". Isso foi feito para melhorar a organização e visualização das informações.
+
+No arquivo “backend/db.json”:
+
+- Adicione a linha "data": "2024-08-01T00:00:00.000Z"" após a linha com a autoria "Grupo da família";
+- Repita o passo anterior para as demais citações, adicionando o campo data com a data e hora correspondentes;
+- Salve as alterações feitas no arquivo.
+
+### Aula 3 - Lista de exercícios
+
+Vamos implementar mais funcionalidades no projeto da lista de filmes?
+
+Use os exercícios abaixo para praticar tudo que você aprendeu nesta aula.
+
+1. Criando campo para adicionar data de lançamento de filmes  
+Queremos aprimorar a lista de filmes, adicionando a data de lançamento dos filmes que fazem parte da lista. Para fazer isso, inicialmente precisamos ter um campo de preenchimento para que os novos filmes que forem adicionados através do formulário possam receber a data de lançamento.
+
+Dica:
+
+Lembra de quando você criou o campo de busca para filtrar os filmes da lista? Vamos usar a mesma lógica nesta situação.
+Vamos lá?
+
+2. Enviando a data para a API  
+Agora vamos começar a manipular o campo de data para conseguir inserir esses dados na API que guarda a lista de filmes (o arquivo "db.json" que está na pasta "back-end"). Para fazer isso, manipule o DOM e realize algumas alterações na submissão do formulário.
+
+O resultado esperado é que assim, que a pessoa usuária adicionar um filme, a data seja adicionada no arquivo "db.json" como parâmetro.
+
+Vamos lá?
+
+3. Validando as datas  
+Não seria muito legal colocar um filme que ainda nem teve sua data de estreia confirmada, certo?
+
+Por isso, crie uma função que valida a data dos filmes, permitindo que as pessoas coloquem apenas na lista filmes que já estrearam. Isso quer dizer que apenas filmes que estrearam até a data atual podem ser adicionados. Caso haja algum problema, use um alert para informar a pessoa usuária.
+
+Dicas:
+
+Você pode usar algumas propriedades de data para te ajudar;
+
+Lembre-se de usar condicionais como o if, por exemplo.
+
+Vamos lá?
+
+4. Usando Inteligência Artificial para adicionar datas  
+Estamos trabalhando com datas, mas, no nosso arquivo "db.json", alguns itens não possuem informações sobre a data de lançamento. Fazer isso manualmente seria muito desgastante, então podemos usar a inteligência artificial para nos ajudar.
+
+Insira as datas nos itens que estão sem data com ajuda de uma IA como o GPT.
+
+Dica:
+
+Ao conversar com a inteligência artificial, use mensagens diretas e contextos claros, além de mostrar os dados que você já possui no back-end.
+Vamos lá?
+
+Opinião do instrutor
+
+1. Criando campo para adicionar data de lançamento de filmes
+
+Abra o arquivo "index.html";
+
+Crie um campo de preenchimento para a data dentro da tag `<form>`, conforme o código HTML abaixo:
+
+`<input type="date" id="data-lancamento" required/>`
+
+Vamos entender melhor cada parte do código?
+
+`<input>`: a tag `<input>` é usada para criar elementos de entrada interativos em formulários HTML. É um dos elementos mais comuns em formulários, permitindo diferentes tipos de entradas como texto, senhas, números, datas, entre outros.
+
+type="date": O atributo type especifica o tipo de entrada que o campo input aceitará. Neste caso, type="date" indica que o campo aceitará uma data. Isso faz com que os navegadores exibam um controle de seleção de data (como um calendário) para o usuário escolher a data desejada. O formato de exibição da data pode variar de acordo com as configurações do navegador e do sistema operacional.
+
+id="data-lancamento": o atributo id atribui um identificador único ao elemento de entrada, que pode ser usado para referenciar este campo no CSS, JavaScript, ou em outras partes do HTML. Neste caso, o ID é data-lancamento, sugerindo que este campo está relacionado ao lançamento de algo (como a data de lançamento de um filme, produto, etc.).
+
+required: o atributo required indica que o preenchimento deste campo é obrigatório antes que o formulário seja submetido. Se o usuário tentar enviar o formulário sem preencher este campo, o navegador exibirá uma mensagem de erro, solicitando que o campo seja preenchido.
+
+Portanto, o código cria um campo de entrada de data, em que o usuário pode selecionar uma data por meio de um seletor de calendário. O campo tem um ID único de data-lancamento, o que facilita a identificação e manipulação do campo por meio de CSS e JavaScript, e o atributo required assegura que o usuário preencha a data antes de enviar o formulário.
+
+2. Enviando a data para a API
+
+Abra o arquivo "main.js";
+
+Na função manipularSubmissaoFormulario, após a linha que pega o valor do gênero do filme, adicione o seguinte código:
+
+```JavaScript
+const data = document.getElementById("data-lancamento").value
+```
+
+Em seguida, acrescentamos o valor capturado no formulário dentro do bloco try ainda na função manipularSubmissaoFormulariocomo parâmetros das funções editarFilme e salvarFilme.
+
+```JavaScript
+  try {
+    if (id) {
+      await api.editarFilme({ id, nome, genero, data })
+    } else {
+      await api.salvarFilme({ nome, genero, data })
+    }
+    ui.renderizarFilmes()
+  }
+```
+
+Com este código, conseguimos adicionar uma data de um filme na API da aplicação!
+
+3. Validando as datas
+
+Abra o arquivo main.js;
+
+Na última linha, crie uma função de validação (dê o nome que preferir para a função) e adicione o seguinte código:
+
+```JavaScript
+function validarData(data) {
+  const dataAtual = new Date()
+  const dataInserida = new Date(data)
+  return dataInserida <= dataAtual
+}
+```
+
+Na função manipulaSubmissaoFormulario, após capturar o valor de data no formulário, use um if para fazer a verificação da seguinte maneira:
+
+```JavaScript
+  if (!validarData(data)) {
+    alert("Parece que esse filme ainda não foi lançado!")
+    return
+  }
+```
+
+Com este código, validamos as datas de lançamento de um filme. Apenas filmes já lançados poderão ser cadastrados (neste caso, essa limitação tem fins didáticos para que você pratique a validação de datas no JavaScript).
+
+4. Usando Inteligência Artificial para adicionar datas
+
+Abra o ChatGPT.
+
+Você pode usar como base a seguinte mensagem para obter mais filmes para o seu catálogo:
+Tenho uma lista de filmes em formato json. A data deve ser o lançamento do respectivo filme no Brasil.
+
+db.json:
+
+```JavaScript
+{
+  "filmes": [
+    {
+      "id": "1001",
+      "nome": "O Iluminado",
+      "genero": "Terror"
+    },
+    {
+      "id": "1002",
+      "nome": "Forrest Gump: O Contador de Histórias",
+      "genero": "Drama"
+    },
+    {
+      "id": "1003",
+      "nome": "Matrix",
+      "genero": "Ficção Científica"
+    },
+    {
+      "id": "1004",
+      "nome": "Batman: O Cavaleiro das Trevas",
+      "genero": "Ação"
+    },
+    {
+      "id": "1005",
+      "nome": "Alien: Romulus",
+      "genero": "Ficção Científica"
+    },
+    {
+      "id": "1006",
+      "nome": "A Origem",
+      "genero": "Ficção Científica"
+    },
+    {
+      "id": "1007",
+      "nome": "O Poderoso Chefão",
+      "genero": "Drama"
+    },
+    {
+      "id": "1008",
+      "nome": "Senhor dos Anéis: A Sociedade do Anel",
+      "genero": "Fantasia"
+    },
+    {
+      "id": "1009",
+      "nome": "Clube da Luta",
+      "genero": "Drama"
+    },
+    {
+      "id": "1010",
+      "nome": "Gladiador",
+      "genero": "Ação"
+    },
+    {
+      "id": "1011",
+      "nome": "Jurassic Park: O Parque dos Dinossauros",
+      "genero": "Aventura"
+    },
+    {
+      "id": "1012",
+      "nome": "O Resgate do Soldado Ryan",
+      "genero": "Guerra"
+    },
+    {
+      "id": "1013",
+      "nome": "Coringa",
+      "genero": "Drama"
+    },
+    {
+      "id": "1014",
+      "nome": "Vingadores: Ultimato",
+      "genero": "Ação"
+    },
+    {
+      "id": "1015",
+      "nome": "Interestelar",
+      "genero": "Ficção Científica"
+    },
+    {
+      "id": "1016",
+      "nome": "Pulp Fiction: Tempo de Violência",
+      "genero": "Crime"
+    },
+    {
+      "id": "1017",
+      "nome": "De Volta para o Futuro",
+      "genero": "Ficção Científica"
+    },
+    {
+      "id": "1018",
+      "nome": "O Senhor dos Anéis: O Retorno do Rei",
+      "genero": "Fantasia"
+    },
+    {
+      "id": "1019",
+      "nome": "O Lobo de Wall Street",
+      "genero": "Biografia"
+    },
+    {
+      "id": "1020",
+      "nome": "Mad Max: Estrada da Fúria",
+      "genero": "Ação"
+    }
+  ]
+}
+```
+
+O código json colocado aqui é um exemplo, você pode usar o exemplo implementar o seu arquivo "db.json".
+
+Você concluiu mais uma lista de exercícios! Muito bem!
+
+Procure-nos no fórum ou Discord se precisar de ajuda!
+
+### Aula 3 - O que aprendemos?
+
+Nesta aula, você aprendeu a:
+
+- Adicionar e configurar um campo de data no formulário para registrar a data de criação de pensamentos;
+- Implementar validações para impedir o cadastro de datas futuras, garantindo a integridade dos dados;
+- Criar e utilizar a função validarData() para incluir validações adicionais antes de salvar ou editar um pensamento, prevenindo a submissão de dados inválidos;
+- Inserir a data correta no objeto enviado à API ao salvar ou editar um pensamento, garantindo que as informações estejam completas e consistentes no back-end;
+- Atualizar o arquivo “backend/db.json”, incluindo o campo data para cada pensamento existente, a fim de manter os registros organizados e coerentes com o novo formato.
+
+Espero você na próxima aula!
+
 ### Aula 3 -  - Vídeo 8

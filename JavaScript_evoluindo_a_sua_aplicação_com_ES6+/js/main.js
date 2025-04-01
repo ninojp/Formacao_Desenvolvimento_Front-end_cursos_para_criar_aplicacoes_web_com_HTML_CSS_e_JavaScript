@@ -21,16 +21,21 @@ document.addEventListener('DOMContentLoaded', async () => {
             const pensamentoId = document.getElementById('pensamento-id').value.trim();
             const pensamentoConteudo = document.getElementById('pensamento-conteudo').value.trim();
             const pensamentoAutoria = document.getElementById('pensamento-autoria').value.trim();
+            const pensamentoData = document.getElementById('pensamento-data').value;
             if (!pensamentoConteudo || !pensamentoAutoria) {
                 alert('Preencha todos os campos!');
                 return;
             };
+            if(!validarData(pensamentoData)) {
+                alert("Não é permitido o cadastro de datas futuras. Selecione outra data")
+                return
+            }
             let novoPensamento;
             if (pensamentoId) {
-                novoPensamento = await apiAxios.editarPensamento({ id: pensamentoId, conteudo: pensamentoConteudo, autoria: pensamentoAutoria });
+                novoPensamento = await apiAxios.editarPensamento({ id: pensamentoId, conteudo: pensamentoConteudo, autoria: pensamentoAutoria, data: pensamentoData });
             } else {
                 //O id é gerado automaticamente pelo json-server.
-                novoPensamento = await apiAxios.salvarPensamento({ conteudo: pensamentoConteudo, autoria: pensamentoAutoria });//A IA do VSC Copilot sugeriu essa linha
+                novoPensamento = await apiAxios.salvarPensamento({ conteudo: pensamentoConteudo, autoria: pensamentoAutoria, data: pensamentoData });//A IA do VSC Copilot sugeriu essa linha
             };
             // await ui.renderizarPensamentos();//Professora fez assim, Renderiza todos os pensamentos                
             await ui.adicionarPensamentoNaLista(novoPensamento);
@@ -68,4 +73,11 @@ async function manipularBuscaPorTermo() {
         console.log('Erro!: manipularBuscaPorTermo()');
         throw error;
     };
+};
+//================================================================================================
+
+function validarData(pensamentoData) {
+    const dataAtual = new Date();
+    const dataInserida = new Date(pensamentoData);
+    return dataAtual >= dataInserida;
 };
