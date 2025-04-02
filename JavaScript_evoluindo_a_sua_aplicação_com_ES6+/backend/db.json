@@ -2,10 +2,10 @@
   "pensamentos": [
     {
       "id": "2a56",
-      "favorito": true,
       "conteudo": "Vc faz TI? Conserta meu celular!",
       "autoria": "Grupo da família",
-      "data": "2025-04-01T10:00:00.000Z"
+      "data": "2025-04-01T00:00:00.000Z",
+      "favorito": false
     },
     {
       "id": "4c7d",
@@ -16,10 +16,10 @@
     },
     {
       "id": "5b8a",
-      "favorito": true,
       "conteudo": "Na minha máquina funciona!",
       "autoria": "Dev",
-      "data": "2025-04-01T10:10:00.000Z"
+      "data": "2025-01-01T00:00:00.000Z",
+      "favorito": true
     },
     {
       "id": "68uy",
@@ -37,10 +37,9 @@
     },
     {
       "id": "9f3c",
-      "favorito": false,
       "conteudo": "Você não é todo mundo!",
       "autoria": "Mãe",
-      "data": "2025-04-01T10:25:00.000Z"
+      "data": "2025-01-22T00:00:00.000Z"
     },
     {
       "id": "6a2b",
@@ -79,10 +78,9 @@
     },
     {
       "id": "8b4c",
-      "favorito": false,
       "conteudo": "A vingança nunca é plena... mata a alma e a envenena...",
       "autoria": "Seu Madruga",
-      "data": "2025-04-01T10:55:00.000Z"
+      "data": "2025-03-02"
     },
     {
       "id": "4d2e",
@@ -99,25 +97,16 @@
       "data": "2025-04-01T11:05:00.000Z"
     },
     {
-      "id": "1e6b",
-      "favorito": false,
-      "conteudo": "Mais um pensamento sem pensar!",
-      "autoria": "Eu",
-      "data": "2025-04-01T11:10:00.000Z"
+      "id": "d71b",
+      "conteudo": "Novo teste de data",
+      "autoria": "Dev",
+      "data": "2025-03-30T00:00:00.000Z"
     },
     {
-      "id": "c1c7",
-      "conteudo": "Pensamento",
-      "autoria": "Eu",
-      "data": "2025-04-01T11:15:00.000Z",
-      "favorito": true
-    },
-    {
-      "id": "c381",
-      "conteudo": "testando o input data",
-      "autoria": "eu",
-      "data": "2025-03-31",
-      "favorito": false
+      "id": "ce2d",
+      "conteudo": "Novo teste Datas",
+      "autoria": "EuMemo",
+      "data": "2025-04-02T00:00:00.000Z"
     }
   ]
 }

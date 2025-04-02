@@ -9,6 +9,7 @@ const ui = {
             document.getElementById('pensamento-id').value = pensamento.id;
             document.getElementById('pensamento-conteudo').value = pensamento.conteudo;
             document.getElementById('pensamento-autoria').value = pensamento.autoria;
+            document.getElementById('pensamento-data').value = pensamento.data.toISOString().split('T')[0];
             // Faz a página subir até o formulário
             document.getElementById('pensamento-form').scrollIntoView({ behavior: 'smooth' }); // 'smooth' para uma rolagem suave;
         } catch (error) {
@@ -45,8 +46,17 @@ const ui = {
 
             const divAutoria = document.createElement('div');
             divAutoria.classList.add('pensamento-autoria');
-            divAutoria.textContent = `${pensamento.autoria}`; // Adiciona a autoria do pensamento
+            divAutoria.textContent = pensamento.autoria; // Adiciona a autoria do pensamento
             liPensamento.appendChild(divAutoria);
+
+            const divData = document.createElement('div');
+            divData.classList.add('pensamento-data');
+            let options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
+            const dataFormatada = new Date(pensamento.data).toLocaleDateString('pt-BR', options);
+            divData.textContent = dataFormatada;
+            // divData.textContent = pensamento.data; // Adiciona a Data do pensamento
+            liPensamento.appendChild(divData);
+
 
             const divIcones = document.createElement('div');
             divIcones.classList.add('icones');
@@ -54,16 +64,15 @@ const ui = {
 
             const botaoFavorito = document.createElement("button")
             botaoFavorito.classList.add("botao-favorito")
-
             botaoFavorito.addEventListener('click', async () => {
                 try {
                     await apiAxios.atualizarFavorito(pensamento.id, !pensamento.favorito);
-                    this.renderizarPensamentos();
+                    ui.renderizarPensamentos();
                 } catch (error) {
                     console.error('Erro! adicionarPensamentoNaLista(), Linha 62');
                     throw error
                 };
-            } );
+            });
             const iconeFavorito = document.createElement("img");
             iconeFavorito.src = pensamento.favorito ? "assets/imagens/icone-favorito.png" : "assets/imagens/icone-favorito_outline.png";
             iconeFavorito.alt = "Ícone de favorito";

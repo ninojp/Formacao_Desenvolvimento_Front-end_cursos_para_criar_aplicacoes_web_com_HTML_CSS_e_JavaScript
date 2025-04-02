@@ -2380,4 +2380,818 @@ Nesta aula, você aprendeu a:
 
 Espero você na próxima aula!
 
-### Aula 3 -  - Vídeo 8
+## Aula 4 - Manipulando e exibindo Datas
+
+### Aula 4 - Convertendo datas - Vídeo 1
+
+Transcrição
+No vídeo anterior, conseguimos ajustar a API fictícia para o formato de data que precisamos enviar. No entanto, percebemos que, ao salvar um novo pensamento, esse formato ainda não está da forma como queríamos.
+
+Precisamos converter o formato selecionado, obtido quando a pessoa seleciona a data no calendário, para o formato que a API deseja receber.
+
+Convertendo a data  
+Voltando ao VS Code, no arquivo api.js, onde está concentrada a lógica de manipulação e de requisições para a API, criaremos uma função acima da const api. Ela será atribuída a uma constante, chamada converterStringParaData.
+
+Nessa função, receberemos como parâmetro a dataString, e criar uma arrow function para transformar essa data, de 2024-08-01, para uma data mais complexa, onde temos o formato UTC.
+
+Entre os parênteses da arrow function, criaremos uma constante, que será um array, com o ano, mês e dia. Para esse array, atribuiremos o valor da dataString, utilizando o método split() e passando entre aspas duplas um hífen.
+
+api.js:
+
+```JavaScript
+const converterStringParaData = (dataString) => {
+    const [ano, mes, dia] = dataString.split("-")
+}
+const api = {
+    // Código omitido
+}
+```
+
+Essa dataString está no formato 2024-08-12 e esse split() é um método de manipulação de string que fará uma quebra nessa string. Dentro dos parênteses, informamos o caractere - através a quebra será feita.
+
+Ou seja, estamos pedindo que um array seja retornado com esses valores quebrados a partir do hífen. Nesse split(), será retornado um array com os valores 2024, 08 e 12.
+
+Atribuindo a constante [ano, mes, dia] a esse retorno, dizemos que essa constante receberá os elementos 2024, 08 e 12. Esse processo se chama destructuring (desestruturação) no JavaScript e consiste em associar um array a outro. Como resultado, o ano será 2024, o mês será 08 e o dia será 12.
+
+Fazemos isso porque queremos retornar um formato de data. Consequentemente, precisamos retornar o construtor new Date na linha seguinte da arrow function, passando como parâmetro o Date.
+
+Adicionando um ponto após o Date, veremos uma lista com vários métodos para manipular datas, entre os quais selecionaremos o UTC, que serve para obter esse formato específico de data. Entre os parênteses desse UTC, passaremos os valores de ano, mês e dia.
+
+```JavaScript
+const converterStringParaData = (dataString) => {
+    const [ano, mes, dia] = dataString.split("-")
+    return new Date(Date.UTC(ano, mes, dia))
+}
+```
+
+Fizemos a desestruturação do array para obter somente os números de ano, mês e dia para criar uma data no formato UTC, passando esses valores que obtivemos. Dessa forma, transformaremos essa data do formato string para Date.
+
+Incluindo a data no pensamento  
+Com essa função pronta, podemos fazer algumas alterações no método salvarPensamento(). Dentro do bloco try, criaremos uma constante chamada data e igualá-la à chamada da função que acabamos de criar, converterStringParaData(), passando o valor de pensamento.data entre parênteses.
+
+Com isso, recolheremos a data que a pessoa escolheu, e quando ela salvar o pensamento, chamaremos a função converterStringParaData(), passando esse valor.
+
+Na linha seguinte, estamos fazendo a requisição post(). Entre seus parênteses, ao invés de passar o pensamento completo, apagaremos a variável pensamento, abriremos colchetes, e entre eles, desceremos uma linha para digitar três pontos e a variável pensamento.
+
+Adicionando uma vírgula, pularemos outra linha e digitaremos a data.
+
+```JavaScript
+async salvarPensamento(pensamento) {
+    try {
+        const data = converterStringParaData(pensamento.data)
+        const response = await axios.post(`${URL_BASE}/pensamentos`, {
+            ...pensamento,
+            data
+        })
+        return await response.data
+    }
+    catch {
+        alert('Erro ao salvar pensamento')
+        throw error
+    }
+},
+```
+
+Com os três pontos, enviaremos as propriedades que já existem no pensamento ao invés de enviá-lo por completo. Esse procedimento se chama spread (espalhamento) no JavaScript.
+
+O operador de três pontos é o Spread Operator (operador de espalhamento). Nesse caso, ele adiciona a data às propriedades do pensamento, sobrescrevendo essa data com a que convertemos para o formato Date.
+
+Testando as alterações  
+Podemos testar para ver se essa abordagem deu certo. Acessando a aplicação pelo navegador, criaremos um novo pensamento, escrevendo "Novo teste de datas" no campo de pensamento, "Dev" na autoria, escolhendo uma data no campo de data e clicando em "Salvar".
+
+Voltando ao VS Code, verificaremos o arquivo db.json que um novo objeto foi criado.
+
+```JavaScript
+{
+    "id": "0956",
+    "conteudo": "Novo teste de datas",
+    "autoria": "Dev",
+    "data": "2024-09-12T00:01:00.000Z"
+}
+```
+
+Podemos constatar que deu certo. O pensamento já está com a data no formato que a API espera receber.
+
+Próximos passos  
+Ainda precisamos fazer alguns ajustes e modificações em outros métodos, como, por exemplo, buscarPensamentos().
+
+### Aula 4 - Exibindo datas de forma amigável - Vídeo 2
+
+Transcrição  
+No vídeo anterior, criamos uma função para converter a data do formato string para Date, e fizemos alguns ajustes na função salvarPensamento(). Ao testar, percebemos que o pensamento estava sendo salvo, mas a data escolhida foi 12 de agosto, e a data salva foi 12 de setembro.
+
+Isso ocorreu porque, como já mencionamos, o JavaScript trata os meses de 0 a 11, e não de 1 a 12, conforme temos costume de lidar. Portanto, podemos fazer um ajuste na função converteStringParaData().
+
+Ajustando a função converteStringParaData()  
+Entre as chaves de converteStringParaData(), podemos adicionar -1 após o mes, localizado entre os parênteses de Date.UTC(). Assim, adicionaremos um número ao mês que a pessoa escolhe.
+
+Com essa adição, tornaremos agosto — que é o mês 08, por exemplo — no mês 07, que será reconhecido pelo JavaScript como agosto.
+
+api.js:
+
+```JavaScript
+const converterStringParaData = (dataString) => {
+    const [ano, mes, dia] = dataString.split("-")
+    return new Date(Date.UTC(ano, mes - 1, dia))
+}
+```
+
+Podemos fazer o teste dessa mudança agora.
+
+Testando o ajuste
+Voltando à aplicação no navegador, adicionaremos caracteres aleatórios no pensamento e na autoria, e para a data, escolheremos 1 de agosto.
+
+Salvaremos esse pensamento, voltaremos ao VS Code, no qual acessaremos o db.json, e verificaremos um novo objeto com a data correta, 1 de agosto.
+
+db.json:
+
+```JavaScript
+{
+    "id": "c9c6",
+    "conteudo": "fewfewf",
+    "autoria": "etfewgt",
+    "data": "2024-08-01T00:00:00.000Z"
+}
+```
+
+Precisamos fazer ajustes em outros métodos do arquivo api.json. Já ajustamos o salvarPensamento() para passar o pensamento com o Spread Operator e a data sobrescrita. Nesse momento, ajustaremos o buscarPensamentos().
+
+Ajustando a função buscarPensamentos()  
+Em seu interior, dentro do bloco, try, apagaremos o return na linha 12 e criaremos em seu lugar uma constante chamada pensamentos, à qual atribuiremos o retorno da API com await response.data.
+
+Pulando uma linha, informaremos o que deve ser retornado, adicionando um return pensamentos e uma transformação nesse array. Para isso, escreveremos um ponto e adicionaremos o método map() do JavaScript.
+
+Esse método retornará um array transformado, de acordo com a condição que informaremos numa função callback. Entre os parênteses do map(), informaremos o pensamento, criando uma arrow function. Entre as chaves desta, adicionaremos um return e um bloco de chaves para informar o que deve ser retornado.
+
+Entre essas chaves, adicionaremos o Spread Operator novamente para fazer o espalhamento do pensamento, e na linha de baixo, a data como um new Date() do pensamento.data.
+
+api.js:
+
+```JavaScript
+const api = {
+    async buscarPensamentos() {
+        try {
+            const response = await axios.get(`${URL_BASE}/pensamentos`)
+            const pensamentos = await response.data
+            
+            return pensamentos.map(pensamento => {
+                return {
+                    ...pensamento,
+                    data: new Date(pensamento.data)
+                }
+            })
+        }
+        catch {
+            alert('Erro ao buscar pensamentos')
+        throw error
+    }
+},
+```
+
+Dessa forma, ajustamos as funções salvarPensamento() e buscarPensamento(). Atualizaremos também a função buscarPensamentoPorId(), porque ela é utilizada na parte de edição.
+
+Ajustando a função buscarPensamentoPorId()  
+Fazer o mesmo processo das outras funções. Entre as chaves do try, substituiremos o return pela criação de uma constante, que chamaremos de pensamento, no singular, pois a função retornará só um pensamento.
+
+Pulando uma linha, nosso return passará a ser um bloco de chaves, dentro do qual espalharemos a propriedade de pensamento com o Spread Operator e passaremos a data também no formato Date.
+
+Para isso, utilizaremos o construtor de datas new Date(), passando entre parênteses o pensamento.data.
+
+```JavaScript
+async buscarPensamentoPorId(id) {
+    try {
+        const response = await axios.get(`${URL_BASE}/pensamentos/${id}`)
+        const pensamento = await response.data
+        
+        return {
+            ...pensamento,
+            data: new Date(pensamento.data)
+        }    
+    }
+    catch {
+        alert('Erro ao buscar pensamento')
+        throw error
+    }
+},
+```
+
+Após esses ajustes, falta mostrar a data escolhida para a pessoa usuária. Para isso, modificaremos o arquivo de interface ui.js.
+
+Exibindo a data  
+Precisamos criar uma div que conterá essa data. Entre as chaves de adicionarPensamentoNaLista(), duplicaremos as três linhas de autoria para as linhas seguintes, com "Ctrl + C" e "Ctrl + V".
+
+ui.js:
+
+```JavaScript
+adicionarPensamentoNaLista(pensamento) {
+
+    // Código omitido
+    
+    const pensamentoAutoria = document.createElement("div")
+    pensamentoAutoria.textContent = pensamento.autoria
+    pensamentoAutoria.classList.add("pensamentoAutoria")
+    
+    const pensamentoAutoria = document.createElement("div")
+    pensamentoAutoria.textContent = pensamento.autoria
+    pensamentoAutoria.classList.add("pensamentoAutoria")
+    
+    // Código omitido
+}
+```
+
+Na cópia, faremos as modificações. Ao invés de pensamentoAutoria, a constante se chamará pensamentoData. O textContent na segunda linha será pensamento.data em vez de autoria, e a classe adicionada na terceira linha será pensamento-data.
+
+```JavaScript
+adicionarPensamentoNaLista(pensamento) {
+    // Código omitido
+    const pensamentoAutoria = document.createElement("div")
+    pensamentoAutoria.textContent = pensamento.autoria
+    pensamentoAutoria.classList.add("pensamentoAutoria")
+    
+    const pensamentoData = document.createElement("div")
+    pensamentoData.textContent = pensamento.data
+    pensamentoData.classList.add("pensamento-data")
+    // Código omitido
+}
+```
+
+Após criar essa div, podemos coletar o valor do pensamento.data. Acessando a função preencherFormulario(), ativada quando clicamos no ícone de editar, posicionaremos o cursor no final da linha document.getElementById("pensamento-autoria").value = pensamento.autoria e pressionaremos "Alt + Shift + seta para baixo" para copiá-la abaixo de si.
+
+```JavaScript
+async preencherFormulario(pensamentoId) {
+    const pensamento = await api.buscarPensamentoPorId(pensamentoId)
+    document.getElementById("pensamento-id").value = pensamento.id
+    document.getElementById("pensamento-conteudo").value = pensamento.conteudo
+    document.getElementById("pensamento-autoria").value = pensamento.autoria
+    document.getElementById("pensamento-autoria").value = pensamento.autoria
+},
+```
+
+Na cópia, substituiremos o pensamento-autoria para pensamento-data, e o value pensamento.autoria para pensamento.data.
+
+```JavaScript
+async preencherFormulario(pensamentoId) {
+    const pensamento = await api.buscarPensamentoPorId(pensamentoId)
+    document.getElementById("pensamento-id").value = pensamento.id
+    document.getElementById("pensamento-conteudo").value = pensamento.conteudo
+    document.getElementById("pensamento-autoria").value = pensamento.autoria
+    document.getElementById("pensamento-data").value = pensamento.data
+},
+```
+
+Em seguida, precisamos fazer o append dessa nova div para aparecer no cartão. No interior da função adicionarPensamentoNaLista(), posicionaremos o cursor no final da linha li.appendChild(pensamentoAutoria) e a duplicaremos assim como feito antes, mudando o pensamentoAutoria para pensamentoData.
+
+```JavaScript
+adicionarPensamentoNaLista(pensamento) {
+    // Código omitido
+    li.appendChild(pensamentoAutoria)
+    li.appendChild(pensamentoData)
+    // Código omitido
+}
+```
+
+Testando a exibição da data  
+Voltando à aplicação, vamos recarregá-la. Após isso, descendo a página, notaremos que a data já está aparecendo nos cartões, junto à hora, ao dia da semana e ao fuso horário.
+
+Não precisamos de tantas informações na data do cartão. Queremos mostrar apenas a data. Para apresentar essa data de forma mais amigável, precisaremos formatá-la.
+
+Formatando a data  
+Voltando ao VS Code, no interior da função adicionarPensamentoNaLista(), criaremos uma constante chamada dataFormatada, entre as linhas const pensamentoData = document.createElement("div") e pensamentoData.textContent = pensamento.data. Ela receberá o valor contido em pensamento.data.
+
+```JavaScript
+adicionarPensamentoNaLista(pensamento) {
+    // Código omitido
+    
+    const pensamentoData = document.createElement("div")
+    const dataFormatada = pensamento.data
+    pensamentoData.textContent = pensamento.data
+    pensamentoData.classList.add("pensamento-data")
+    
+    // Código omitido
+}
+```
+
+Conforme mencionamos anteriormente, existem vários métodos que manipulam as datas no JavaScript e permitem formatá-las. Um deles é o toLocaleDateString(), que adicionaremos ao pensamento.data.
+
+```JavaScript
+adicionarPensamentoNaLista(pensamento) {
+    // Código omitido
+   
+    const pensamentoData = document.createElement("div")
+    const dataFormatada = pensamento.data.toLocaleDateString()
+    pensamentoData.textContent = pensamento.data
+    pensamentoData.classList.add("pensamento-data")
+    
+    // Código omitido
+}
+```
+
+Esse método é perfeito para o que estamos querendo, porque retornará apenas a data como um valor de string.
+
+Essa data corresponderá ao local onde o navegador está.
+
+Também podemos passar alguns parâmetros para essa função. Para informar a localidade, digitaremos entre aspas simples um pt-BR, com "BR" em maiúsculas.
+
+Por fim, acessando a linha do textContent, logo abaixo, substituiremos o pensamento.data por dataFormatada.
+
+```JavaScript
+adicionarPensamentoNaLista(pensamento) {
+
+    // Código omitido
+    
+    const pensamentoData = document.createElement("div")
+    const dataFormatada = pensamento.data.toLocaleDateString('pt-BR')
+    pensamentoData.textContent = dataFormatada
+    pensamentoData.classList.add("pensamento-data")
+    
+    // Código omitido
+}
+```
+
+Testando a formatação da data  
+Voltando à aplicação, vamos recarregá-la. Após isso, constataremos qeu conseguimos apresentar a data de forma mais amigável, exibindo apenas o dia, o mês e o ano em números, separados por barras.
+
+Por exemplo, temos o dia da semana 01/08/2024 no cartão do mestre Yoda.
+
+### Aula 4 - Para saber mais: entendendo o formato UTC e o formato ISO
+
+Ao trabalhar com datas, vimos um formato padrão utilizado internacionalmente: o UTC! Vamos conhecer um pouco mais sobre ele?
+
+1. O que é o formato UTC?  
+O formato UTC (Tempo Universal Coordenado) é um padrão de tempo global que assegura a consistência de datas e horários em todo o mundo, independentemente da localização geográfica. Por exemplo: o Brasil utiliza o formato dia-mês-ano (30/1/24); os Estados Unidos emprega o formato mês-dia-ano (1/30/2024). Se cada país utilizasse apenas seu próprio formato, seria difícil trabalhar com datas em aplicações que rodam em vários países. Assim, o UTC estabelece um padrão mundial que facilita a nossa vida!
+
+Em JavaScript, o UTC é utilizado para armazenar e manipular datas de maneira padronizada, evitando problemas relacionados a fusos horários locais e garantindo que suas aplicações funcionem de forma uniforme, não importa onde estejam sendo executadas.
+
+2. Como o UTC funciona em JavaScript?  
+Quando você cria um objeto Date em JavaScript, ele é internamente armazenado como o número de milissegundos desde 1º de janeiro de 1970 às 00:00:00 UTC. Este ponto de referência, conhecido como **Epoch Unix, é utilizado para garantir que a data e a hora sejam representadas de forma consistente.
+
+Para trabalhar com o formato UTC, o javaScript oferece métodos como:
+
+- toUTCString(): converte a data em uma string no formato UTC, que é fácil de ler e entender;
+- toISOString(): retorna a data no formato ISO 8601, que é uma representação padrão e amplamente utilizada para troca de dados.
+
+Ambos os métodos garantem a precisão e a consistência dos dados de data quando armazenados em bancos de dados ou trocados entre sistemas.
+
+Você viu que falamos de outro formato, o ISO 8601. Assim como o UTC, o ISO 8601 tamb é uma maneira padronizada de representar datas e horas, comumente utilizado em computação para garantir a clareza e evitar ambiguidades. Ométodo toISOString() é usado para converter uma data para o formato ISO 8601, que segue o padrão YYYY-MM-DDTHH:mm:ss.sssZ.
+
+Por exemplo:
+
+```javascript
+const data = new Date()
+console.log(data.toISOString()) // Exemplo de saída: "2024-08-19T10:30:00.000Z"
+```
+
+Já quando você precisa exibir datas na interface, você pode converter as datas de UTC para o horário local utilizando métodos como:
+
+- toLocaleString(): retorna uma string representando a data de acordo com o fuso horário local do navegador.
+- toLocaleDateString(): retorna uma string da data ajustada para o fuso horário local, com opções de formatação específicas para diferentes localidades.
+
+Esses métodos ajudam a garantir que as datas sejam apresentadas de maneira compreensível e adequada para a localização da pessoa usuária.
+
+Esse é um assunto bem interessante e para aprender ainda mais sobre como utilizar o objeto Date e o formato de datas em JavaScript, e como o UTC e o formato ISO se encaixam na manipulação de datas, você pode conferir o [artigo Objeto Date e formato de datas em javaScript](https://www.alura.com.br/artigos/objeto-format-date-e-formato-datas-em-javascript), que explora técnicas e práticas recomendadas para lidar com datas em suas aplicações.
+
+### Aula 4 - Agendamento de consultas com Date
+
+Você trabalha na Clínica Médica Voll e quer desenvolver um sistema de agendamento de consultas. A clínica deseja que todas as datas e horários sejam armazenados no formato UTC para evitar problemas de fuso horário.
+
+Durante o desenvolvimento, você precisa criar uma função que receba a data e hora da consulta em formato local e a converta para UTC. Considere que a data e a hora local são fornecidos como strings no formato "YYYY-MM-DDTHH:mm:ss” e você precisa convertê-lo para o UTC.
+
+Como você pode escrever o código da função de conversão?
+
+```JavaScript
+function convertToUTC(localDateTime) {
+    // Sua implementação aqui
+}
+
+//Resposta
+
+function convertToUTC(localDateTime) {
+    let date = new Date(localDateTime);
+    return date.toISOString();
+}
+```
+
+toISOString() retorna a data no formato ISO 8601, que é o formato UTC desejado pela clínica.
+
+### Aula 4 - Aprimorando a exibição de datas - Vídeo 3
+
+Transcrição  
+Podemos utilizar alguns meios para estilizar a data, apresentando o dia do mês por extenso e adicionando o dia da semana, por exemplo. Mas como fazer isso?
+
+Estilizando a data  
+Voltando ao VS Code, passaremos outro parâmetro para o método toLocaleDateString(). Podemos digitar uma vírgula depois de pt-BR e passar algumas opções, digitando options, uma variável que criaremos.
+
+Subindo o código, entre as constantes pensamentoData e dataFormatada, criaremos uma linha na qual adicionaremos a variável nova options. Enviaremos a ela um conteúdo copiado de uma referência externa, que será explicado na sequência.
+
+ui.js:
+
+```JavaScript
+adicionarPensamentoNaLista(pensamento) {
+    // Código omitido
+    const pensamentoData = document.createElement("div")
+    var options = {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        timeZone: 'UTC'
+    }
+    const dataFormatada = pensamento.data.toLocaleDateString('pt-BR', options)
+    pensamentoData.textContent = dataFormatada
+    pensamentoData.classList.add("pensamento-data")
+    
+    // Código omitido
+}
+```
+
+No trecho colado, passamos algumas propriedades e valores para elas. Temos o weekday (dia da semana) que recebe o valor de long — ou seja, teremos o nome do dia da semana por extenso.
+
+Também informamos que o year (ano) será numérico, o month (mês) em formato long, o day (dia) também numérico, e a timezone com o valor UTC, para não termos problemas com relação ao fuso horário.
+
+Com essas opções já adicionadas ao método toLocaleDateString(), se voltarmos à aplicação, teremos a apresentação no cartão com o nome do dia da semana, o dia, o mês e o ano — por exemplo, "sexta-feira, 2 de agosto de 2024" no cartão do mestre Yoda.
+
+Ajustando a edição de cartões  
+Já testamos a parte de criação dos cartões. Entretanto, ao clicar no ícone de editar em um deles, continuaremos na mesma parte da aplicação. Podemos ajustar isso.
+
+Voltando ao VS Code, acessaremos a função preencherFormulario(). Entre seus parênteses, abaixo do último código podemos chamar um document.getElementById() quando essa função for chamada, passando o contêiner do formulário form-container entre os parênteses e o método scrollIntoView() fora deles. Isso ativará o direcionamento para essa parte do formulário por meio do clique no ícone.
+
+```JavaScript
+async preencherFormulario(pensamentoId) {
+    const pensamento = await api.buscarPensamentoPorId(pensamentoId)
+    document.getElementById("pensamento-id").value = pensamento.id
+    document.getElementById("pensamento-conteudo").value = pensamento.conteudo
+    document.getElementById("pensamento-autoria").value = pensamento.autoria
+    document.getElementById("pensamento-data").value = pensamento.data
+    document.getElementById("form-container").scrollIntoView()
+},
+```
+
+Voltando à aplicação, clicaremos novamente no ícone de editar do cartão, e dessa vez, haverá um redirecionamento para a tela do formulário de edição. Em seu interior, teremos o conteúdo do pensamento e a autoria cadastrados anteriormente, só que a data não foi preenchida.
+
+Por que isso está acontecendo? Recebemos a data em UTC, realizamos a formatação para mostrar no cartão, mas não conseguimos preencher o input de data com essa informação.
+
+Isso é uma limitação do próprio campo de input. Precisaremos realizar um ajuste para fazer isso.
+
+Ajustando o input de data  
+Voltando ao código, na linha document.getElementById("pensamento-data").value = pensamento.data, na qual coletamos o valor de data, utilizaremos outro método após pensamento.data, chamado toISOString().
+
+Realizaremos uma quebra de linha antes desse método e após o ponto que o ativa para facilitar sua visualização.
+
+```JavaScript
+async preencherFormulario(pensamentoId) {
+    const pensamento = await api.buscarPensamentoPorId(pensamentoId)
+    document.getElementById("pensamento-id").value = pensamento.id
+    document.getElementById("pensamento-conteudo").value = pensamento.conteudo
+    document.getElementById("pensamento-autoria").value = pensamento.autoria
+    document.getElementById("pensamento-data").value = pensamento.data
+    document.getElementById("form-container").scrollIntoView().
+    toISOString()
+},
+```
+
+Esse método retornará uma data como um valor de string no formato ISO, o padrão para a representação de datas e horas. Ele pode ser utilizado em conjunto com o UTC.
+
+Após os parênteses de toISOString(), também precisaremos fazer uma quebra com o split(), enviando como parâmetro o T entre aspas duplas.
+
+Por fim, após os parênteses, acessaremos o primeiro elemento, o [0].
+
+```JavaScript
+async preencherFormulario(pensamentoId) {
+    const pensamento = await api.buscarPensamentoPorId(pensamentoId)
+    document.getElementById("pensamento-id").value = pensamento.id
+    document.getElementById("pensamento-conteudo").value = pensamento.conteudo
+    document.getElementById("pensamento-autoria").value = pensamento.autoria
+    document.getElementById("pensamento-data").value = pensamento.data
+    document.getElementById("form-container").scrollIntoView().
+    toISOString().split("T")[0]
+},
+```
+
+Voltaremos ao arquivo db.json e observaremos o último objeto cadastrado para entender o que fizemos.
+
+db.json:
+
+```JavaScript
+{
+    "id": "c9c6",
+    "conteudo": "fewfewf",
+    "autoria": "etfewgt",
+    "data": "2024-08-01T00:00:00.000Z"
+}
+```
+
+Estamos recebendo a data "2024-08-01T00:00:00.000Z" no formato UTC, e precisamos fazer com que o input de data a reconheça. Para isso, utilizamos o toISOString().
+
+Também fizemos um split(), portanto, a quebra acontecerá a partir do T, e será dividida em duas partes: a primeira com a data e a segunda com o horário.
+
+Por fim, o array entre colchetes que informamos com o valor zero indica que queremos o primeiro elemento desse array — ou seja, a data.
+
+Após essa explicação, como estamos utilizando o toISOString(), acessaremos o arquivo api.js, na função salvarPensamento(). Entre as chaves da const response adicionaremos dois pontos e enviaremos o valor de data.toISOString() para a data. Assim, teremos uma compatibilidade entre esses métodos.
+
+api.js:
+
+```JavaScript
+async salvarPensamento(pensamento) {
+    try {
+        const data = converterStringParaData(pensamento.data)
+        const response = await axios.post(`${URL_BASE}/pensamentos`, {
+            ...pensamento,
+            data: data.toISOString()
+        })
+        return await response.data
+    }
+    catch {
+        alert('Erro ao salvar pensamento')
+        throw error
+    }
+},
+```
+
+Testando o input de data  
+Voltando à aplicação, podemos testar novamente. Ao clicar no ícone de editar no cartão do Chaves, notaremos que há o conteúdo, a autoria e a data, condizentes com o que há no cartão.
+
+Podemos até alterar essa data para 12/08/2024 e salvar. Com isso, a data do cartão será atualizada.
+
+Conclusão e próximos passos  
+Finalmente, conseguimos adicionar a propriedade de data no pensamento. Realizamos uma série de manipulações nessa data para enviá-la e recebê-la no formato correto, além de apresentar na interface de uma forma amigável.
+
+Na próxima aula, aprenderemos sobre um padrão para manipulação de strings muito importante no JavaScript.
+
+### Aula 4 - Manipulação de datas com UTC e toISOString
+
+Você está desenvolvendo um sistema para a Jornada Milhas, uma empresa que compra e vende milhas aéreas.
+
+Uma das funcionalidades do sistema é registrar a data e hora exata em que uma passagem é comprada, para garantir que todas as datas sejam armazenadas de forma consistente.
+
+Você precisa criar uma função em JavaScript que registre a data e hora atual da compra de uma passagem em formato ISO 8601, utilizando o fuso horário UTC.
+
+Como você pode escrever o código dessa função?
+
+Resposta:
+
+```JavaScript
+function registrarCompra() {
+  let dataAtual = new Date();
+  return dataAtual.toISOString();
+}
+```
+
+Muito bem! Esta função cria um objeto Date com a data e hora atual e utiliza o método toISOString para convertê-la para o formato ISO 8601 em UTC.
+
+### Aula 4 - Faça como eu fiz: formatando datas
+
+Nesta aula, abordamos a formatação de datas para garantir que elas sejam apresentadas de forma clara e consistente. Aprendemos a converter datas em strings e a exibir essas datas de maneira amigável na interface.
+
+Se ainda não fez, é importante que você coloque em prática o conhecimento adquirido em aula para que o seu aprendizado seja eficaz! Siga os passos abaixo para implementar o que foi visto na aula:
+
+- Atualizar o back-end com data formatada;
+- Converter string de data para objeto Date;
+- Exibir datas formatadas na interface.
+
+O resultado final esperado é que as datas sejam corretamente armazenadas, formatadas e exibidas na interface.
+
+Vamos lá?
+
+Para implementar o que foi visto na aula, clique abaixo em “ver opinião da instrutora” para seguir o passo a passo.
+
+Opinião do instrutor
+
+Para ver detalhes do código implementado, acesse o repositório no GitHub.
+
+No arquivo "js/api.js", criamos uma função para converter uma string de data em um objeto Date, e essa função foi utilizada para formatar a data antes de salvar um novo pensamento na API.
+
+No arquivo “js/api.js”:
+
+- Crie uma função chamada converterStringParaData que recebe uma string de data e a converte em um objeto Date;
+- Utilize a função converterStringParaData para formatar a data antes de salvar um novo pensamento na API;
+- Atualize o objeto a ser enviado na requisição POST para incluir a data formatada.
+- No arquivo "js/api.js", também modificamos as funções de busca de pensamentos para converter a data de string para objeto Date. E no arquivo "js/ui.js", adicionamos a exibição da data formatada de cada pensamento na interface.
+
+No arquivo “js/api.js”:
+
+- Modifique a função buscarPensamentos para mapear os pensamentos e converter a data de cada um para objeto Date;
+- Modifique a função buscarPensamentoPorId para converter a data do pensamento retornado para objeto Date.
+
+No arquivo “js/ui.js”:
+
+Adicione a exibição da data formatada de cada pensamento na interface, criando um elemento div para mostrar a data e formatando-a com toLocaleDateString('pt-BR').
+
+No arquivo "js/api.js", ajustamos o formato da data para ser enviado no formato ISO. Já no arquivo "js/ui.js", a exibição da data de um pensamento foi formatada de acordo com as configurações especificadas.
+
+No arquivo “js/api.js”:
+
+- Encontre a parte do código que faz o envio do pensamento para a API;
+- Modifique a linha que define a data para que seja convertida para o formato ISO antes de ser enviada.
+
+No arquivo “js/ui.js”:
+
+- Procure a função que preenche o formulário com os dados de um pensamento;
+- Adicione uma linha para formatar a exibição da data no formato ISO e separar a data da hora;
+- Encontre a parte do código que formata a data de um pensamento para exibição;
+- Adicione as opções de formatação desejadas para exibir a data de acordo com as especificações.
+
+Se restar alguma dúvida, procure-no fórum dou Discord!
+
+### Aula 4 - Lista de exercícios
+
+Vamos para mais uma rodada de exercícios?
+
+O projeto da lista de filmes ainda precisa de você para exibir as datas de lançamento dos filmes na tela.
+
+1. Ajustando o formato de data de lançamento dos filmes
+
+As datas que estão no back-end têm o formato de ano, mês e dia (2024-08-12). Ao salvar um novo filme na lista, a data também aparece nesse mesmo formato. Mas queremos converter a data para mostrar apenas o ano de lançamento do filme. Para fazer isso, você precisa criar uma função que converta a data para exibir apenas o ano.
+
+Dicas:
+
+Faça as alterações no arquivo "api.js";  
+Você precisa obter o valor específico do ano por meio de uma desestruturação.
+Bom trabalho!
+
+2. Atualizando as funções que precisam receber a data.
+
+Agora que temos uma função que converte as datas e obtém apenas o ano do lançamento dos filmes, altere a função as três funções a seguir:
+
+- buscarFilmes: que busca o filme no back-end;
+- salvarFlme: que salva os filmes novos;
+- buscaFilmePorId: que busca os filmes pela id.
+
+Dicas:
+
+Para a função buscarFilmes, empregue a função .map() para retornar uma nova lista que contenha apenas o ano de lançamento do filme;
+Nas funções salvarFilme e buscarFilmePorId, informe a data convertida.
+
+Vamos lá?
+
+3. Exibindo os resultados do ano de lançamento do filme na tela
+
+Ainda falta a parte mais importante: exibir os filmes na tela. Para exibi-los, precisamos realizar algumas alterações no arquivo "ui.js":
+
+- Acrescente o valor recebido pelo formulário lá na função preencherFormulario;
+- Crie um elemento para inserir o ano dentro dos cards dos filmes. Você pode usar a mesma lógica usada na criação das constantes FilmeNome e Filme Genero;
+- Por fim, faça um appendChild do elemento que foi criado para exibir o ano de lançamento do filme.
+
+Bons estudos!
+
+Opinião do instrutor
+
+Hora de conferir as sugestões de resolução dos exercícios!
+
+1. Ajustando o formato de data de lançamento dos filmes
+
+Abra o arquivo "api.js";
+
+- Abaixo da constante url, crie uma constante converterData;
+- Passe para essa constante uma arrow function que faça a desestruturação da data com o método split;
+- Retorne apenas o ano.
+
+O seu código JavaScript pode ter ficado parecido com isto:
+
+```JavaScript
+const converterData = (dataString) => {
+  const [ano] = dataString.split("-")
+  return ano
+}
+```
+
+Vamos analisar as partes do código:
+
+```JavaScript
+const converterData = (dataString) => {
+```
+
+Linha 1: Aqui, declaramos uma função chamada converterData usando uma função de seta (arrow function). A função aceita um parâmetro chamado dataString, que é esperado ser uma string representando uma data no formato "YYYY-MM-DD" (por exemplo, "2024-08-27").
+
+```JavaScript
+  const [ano] = dataString.split("-")
+```
+
+Linha 2:
+
+- Esta linha usa a desestruturação de array para extrair a primeira parte do array retornado pelo método split.
+- dataString.split("-"): O método split("-") divide a string dataString em um array de substrings, usando o hífen (-) como separador. Por exemplo, se dataString for "2024-08-27", o resultado de split("-") seria o array ["2024", "08", "27"].
+- const [ano] = ...: A desestruturação de array [ano] extrai o primeiro elemento do array resultante do split e o atribui à variável ano. Nesse caso, ano conterá a string "2024".
+
+```JavaScript
+  return ano
+```
+
+Linha 3: Esta linha retorna o valor da variável ano, que é a parte do ano extraída da string original dataString.
+
+Colocando em linhas gerais, a função converterData pega uma string de data no formato "YYYY-MM-DD" (ano-mês-dia), divide-a em partes usando o hífen como delimitador, extrai o ano (a primeira parte da string, ou seja, “YYYY”) e retorna esse ano como uma string.
+
+Veja um exemplo:
+
+```JavaScript
+const ano = converterData("2024-08-27");
+console.log(ano);  // Saída: "2024"
+```
+
+Nesse exemplo, a função extrai "2024" da data "2024-08-27" e a retorna. Teste isso em seu console para praticar ainda mais!
+
+2. Atualizando as funções que precisam receber a data.
+
+Abra o arquivo "api.js";
+
+Altere as funções abaixo, acrescentando os códigos necessários:
+
+Função buscarFilmes:
+
+```JavaScript
+async buscarFilmes() {
+    try {
+      const response = await axios.get(`${url}/filmes`)
+      const filmes = await response.data
+      return filmes.map(filme=>{
+        return{
+          ...filme,
+          data: converterData(filme.data)
+        }
+      })
+    }
+    catch {
+      alert('Erro ao buscar filmes')
+      throw error
+    }
+  }
+```
+
+Função salvarFilme:
+
+```JavaScript
+ async salvarFilme(filme) {
+    try {
+      const response = await axios.post(`${url}/filmes`, {
+        ...filme,
+        data: converterData(filme.data)
+      })
+      return await response.data
+    }
+    catch {
+      alert('Erro ao salvar filme')
+      throw error
+    }
+  }
+```
+
+Função buscarFilmePorId:
+
+```JavaScript
+async buscarFilmePorId(id) {
+    try {
+      const response = await axios.get(`${url}/filmes/${id}`)
+      const filme = await response.data
+
+      return{
+        ...filme,
+        data: converterData(filme.data)
+      }
+    }
+    catch {
+      alert('Erro ao buscar filme')
+      throw error
+    }
+  }
+```
+
+3. Exibindo os resultados do ano de lançamento do filme na tela
+
+Abra o arquivo "ui.js";
+
+```JavaScript
+Na função preencherFormulario, após a linha de código que captura o valor do gênero do filme, adicione a seguinte linha de código:
+document.getElementById("filme-data").value = filme.data
+```
+
+Em seguida, abaixo da constante FilmeGenero, crie um novo elemento para a data da seguinte maneira:
+
+```JavaScript
+const filmeData = document.createElement("div")
+filmeData.textContent = filme.data
+filmeData.classList.add("filme-data")
+```
+
+Finalmente, para exibir o ano de lançamento dos filmes na tela, após fazer o appendChild do gênero do filme, faça o appendChild da data do filme:
+
+```JavaScript 
+ li.appendChild(filmeData)
+```
+
+Você concluiu mais uma lista de exercícios! Muito bem!
+
+Procure-nos no fórum ou Discord se precisar de ajuda!
+
+### Aula 4 - O que aprendemos?
+
+Nesta aula, você aprendeu como:
+
+- Criar uma função para converter strings de data em objetos Date, facilitando a manipulação de datas no back-end e front-end;
+- Garantir que as datas sejam formatadas corretamente antes de salvar novos pensamentos na API;
+- Refatorar funções para converter as datas retornadas pela API em objetos Date;
+- Exibir datas formatadas na interface, utilizando métodos para apresentar as datas de maneira legível;
+- Modificar o código para enviar e exibir as datas no formato ISO, assegurando consistência entre a data armazenada e a data exibida.
+
+Espero você na próxima aula!
+
+## Aula 5 - 
+### Aula 5 -  - Vídeo 1

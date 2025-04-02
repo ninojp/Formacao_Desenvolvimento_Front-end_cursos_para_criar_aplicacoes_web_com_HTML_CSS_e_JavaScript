@@ -1,11 +1,18 @@
 'use strict';
 const URL_BASE = "http://localhost:3001/";
 
+const converterStringParaData = (dataString) => {
+    const [ano, mes, dia] = dataString.split('-');
+    return new Date(Date.UTC(ano, mes -1, dia))
+};
 const apiAxios = {
     async buscarPensamentos() {
         try {
             const response = await axios.get(`${URL_BASE}pensamentos/`);
-            return await response.data;
+            const pensamentos =  await response.data;
+            return pensamentos.map( (pensamento) => {
+                return { ...pensamento, data: new Date(pensamento.data)};
+            });
         } catch (error) {
             console.log('api.js: Erro ao buscar pensamentos na APILocal', error);
             alert('api.js: Erro ao buscar pensamentos na APILocal');
@@ -16,7 +23,8 @@ const apiAxios = {
     async buscaPensamentoPorId(id) {
         try {
             const response = await axios.get(`${URL_BASE}pensamentos/${id}`);
-            return await response.data;
+            const pensamento =  await response.data;
+            return {...pensamento, data: new Date(pensamento.data)};
         } catch (error) {
             console.log('api.js: Erro ao buscar o pensamento na APILocal', error);
             alert('api.js: Erro ao buscar o pensamento na APILocal');
@@ -26,7 +34,8 @@ const apiAxios = {
     //============================================================================
     async salvarPensamento(pensamento) {
         try {
-            const response = await axios.post(`${URL_BASE}pensamentos/`, pensamento);
+            const data = converterStringParaData(pensamento.data);
+            const response = await axios.post(`${URL_BASE}pensamentos/`, { ...pensamento, data: data.toISOString() });
             return await response.data;
         } catch (error) {
             console.log('api.js: Erro ao Salvar pensamentos na APILocal', error);
@@ -37,7 +46,8 @@ const apiAxios = {
     //============================================================================
     async editarPensamento(pensamento) {
         try {
-            const response = await axios.put(`${URL_BASE}pensamentos/${pensamento.id}`, pensamento);
+            const data = converterStringParaData(pensamento.data);
+            const response = await axios.put(`${URL_BASE}pensamentos/${pensamento.id}`, { ...pensamento, data: data.toISOString() });
             return await response.data;
         } catch (error) {
             console.log('api.js: Erro ao Editar pensamentos na APILocal', error);
