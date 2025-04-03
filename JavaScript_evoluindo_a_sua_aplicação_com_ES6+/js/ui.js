@@ -53,10 +53,9 @@ const ui = {
             divData.classList.add('pensamento-data');
             let options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
             const dataFormatada = new Date(pensamento.data).toLocaleDateString('pt-BR', options);
-            divData.textContent = dataFormatada;
-            // divData.textContent = pensamento.data; // Adiciona a Data do pensamento
+            const dataComRegex = dataFormatada.replace(/^(\w)/, (primeiraLetra) => primeiraLetra.toUpperCase())//Regex, pega o primeiro caracter((\w))
+            divData.textContent = dataComRegex
             liPensamento.appendChild(divData);
-
 
             const divIcones = document.createElement('div');
             divIcones.classList.add('icones');

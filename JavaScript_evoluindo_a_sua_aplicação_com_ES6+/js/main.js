@@ -1,8 +1,25 @@
 'use strict';
 import api from "./api.js";
-// import api from "./api.js";
 import apiAxios from "./apiAxios.js";
 import ui from "./ui.js";
+/*Regex
+// -> /inicia a regex. finaliza/
+^ -> inicia a expressão /^
+$ -> finaliza a expressão $/
+[] -> [A-Z(permite letras maiúsculas)a-z(minúsculas)\s(permite espaço)]
+{} -> {minimo de caracteres, maximo}
+/g -> a letra "G", é uma flag que significa "global", essa substituição 
+vai acontecer não só na primeira ocorrência, e sim em todas as ocorrências que houverem.
+\s+ -> O caractere de mais+, vai indicar um ou mais caracteres desses que estão precedendo
+*/
+function removerEspacos(string) {
+    return string.replaceAll(/\s+/g, '');
+    // Perceba que não colocamos as âncoras de início e fim, porque queremos que sejam encontrados 
+    //todos os espaços que possam existir nesse conteúdo, então não delimitamos o início e o fim da string.
+};
+function validarRegex(expRegex, conteudo) {
+    return expRegex.test(conteudo);
+};
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
@@ -26,7 +43,19 @@ document.addEventListener('DOMContentLoaded', async () => {
                 alert('Preencha todos os campos!');
                 return;
             };
-            if(!validarData(pensamentoData)) {
+            const conteudoSemEspacos = removerEspacos(pensamentoConteudo)
+            const autoriaSemEspacos = removerEspacos(pensamentoAutoria)
+            const regexConteudo = /^[A-Za-z\s]{10,}$/;
+            if (!validarRegex(regexConteudo, conteudoSemEspacos)) {
+                alert("É permitida a inclusão apenas de letras e espaços com no mínimo 10 caracteres")
+                return
+            }
+            const regexAutoria = /^[A-Za-z]{3,15}$/;
+            if (!validarRegex(regexAutoria, autoriaSemEspacos)) {
+                alert("É permitida a inclusão apenas de letras(mínimo 3) máximo 15, sem espaços e caracteres especiais!")
+                return
+            }
+            if (!validarData(pensamentoData)) {
                 alert("Não é permitido o cadastro de datas futuras. Selecione outra data")
                 return
             }
@@ -44,12 +73,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             // Adiciona um pequeno atraso antes de rolar até o elemento
             // setTimeout(() => {
-                const elementoPensamento = document.querySelector(`[data-id='${novoPensamento.id}']`);
-                if (elementoPensamento) {
-                    elementoPensamento.scrollIntoView({ behavior: 'smooth' });
-                } else {
-                    console.log('Elemento não encontrado no DOM!');
-                }
+            const elementoPensamento = document.querySelector(`[data-id='${novoPensamento.id}']`);
+            if (elementoPensamento) {
+                elementoPensamento.scrollIntoView({ behavior: 'smooth' });
+            } else {
+                console.log('Elemento não encontrado no DOM!');
+            }
             // }, 100); // Atraso de 100ms
             // Rola até o final da página
             // window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });

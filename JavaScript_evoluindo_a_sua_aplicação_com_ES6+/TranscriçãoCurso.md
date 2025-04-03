@@ -3193,5 +3193,549 @@ Nesta aula, você aprendeu como:
 
 Espero você na próxima aula!
 
-## Aula 5 - 
-### Aula 5 -  - Vídeo 1
+## Aula 5 - Implementando Validações com expressões Regulares (Regex)
+
+### Aula 5 - Projeto da aula anterior
+
+Caso queira revisar o código até aqui ou começar a partir desse ponto, [faça o download](https://github.com/alura-cursos/3782-javascript/archive/refs/heads/aula-4.zip) ou veja nosso [repositório do Github](https://github.com/alura-cursos/3782-javascript/tree/aula-4).
+
+### Aula 5 - Validação do conteúdo com Regex - Vídeo 1
+
+Transcrição  
+Na aula passada, conseguimos implementar mais uma propriedade no pensamento, a propriedade de data. Agora, podemos testar a criação de algum pensamento novo.
+
+Imaginemos que queremos criar um pensamento com um caractere de arroba (@) no conteúdo, um caractere de arroba na autoria, e uma data, e vamos salvar.
+
+Percebam que esse pensamento foi enviado para a API.
+
+Se quisermos, por exemplo, digitar várias vezes a barra de espaço, será que conseguimos também enviar?
+
+Esse pensamento vazio também foi criado.
+
+Ainda não temos nenhum tipo de validação nesse formulário. Ele é um formulário muito frágil, porque podemos enviar essas informações inválidas.
+
+Para melhorar essa experiência, pensando, claro, nessa aplicação, mas extrapolando para outras aplicações, imaginem um cadastro que você está fazendo, com seu nome, e-mail, CPF, endereço, essa não é uma experiência que deve acontecer.
+
+Então, precisamos adicionar algumas validações para esse formulário.
+
+Adicionando validações  
+Para adicionar validações, existe um recurso que pode nos auxiliar bastante. Ele é chamado de expressão regular, ou regex.
+
+Não é um recurso específico do JavaScript. Existem várias linguagens de programação que implementam regex, e vamos ver como utilizá-las para deixar o nosso formulário mais robusto e menos frágil.
+
+No VS Code, e vamos acessar o arquivo main.js, para conseguirmos ver como é que podemos criar uma expressão regular, e o que é isso. Na linha 4, vamos criar uma constante que chamaremos de regexConteudo.
+
+Então, vamos começar a pensar em uma forma de validar o conteúdo do pensamento.
+
+Podemos ter diversos tipos de validação, como, por exemplo, validar quantidade mínima e máxima de caracteres, permitir ou não a inserção de números, de espaços, de caracteres especiais, etc.
+
+Mas vamos imaginar que queremos que seja possível adicionar apenas letras, maiúsculas, minúsculas e espaços. E tenha aí um mínimo de 10 caracteres.
+
+- Apenas letras maiúsculas, minúsculas e espaços
+- Mínimo de 10 caracteres
+
+Para começar a implementar essa expressão regular, utilizaremos duas barras, e para delimitar o início e o fim, de onde vamos aplicar esse padrão da regex, utilizamos âncoras, então, no início, vamos adicionar um acento circunflexo, e para o final, vamos adicionar um cifrão, isso vai caracterizar o início e o fim da string, e no meio, vamos passar o que queremos que essa string contenha.
+
+Para permitir a inserção de espaços, podemos utilizar \s, isso significa que é permitido a inserção de espaços, tabulação, quebra de linha, esse tipo de coisa.
+
+```JavaScript
+const regexConteudo = /^[A-Za-z\s]$/
+```
+
+Em seguida, fora do colchetes, podemos passar a questão dos caracteres, então, entre chaves, vamos digitar 10, que é o mínimo de caracteres, vírgula, e não vamos passar nada depois, porque nesse caso, não temos nenhum limite máximo de caracteres.
+
+```JavaScript
+const regexConteudo = /^[A-Za-z\s]{10,}$/
+```
+
+Pronto. Criamos uma regex. Agora, precisamos validar se o conteúdo que a pessoa vai digitar vai atender a esses requisitos.
+
+Vamos criar uma função, que chamaremos de validarConteúdo, que vai receber o conteúdo, e queremos que ela retorne essa regexConteudo, podemos utilizar o método test() e passar o conteúdo. Esse método teste vai retornar um booleano, para avisar se aquele conteúdo seguiu ou não os requisitos da regex.
+
+```JavaScript
+function validarConteudo(conteudo) {
+  return regexConteudo.test(conteudo)
+}
+```
+
+Podemos adicionar também uma validação quando a pessoa digitar. Na linha 29, vamos digitar if(!validarConteudo(conteudo)), ou seja, se o conteúdo não for validado, passando o conteúdo como parâmetro, vamos alertar a pessoa usuária.
+
+```JavaScript
+  if (!validarConteudo(conteudo)) {
+    alert("É permitida a inclusão apenas de letras e espaços com no mínimo 10 caracteres")
+    return
+  }
+```
+
+Já podemos ver se essa validação está sendo aplicada.
+
+Testando  
+Vamos voltar na aplicação e digitar menos de 10 caracteres no campo de pensamento. Ao clicar em "Salvar", apareceu o alert, com a mensagem que colocamos.
+
+Agora, vamos tentar colocar caracteres especiais. Também não vai passar, porque não permitimos a inclusão desse tipo de caracteres, e agora, vamos adicionar um hello world, com letras maiúsculas e minúsculas, vai totalizar mais de 10 caracteres, e vamos ver, vamos mudar a autoria para dev, vamos ver se conseguimos cadastrar agora. Vamos clicar em "Salvar", percebam que foi recarregado, e temos o pensamento cadastrado. Então, sim, a nossa regex funcionou.
+
+O que é Regex?
+
+À primeira vista, parece uma sopa de letrinhas, um pouco complexa, mas uma regex é uma sequência de caracteres que vai definir um padrão de pesquisa. As regex são muito utilizadas para fazer buscas, validações e vários tipos de manipulação de texto, para conseguir encontrar um padrão no texto que você vai passar.
+
+Mão na massa  
+Agora é o momento mão na massa. Queremos que você crie uma regex para o campo de autoria. Então, você vai criar uma constante regexAutoria.
+
+O novo comportamento e o resultado esperado é que seja possível cadastrar apenas letras e de 3 a 15 caracteres. Caso a pessoa tente cadastrar um pensamento com autoria que não atenda aos requisitos, deve ser exibido um alerta com uma mensagem de aviso.
+
+Então, você vai criar essa regex, vai criar também a função para validar a autoria, e vai adicionar a condicional para que a pessoa não consiga cadastrar o pensamento caso a autoria não passe aí nessa validação.
+
+Então, se você tiver alguma dúvida, não se preocupe, vamos deixar o gabarito em uma atividade nessa aula, mas queremos que você tente fazer e nos encontre no vídeo a seguir.
+
+### Aula 5 - Mão na massa: validação da autoria com Regex
+
+Agora é sua vez de praticar, adicionando validação para o campo de autoria.
+
+No momento, o comportamento atual é: podemos cadastrar qualquer valor para a autoria; números, letras, espaços, caracteres especiais e não há definição de quantidade mínima ou máxima de caracteres. Queremos mudar esse comportamento!
+
+O novo comportamento e o resultado esperado é que seja possível cadastrar apenas letras e de 3 a 15 caracteres. Caso a pessoa tente cadastrar um pensamento com autoria que não atenda aos requisitos, deve ser exibido um alerta com uma mensagem de aviso.
+
+Vamos lá?
+
+Opinião do instrutor
+
+Para essa validação, criamos uma expressão regular (regex) que permite apenas letras e define que o texto deve ter entre 3 a 15 caracteres. Essa é uma solução simples, mas eficiente, para garantir que o campo de autoria seja preenchido corretamente.
+
+Além disso, lembre-se de que essa abordagem pode ser expandida ou adaptada conforme o necessário. Por exemplo, você pode permitir espaços ou expandir o intervalo de caracteres aceitos.
+
+Vejamos o passo a passo:
+
+No arquivo “js/main.js”:
+
+```JavaScript
+const regexAutoria = /^[a-zA-Z]{3,15}$/;
+
+function validarAutoria(autoria) {
+  return regexAutoria.test(autoria);
+}
+
+//código omitido
+
+async function manipularSubmissaoFormulario(event) {
+    //código omitido
+ 
+  if (!validarAutoria(autoria)) {
+    alert("É permitida a inclusão de letras e entre 3 e 15 caracteres sem espaços")
+    return
+  }
+}
+```
+
+Vamos entender esse código linha a linha?
+
+^: Esse caractere indica o início da string. A expressão regular deve começar a validar a string desde o primeiro caractere.
+
+[a-zA-Z]: Isso define uma classe de caracteres, ou seja, o que é permitido na string. Neste caso, [a-zA-Z] permite qualquer letra minúscula (a-z) ou maiúscula (A-Z). Portanto, apenas letras são permitidas.
+
+{3,15}: Isso define a quantidade de caracteres que a string deve conter. O trecho {3,15} especifica que a string deve ter no mínimo 3 e no máximo 15 caracteres. Portanto, “abc” é válido, assim como “abcdefghijklmnop”, mas strings com menos de 3 ou mais de 15 caracteres não passarão na validação.
+
+$: Esse caractere indica o fim da string. Ele garante que a string inteira seja validada e que não existam caracteres adicionais além daqueles que correspondem ao padrão definido.
+
+validarAutoria(autoria): esta função recebe uma string autoria como argumento. A função serve para verificar se a string autoria atende ao padrão definido pela expressão regular regexAutoria.
+
+regexAutoria.test(autoria): o método .test() é um método do JavaScript que verifica se a string fornecida corresponde ao padrão definido pela expressão regular. Ele retorna true (verdadeiro) se a string autoria seguir as regras definidas pelo regexAutoria, ou false (falso) em caso contrário.
+
+Quando você chama a função validarAutoria passando uma string como argumento, ela vai:
+
+- Verificar se a string começa com uma letra (^);
+- Verificar se a string contém apenas letras, sejam elas maiúsculas ou minúsculas ([a-zA-Z]);
+- Verificar se o comprimento da string está entre 3 e 15 caracteres ({3,15});
+- Certificar-se de que a string termina exatamente após esses caracteres, sem nada a mais ($).
+
+Se todos esses critérios forem atendidos, a função retorna true, indicando que a autoria é válida. Caso contrário, retorna false, sinalizando que a string não segue o padrão esperado.
+
+Essa implementação assegura que a autoria seja sempre validada antes de ser enviada, garantindo a integridade dos dados.
+
+Acesse as alterações feitas no commit.
+
+Se precisar, chame-nos no fórum ou Discord!
+
+### Aula 5 - Lidando com espaços vazios - Vídeo 2
+
+Transcrição  
+Conseguiu criar a Regex para o campo de autoria?
+
+Ela é bem parecida com a de conteúdo, só que não permitimos os espaços, então, não tem a barra invertida com o "S" (\s), e na questão dos caracteres, definimos que deve ser de 3 a 15. Criamos também a função de validar a autoria, e validamos a autoria dentro da função de manipular a submissão do formulário. Esperamos que você tenha conseguido fazer!
+
+Se voltarmos na aplicação, agora temos essas validações para o conteúdo e para a autoria.
+
+Mas se fizermos um teste de cadastrar um pensamento só com pensamento vazio, somente com espaços, será que vai passar?
+
+Inserimos alguns espaços no campo "pensamento" e ao clicar em "Salvar", o pensamento foi salvo.
+
+Na autoria não conseguimos adicionar espaços, mas no conteúdo conseguimos inserir espaço. Permitimos isso porque não seria interessante limitar isso para a pessoa usuária, já que é um cadastro de pensamentos.
+
+E como vamos lidar com isso?
+
+Bem, as regex podem nos auxiliar com isso também. Vamos voltar no VSCode, no arquivo main.js, e criar uma função na linha 4 para remover esses espaços.
+
+Existem diversas formas em JavaScript para lidarmos com a remoção de espaços, mas já que estamos falando sobre regex, vamos usar o poder das expressões regulares para fazer isso.
+
+Queremos remover todos esses espaços vazios, então vamos utilizar um método do JavaScript chamado replaceAll, que vai fazer uma substituição, ele vai encontrar todos esses espaços vazios e fazer a remoção. Para esse replaceAll vamos passar os espaços e o que queremos que seja substituído.
+
+```JavaScript
+function removerEspacos(string) {
+  return string.replaceAll(/\s+/g, '')
+}
+```
+
+Perceba que não colocamos as âncoras de início e fim, porque queremos que sejam encontrados todos os espaços que possam existir nesse conteúdo, então não delimitamos o início e o fim da string.
+
+Vamos adicionar o caractere de mais, que vai indicar um ou mais caracteres desses que estão precedendo, ou seja, queremos que seja encontrado um ou mais espaços. E depois da barra vamos adicionar a letra "G", que é uma flag que significa "global", ou seja, essa substituição vai acontecer não só na primeira ocorrência, e sim em todas as ocorrências que houverem.
+
+Se não colocarmos a letra "G", ele vai parar na primeira ocorrência.
+
+Onde vamos chamar essa função?
+
+Podemos criar duas constantes para representar esse conteúdo e essa autoria sem espaços:
+
+```JavaScript
+  const conteudoSemEspacos = removerEspacos(conteudo)
+  const autoriaSemEspacos = removerEspacos(autoria)
+
+  if (!validarConteudo(conteudoSemEspacos)) {
+    alert("É permitida a inclusão apenas de letras e espaços com no mínimo 10 caracteres")
+    return
+  }
+
+  if (!validarAutoria(autoriaSemEspacos)) {
+    alert("É permitida a inclusão de letras e entre 3 e 15 caracteres sem espaços")
+    return
+  }
+```
+
+Conclusão  
+Agora, ao tentar inserir muitos espaços seguidos, veremos a mensagem alerta. Você pode até ajustar também a mensagem exibida para ficar um pouco mais clara.
+
+As expressões regulares conseguem nos auxiliar em diversos casos de uso. E no próximo vídeo você vai conhecer mais um desses casos!
+
+### Aula 5 - Para saber mais: trabalhando com expressões regulares
+
+Nesta aula, conhecemos mais uma técnica interessante do ES6+: as expressões regulares.
+
+Vamos conhecer um pouco mais sobre elas?
+
+1. O que são as expressões regulares ou regex?
+
+Expressões regulares (regex) em JavaScript são ferramentas utilizadas para manipulação de strings. Elas permitem a criação de padrões de busca que ajudam a localizar, substituir ou validar partes específicas de texto dentro de uma string, o que as torna indispensáveis em muitas situações, como validação de formulários, formatação de dados e extração de informações.
+
+Por exemplo: imagine que você precisa criar um formulário de compra que solicita o número de cartão de crédito ou CPF; seria melhor permitir que o usuário digite apenas números (em vez de letras). As regex ajudam a colocar uma limitação no que é digitado, validando se a entrada do usuário é válida ou não.
+
+1.1. Estrutura básica da Regex  
+Uma expressão regular é composta por uma combinação de caracteres literais e metacaracteres, que juntos definem um padrão de busca. Por exemplo:
+
+- Caractere literal: /abc/ encontra a sequência exata "abc" dentro de uma string;
+- Metacaracteres: caracteres especiais que possuem significados específicos dentro de uma regex, como . (que representa qualquer caractere) ou * (que indica zero ou mais ocorrências do caractere anterior).
+
+1.2. Exemplos comuns de uso  
+Vamos ver alguns exemplos de cenários comuns em que você se beneficia do uso de regex:
+
+1.2.1. Validação de formulários:
+
+Você pode utilizar uma regex para garantir que os dados inseridos em formulários seguem um formato específico, como validação de e-mails, números de telefone ou códigos postais.
+
+1.2.2. Substituição de textos:
+
+Com o método replace() do javaScript, é possível substituir partes de uma string que correspondam a um padrão regex por outro texto.
+
+Imagine que você deseja remover todos os espaços vazios de uma string.
+
+```JavaScript
+// Texto com espaços vazios
+let texto = "Este é um exemplo com espaços vazios.";
+
+// Expressão regular para espaços vazios
+let regex = /\s+/g;
+
+// Substituição
+let novoTexto = texto.replace(regex, '');
+
+console.log(novoTexto); // "Esteéumexemplocomespaçosvazios."
+```
+
+Nesse exemplo, a expressão regular: \s+ encontra um ou mais espaços em branco (incluindo espaços, tabulações e quebras de linha) e a função replace() remove esses espaços, substituindo-os por uma string vazia ('').
+
+** 1.2.3. Busca e extração de dados:** Regex também é usada para extrair dados específicos de uma string. Por exemplo, extrair todos os números de uma string.
+
+Componentes e sintaxe avançada
+
+Depois de conhecer cenários comuns em que você pode utilizar expressões regulares, vamos explorar alguns conceitos mais avançados para expandir suas habilidades na manipulação de strings. Esses conceitos ajudarão você a criar padrões de correspondência com regex. São eles:
+
+- Classes de caracteres: permitem definir um conjunto de caracteres que devem ser correspondidos. Por exemplo, [a-z] corresponde a qualquer letra minúscula;
+- ** ncoras**: como ^ e $, que especificam o início e o fim de uma string;
+- Grupos: capturam partes de uma correspondência para reutilização ou referência posterior.
+
+Melhores práticas
+
+Vamos compreender algumas boas práticas no uso de regex?
+
+- Modularização: pensando na legibilidade de código, é recomendado que você divida regex complexas em várias partes ou usar comentários;
+- Testes: teste suas expressões regulares com diferentes entradas! Isso é importante garantir que todas as possíveis variações são tratadas corretamente;
+- Performance: expressões regulares muito complexas podem afetar a performance da aplicação, especialmente em strings muito longas ou em loops. Sempre que possível, evite regex muito complexas, fazendo uso de modularização também
+
+Recursos para aprofundamento  
+
+Para um entendimento mais profundo e exemplos práticos, que tal dar uma olhada nos links abaixo:
+
+- Artigo [Manipulando Strings com Regex no JavaScript](https://www.alura.com.br/artigos/javascript-replace-manipulando-strings-e-regex): entenda como utilizar regex com o método replace() para fazer substituições de forma eficaz.
+
+- Artigo [Formatando CPF com Expressões Regulares](https://www.alura.com.br/artigos/formatando-cpf-com-ajuda-das-expressoes-regulares): veja como uma regex pode ser usada para validar e formatar números de CPF, um exemplo de uso cotidiano.
+
+- Documentação [Guia de Expressões Regulares no MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions): o MDN oferece uma visão abrangente das expressões regulares em JavaScript, ideal para consultas rápidas e aprofundamento.
+
+- Curso Expressões Regulares: Buscas, Validações e Substituições em Textos: este curso é uma excelente oportunidade para quem deseja dominar regex e aplicá-las de forma eficaz em projetos JavaScript.
+
+### Aula 5 - Formatação da data com Regex - Vídeo 3
+
+Transcrição  
+A utilização de expressões regulares não se limita apenas às validações. É possível fazer muito mais com essa ferramenta.
+
+Um dos requisitos do nosso projeto, onde também podemos usar expressões regulares, é garantir que o nome do dia da semana presente no card tenha sua letra inicial maiúscula. Existem várias formas de fazer isso, mas vamos utilizar um método de regex para resolver o problema.
+
+Implementação no VS Code
+No arquivo ui.js, estamos formatando a data na linha 75. Para resolver o requisito, criaremos uma nova constante chamada dataComRegex. O código ficará assim:
+
+```JavaScript
+const dataComRegex =
+```
+
+Vamos utilizar o método replace para buscar o primeiro caractere da palavra e substituí-lo por uma letra maiúscula. Para isso, vamos construir a regex:
+
+- Delimitamos a expressão regular com barras / /.
+- Adicionamos a âncora ^, para identificar o início da string.
+- Usamos \W, que indica o primeiro caractere não alfanumérico da string que queremos substituir.
+- Em seguida, fazemos a substituição com o método replace:
+
+```JavaScript
+ const dataComRegex = dataFormatada.replace(/^(\w)/, (match) => match.toUpperCase())
+```
+
+Aqui, estamos utilizando uma arrow function para converter o caractere encontrado para maiúsculo com match.toUpperCase(). Assim, substituímos o primeiro caractere da string por sua versão maiúscula. Agora, passamos a dataComRegex no lugar da data formatada como o novo textContent.
+
+```JavaScript
+const dataFormatada = pensamento.data.toLocaleDateString('pt-BR', options)
+const dataComRegex = dataFormatada.replace(/^(\w)/, (match) => match.toUpperCase())
+pensamentoData.textContent = dataComRegex
+pensamentoData.classList.add("pensamento-data")
+```
+
+Ao testar a aplicação, veremos que o nome do dia da semana já aparece com a primeira letra em maiúsculo.
+
+Mais sobre expressões regulares  
+Se acessarmos a documentação do MDM sobre expressões regulares, encontraremos um guia extenso sobre o assunto.
+
+Utilizamos apenas alguns métodos, como o match, replace, replaceAll, e split(), que são bastante comuns em aplicações. A documentação apresenta um passo a passo para a criação de expressões regulares.
+
+Não se assuste com a aparente complexidade! Existem várias ferramentas que ajudam na criação de expressões regulares. Além disso, na Alura, oferecemos cursos sobre expressões regulares e atividades práticas. Ferramentas como IAs generativas também podem auxiliar no desenvolvimento de suas expressões regulares.
+
+Embora existam ferramentas que automatizam parte desse processo, é importante aprender a criar e ajustar expressões regulares manualmente, pois muitas vezes será necessário corrigir ou adaptar as regras para diferentes contextos!
+
+### Aula 5 - Validação de nomes de produtos na loja Meteora com regex
+
+Você trabalha na Meteora, uma loja de roupas online. A equipe de marketing solicitou uma nova funcionalidade para validar os nomes dos produtos antes de serem cadastrados no sistema. As novas regras para os nomes dos produtos são:
+
+Os nomes devem conter apenas letras minúsculas e espaços.
+A string deve ter no máximo 20 caracteres.
+Logo, você precisa escrever uma expressão regular que atenda os dois requisitos de validação de nome dos produtos.
+
+Como você pode escrever essa regex?
+
+Resposta:
+
+/^[a-z\s]{1,20}$/
+
+> Ótimo! Essa expressão regular assegura que a string é composta exclusivamente por letras minúsculas e espaços e possui no máximo 20 caracteres. O padrão ^[a-z\s]{1,20}$ indica que a string deve começar (^) e terminar ($) com letras minúsculas ([a-z]) e espaços (\s), e ter no máximo 20 caracteres ({1,20}).
+
+### Aula 5 - Faça como eu fiz: validação de formulário
+
+Nesta aula, abordamos a validação de campos de formulário para garantir que os dados sejam inseridos corretamente e estejam de acordo com os critérios especificados. Aprendemos a validar o conteúdo do pensamento e a autoria, assegurando que apenas valores válidos sejam aceitos.
+
+Se ainda não fez, é importante que você coloque em prática o conhecimento adquirido em aula para que o seu aprendizado seja eficaz! Siga os passos abaixo para implementar o que foi visto na aula:
+
+- Validar o conteúdo do pensamento, utilizando uma expressão regular que permita apenas letras e espaços com no mínimo 10 caracteres;
+- Verificar a autoria inserida no formulário, assegurando que siga um padrão específico de letras e tamanho;
+- Remover os espaços em branco do conteúdo e autoria antes de validar.
+
+O resultado final esperado é que apenas pensamentos válidos sejam aceitos e exibidos corretamente na interface, seguindo as regras de validação especificadas.
+
+Vamos lá?
+
+Para implementar o que foi visto na aula, clique abaixo em “ver opinião da instrutora” para seguir o passo a passo.
+
+Opinião do instrutor
+
+Para ver detalhes do código implementado, acesse o repositório no GitHub.
+
+No arquivo "js/main.js", criamos uma função para validar o conteúdo do pensamento, permitindo apenas letras e espaços com no mínimo 10 caracteres.
+
+No arquivo “js/main.js”:
+
+- Crie uma constante chamada regexConteudo com uma expressão regular que permita apenas letras e espaços com no mínimo 10 caracteres;
+- Crie uma função chamada validarConteudo que recebe o conteúdo do pensamento e retorna true (verdadeiro) se o conteúdo atender à expressão regular;
+- No evento "DOMContentLoaded", adicione a chamada para a função renderizarPensamentos;
+- Na função manipularSubmissaoFormulario, adicione uma verificação utilizando a função validarConteudo para o conteúdo do pensamento, exibindo um alerta caso não atenda aos critérios.
+
+Nesta aula, implementamos uma nova função chamada validarAutoria, que verifica se a autoria inserida no formulário segue um padrão específico de letras e tamanho. Faz sentido? Além disso, incluímos uma validação para a autoria no evento de submissão do formulário.
+
+No arquivo “js/main.js”:
+
+- Adicione a função validarAutoria, que verifica se a autoria inserida segue um padrão específico de letras e tamanho;
+- Inclua uma validação para a autoria no evento de submissão do formulário, exibindo um alerta caso a autoria não esteja de acordo com o padrão estabelecido.
+- Outra função que criamos foi chamada removerEspacos: seu objetivo é remover todos os espaços de uma string. Depois, alteramos o código para utilizar essa função e validar o conteúdo e autoria sem espaços em branco.
+
+No arquivo “js/main.js”:
+
+- Adicione uma função chamada removerEspacos, que recebe uma string como parâmetro e retorna a string sem espaços em branco;
+- Utilize a função removerEspacos para remover os espaços em branco de conteúdo e de autoria antes de validar;
+- Substitua as variáveis conteudo e autoria pelas variáveis conteudoSemEspacos e autoriaSemEspacos nos condicionais de validação.
+- Também mexemos no arquivo "js/ui.js" para que a primeira letra da data exibida fosse convertida para maiúscula.
+
+No arquivo “js/ui.js”:
+
+- Substitua a primeira letra da data por maiúscula, utilizando uma expressão regular;
+- Atribua o resultado à variável dataComRegex;
+- Atribua o valor de dataComRegex ao texto do elemento pensamentoData;
+- Adicione a classe pensamento-data ao elemento pensamentoData.
+
+### Aula 5 - Lista de exercícios
+
+Vamos praticar tudo o que vimos sobre validação de formulários?
+
+O projeto lista de filmes, permite adicionar qualquer tipo de informação nos campos de nome e gênero, por isso, cabe a você ajudar a limitar as possibilidades e validar os dados inseridos.
+
+1. Validando o campo de inserção do nome do filme
+
+O campo de nome do filme aceita qualquer letra, número e caractere especial. Entretanto, o objetivo é que neste campo sejam permitidos apenas letras (maiúsculas e minúsculas) e números. Por isso, crie uma regex e sua validação, implementando uma mensagem de erro caso essa validação não seja cumprida (por exemplo: "O filme só pode conter letras e números").
+
+Bom trabalho!
+
+2. Validando o campo de inserção do gênero do filme
+
+Valide as informações recebidas no campo de gênero do filme. Ele deve aceitar apenas letras maiúsculas e minúsculas. Logo, implemente a regex e sua validação.
+
+Dica:
+
+Você pode adotar a mesma estratégia que utilizou na validação do campo de nome de filme. Mas lembre-se de que a expressão regular e algumas informações precisam ser diferentes para atender as necessidades de verificação deste campo.
+Vamos lá?
+
+3. Lidando com campos em branco
+
+Você precisa lidar, agora, com a possibilidade de incluir tanto o nome quanto o gênero vazios, utilizando a tecla espaço. Para evitar que espaços em branco sejam adicionados à lista, implemente uma função que remove os espaços e use expressões regulares que substituam os caracteres de espaços por um campo vazio.
+
+Dica:
+
+Lembre-se de utilizar essa função nas condicionais que validam o nome e o gênero.
+Vamos lá?
+
+Opinião do instrutor
+
+Vamos aos “gabaritos”!
+
+1. Validando o campo de inserção do nome do filme
+
+Abra o arquivo "main.js";
+
+Crie uma constante regexNome e informe a expressão que faz a validação.
+
+```JavaScript
+const regexNome = /^[a-zA-Z0-9\s ]*$/
+```
+
+Agora, crie uma função que valida a informação colocada no campo de preenchimento do nome do filme.
+
+```JavaScript
+function validarNome(nome) {
+  return regexNome.test(nome)
+}
+```
+
+Implemente, na função manipularSubmissaoFormulario, um ifque vai verificar se a condição é atendida ou não. Caso não seja atendida, vai emitir um alerta.
+
+```JavaScript
+if(!validarNome(nome)){
+  alert("O filme só pode conter letras e números")
+  return
+}
+```
+
+2. Validando o campo de inserção do gênero do filme
+
+Abra o arquivo "main.js";
+
+Crie uma constante regexNome e informe a expressão que faz a validação:
+
+```JavaScript
+const regexGenero = /^[a-zA-Z\s ]*$/
+```
+
+Escreva uma função que vai validar a informação colocada no campo de preenchimento do gênero do filme:
+
+```JavaScript
+function validarGenero(genero){
+  return regexGenero.test(genero)
+}
+```
+
+Implemente, na função manipularSubmissaoFormulario, um ifque verifica se a condição é atendida ou não. Caso não seja atendida, vai emitir um alerta.
+
+```JavaScript
+if(!validarGenero(genero)){
+  alert("Use apenas letras para definir o gênero do filme")
+  return
+}
+```
+
+3. Lidando com campos em branco
+
+Abra o arquivo "main.js";
+
+Crie uma função que remove os espaços:
+
+```JavaScript
+function removerEspacos(string) {
+  return string.replaceAll(/\s+/g, '')
+}
+```
+
+Dentro da função manipularSubmissaoFormulario, crie duas constantes, uma para o campo de nome e outra para o campo de gênero. Nelas você irá usar a função que remove os espaços:
+
+```JavaScript
+const nomeSemEspaço = removerEspacos(nome)
+const generoSemEspacos = removerEspacos(genero)
+```
+
+Agora altere o parâmetro das funções que validam o nome e o gênero para receber as constantes nomeSemEspaco e generoSemEspaco:
+
+```JavaScript
+if(!validarNome(nomeSemEspaço)){
+  alert("O filme só pode conter letras e números")
+  return
+}
+
+if(!validarGenero(generoSemEspacos)){
+  alert("Use apenas letras para definir o gênero do filme")
+  return
+}
+```
+
+Você concluiu mais uma lista de exercícios! Muito bem!
+
+Procure-nos no fórum ou Discord se precisar de ajuda!
+
+### Aula 5 - O que aprendemos?
+
+Nesta aula, você aprendeu como:
+
+- Implementar validações com expressões regulares para os campos de conteúdo e autoria dos pensamentos;
+- Validar os campos de conteúdo e autoria para garantir que sigam um padrão específico de letras e quantidade de caracteres;
+- Remover espaços em branco do conteúdo e da autoria antes de realizar a validação;
+- Formatar a exibição da data dos pensamentos, incluindo ajustes na primeira letra para maiúscula;
+- Melhorar a interface com a adição de uma regex para estilizar a exibição da data.
+
+### Aula 5 -  - Vídeo 7
+### Aula 5 -  - Vídeo 8
