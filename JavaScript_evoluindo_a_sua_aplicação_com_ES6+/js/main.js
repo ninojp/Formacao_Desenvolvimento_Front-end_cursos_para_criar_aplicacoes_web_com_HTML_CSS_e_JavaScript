@@ -17,13 +17,37 @@ function removerEspacos(string) {
     // Perceba que não colocamos as âncoras de início e fim, porque queremos que sejam encontrados 
     //todos os espaços que possam existir nesse conteúdo, então não delimitamos o início e o fim da string.
 };
+//================================================================================================
 function validarRegex(expRegex, conteudo) {
     return expRegex.test(conteudo);
 };
+//================================================================================================
+function validarData(pensamentoData) {
+    const dataAtual = new Date();
+    const dataInserida = new Date(pensamentoData);
+    return dataAtual >= dataInserida;
+};
+//================================================================================================
+const pensamentosSet = new Set();
+async function adicionarChaveAoPensamento() {
+    try {
+        const pensamentos = await api.buscarPensamentos()
+        pensamentos.forEach(pensamento => {
+          const chavePensamento = `${pensamento.conteudo.trim().toLowerCase()}-${pensamento.autoria.trim().toLowerCase()}`
+          pensamentosSet.add(chavePensamento)
+        })
+    } catch (error) {
+        console.error('Erro! adicionarChaveAoPensamento()');
+        alert('erro! Ao adicionar chave ao pensamentosSet.')
+        throw error;
+    };
+};
+//=================================================================
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
         await ui.renderizarPensamentos();
+        adicionarChaveAoPensamento();
         document.getElementById('pensamento-form').addEventListener('submit', manipulaSubmitForm);
         document.getElementById('botao-cancelar').addEventListener('click', ui.limpaFormulario);
         document.getElementById('buscarPensamentosId').addEventListener('input', manipularBuscaPorTermo);
@@ -43,22 +67,28 @@ document.addEventListener('DOMContentLoaded', async () => {
                 alert('Preencha todos os campos!');
                 return;
             };
-            const conteudoSemEspacos = removerEspacos(pensamentoConteudo)
-            const autoriaSemEspacos = removerEspacos(pensamentoAutoria)
+            const conteudoSemEspacos = removerEspacos(pensamentoConteudo);
+            const autoriaSemEspacos = removerEspacos(pensamentoAutoria);
             const regexConteudo = /^[A-Za-z\s]{10,}$/;
             if (!validarRegex(regexConteudo, conteudoSemEspacos)) {
-                alert("É permitida a inclusão apenas de letras e espaços com no mínimo 10 caracteres")
-                return
-            }
+                alert("É permitida a inclusão apenas de letras e espaços com no mínimo 10 caracteres");
+                return;
+            };
             const regexAutoria = /^[A-Za-z]{3,15}$/;
             if (!validarRegex(regexAutoria, autoriaSemEspacos)) {
-                alert("É permitida a inclusão apenas de letras(mínimo 3) máximo 15, sem espaços e caracteres especiais!")
-                return
-            }
+                alert("É permitida a inclusão apenas de letras(mínimo 3) máximo 15, sem espaços e caracteres especiais!");
+                return;
+            };
             if (!validarData(pensamentoData)) {
-                alert("Não é permitido o cadastro de datas futuras. Selecione outra data")
-                return
-            }
+                alert("Não é permitido o cadastro de datas futuras. Selecione outra data");
+                return;
+            };
+            const chaveNovoPensaemnto = `${pensamentoConteudo.trim().toLowerCase()}-${pensamentoAutoria.trim().toLowerCase()}`;
+            if (pensamentosSet.has(chaveNovoPensaemnto)){
+                alert('Este Pensamento Já existe!');
+                console.error('Este Pensamento Já existe!');
+                return;
+            };
             let novoPensamento;
             if (pensamentoId) {
                 novoPensamento = await apiAxios.editarPensamento({ id: pensamentoId, conteudo: pensamentoConteudo, autoria: pensamentoAutoria, data: pensamentoData });
@@ -66,22 +96,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                 //O id é gerado automaticamente pelo json-server.
                 novoPensamento = await apiAxios.salvarPensamento({ conteudo: pensamentoConteudo, autoria: pensamentoAutoria, data: pensamentoData });//A IA do VSC Copilot sugeriu essa linha
             };
-            // await ui.renderizarPensamentos();//Professora fez assim, Renderiza todos os pensamentos                
             await ui.adicionarPensamentoNaLista(novoPensamento);
-
-            // alert('Pensamentos Salvo e Adicionado!');
-
-            // Adiciona um pequeno atraso antes de rolar até o elemento
-            // setTimeout(() => {
+            
             const elementoPensamento = document.querySelector(`[data-id='${novoPensamento.id}']`);
             if (elementoPensamento) {
+                // Adiciona um pequeno atraso antes de rolar até o elemento
                 elementoPensamento.scrollIntoView({ behavior: 'smooth' });
             } else {
                 console.log('Elemento não encontrado no DOM!');
-            }
-            // }, 100); // Atraso de 100ms
-            // Rola até o final da página
-            // window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+            };            
+            // window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });// Rola até o final da página
             ui.limpaFormulario();
         } catch (error) {
             console.log('main.js: Erro ao manipulaSubmitForm(): - ', error);
@@ -105,8 +129,3 @@ async function manipularBuscaPorTermo() {
 };
 //================================================================================================
 
-function validarData(pensamentoData) {
-    const dataAtual = new Date();
-    const dataInserida = new Date(pensamentoData);
-    return dataAtual >= dataInserida;
-};

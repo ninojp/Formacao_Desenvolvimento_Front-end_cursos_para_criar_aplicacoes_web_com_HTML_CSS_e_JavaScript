@@ -3737,5 +3737,635 @@ Nesta aula, você aprendeu como:
 - Formatar a exibição da data dos pensamentos, incluindo ajustes na primeira letra para maiúscula;
 - Melhorar a interface com a adição de uma regex para estilizar a exibição da data.
 
-### Aula 5 -  - Vídeo 7
-### Aula 5 -  - Vídeo 8
+## Aula 6 - Evitando Pensamentos duplicados
+
+### Aula 6 - Conhecendo o Set - Vídeo 1
+
+Transcrição
+À medida que a aplicação cresce e mais dados são cadastrados, torna-se cada vez mais fácil adicionar um pensamento já existente no nosso mural. Atualmente, nossa aplicação não possui nenhum tipo de restrição para evitar essa duplicação. Vamos realizar um teste!
+
+Testando a duplicação  
+Já temos o pensamento "Na minha máquina funciona". Vamos copiá-lo do card e cadastrá-lo novamente, preenchendo a autoria como "Dev", escolhendo uma data e salvando.
+
+Feito isso, ao verificar o final do mural, observamos que agora temos dois pensamentos idênticos, com o mesmo conteúdo e autoria. Em muitos casos, independentemente do contexto da aplicação, não desejamos permitir essa duplicação. Mas como podemos lidar com isso e evitar esse tipo de comportamento de duplicação de dados?
+
+Utilizando o Set no JavaScript  
+O JavaScript possui uma estrutura de dados que pode nos auxiliar nesse caso: o Set. Na documentação do MDN, vemos que essa estrutura é semelhante a um array, mas com uma característica distinta: ele não permite a adição de elementos duplicados. Portanto, cada valor é único dentro dessa estrutura. Isso será crucial para nos ajudar a evitar a inclusão de pensamentos duplicados na aplicação.
+
+Acessando o menu lateral esquerdo da documentação, podemos clicar na seção "Instance methonds" (Métodos de instância), que lista os métodos disponíveis na estrutura Set. Exemplos desses métodos incluem .add(), para adicionar um novo elemento, .delete(), para remover um elemento, e .has(), para verificar se um elemento existe dentro do Set. Vamos explorar alguns desses métodos na prática.
+
+Demonstrando o uso do Set  
+Primeiro, acessamos a aplicação e abrimos o console do navegador pressionando "Ctrl + Shift + J". Isso nos permitirá demonstrar como essa estrutura funciona antes de partirmos para o código.
+
+No console, criaremos uma constante chamada novoSet. Para criar um Set, utilizamos o construtor new Set()
+
+```JavaScript
+const novoSet = new Set()
+```
+
+Para adicionar elementos a esse Set, chamamos novoSet e usamos o método .add(), passando o elemento a ser adicionado. Por exemplo, ao executar novoSet.add(1), o Set agora contém o valor 1.
+
+```JavaScript
+novoSet.add(1)
+```
+
+Em seguida, adicionamos o valor 2 com novoSet.add(2), resultando em dois elementos no Set.
+
+```JavaScript
+novoSet.add(2)
+```
+
+Set(2) {1, 2}
+
+Agora, vamos limpar o console com "Ctrl + L" e tentar adicionar o valor 1 novamente com novoSet.add(1).
+
+```JavaScript
+novoSet.add(1)
+```
+
+Set(2) {1, 2}
+
+Note que a estrutura não muda, pois o Set ignora elementos duplicados e mantém o mesmo tamanho. Essa é a peculiaridade do Set.
+
+Prevenindo a duplicação de pensamentos
+
+Agora que já entendemos o funcionamento do Set, precisamos identificar os pensamentos que já existem e compará-los para evitar duplicações. Podemos fazer isso criando uma chave que identifique o pensamento. Como queremos que o conteúdo e a autoria não sejam repetidos, podemos criar uma chave que contenha essas duas propriedades combinadas.
+
+Vamos implementar isso no arquivo main.js. Antes do bloco try...catch, criaremos uma constante chamada chaveNovoPensamento.
+
+```JavaScript
+const chaveNovoPensamento = 
+
+  try {
+    // código omitido
+    }
+    ui.renderizarPensamentos()
+  } catch {
+    // código omitido
+  }
+```
+
+Nessa constante, passaremos o conteúdo e a autoria do pensamento que estamos verificando. Utilizaremos template strings com a sintaxe das crases. Dentro das crases, usaremos o cifrão e colchetes para inserir conteudo. Como queremos comparar apenas o conteúdo, utilizaremos o método .trim() para remover os espaços.
+
+Vamos quebrar a linha para manter o código organizado. O método trim retornará o conteúdo sem espaços. Além disso, queremos padronizar o texto para minúsculas, então utilizaremos o método .toLowerCase().
+
+```JavaScript
+const chaveNovoPensamento = 
+  `${conteudo.trim().toLowerCase()}`
+```
+
+Agora, adicionamos um hífen - para concatenar a autoria seguindo a mesma sintaxe: -${autoria.trim().toLowerCase()}.
+
+```JavaScript
+const chaveNovoPensamento = 
+  `${conteudo.trim().toLowerCase()}-${autoria.trim().toLowerCase()}`
+```
+
+Implementando a verificação de duplicação  
+Na sequência, podemos adicionar uma condicional if para verificar se a chave já existe e, assim, evitar a duplicação. Mas, antes, vamos criar o Set dentro do arquivo.
+
+Após as importações, criaremos uma constante chamada pensamentosSet, que será um new Set().
+
+```JavaScript
+import ui from "./ui.js"
+import api from "./api.js"
+
+const pensamentosSet = new Set()
+```
+
+Feito isso, voltamos à parte do código em que criamos a constante chaveNovoPensamento. Antes de salvar o pensamento, faremos a verificação com a condiconal if(pensamentosSet.has()). Usaremos o método .has(), que verifica se o Set contém um determinado elemento. Se o Set contiver a chave desse pensamento, não queremos que ele seja cadastrado.
+
+Portanto, para .has(), passamos o valor chaveNovoPensamento. Caso a estrutura de dados Set já possua essa chaveNovoPensamento, alertamos a pessoa usuária com a mensagem de que esse pensamento já existe e finalizamos com um retorno.
+
+```JavaScript
+const chaveNovoPensamento = 
+  `${conteudo.trim().toLowerCase()}-${autoria.trim().toLowerCase()}`
+
+  if(pensamentosSet.has(chaveNovoPensamento)) {
+    alert('Esse pensamento já existe')
+    return
+  }
+```
+
+Próximos passos  
+Essa é a lógica que vamos utilizar. No entanto, se testarmos na aplicação, ainda não estará funcionando, porque apenas criamos o Set.
+
+Podemos incluir um pensamento que já existe, como "Na minha máquina funciona", cuja autoria é "Dev", e ainda conseguiremos salvar. Isso ocorre porque criamos o Set, criamos a chave e estamos fazendo a verificação, mas não estamos adicionando a chave de cada pensamento dentro desse Set. É isso que faremos no próximo vídeo!
+
+### Aula 6 - Para saber mais: métodos e propriedades do Set
+
+Você desbloqueou mais uma ferramenta do JavaScript: a estrutura Set!
+
+Vamos mergulhar mais fundo nisso?
+
+1. O que é um Set?
+
+No JavaScript, um Set é um objeto que armazena valores únicos de qualquer tipo, seja primitivo ou objeto. Ao contrário de arrays, um Set não permite valores duplicados, garantindo que cada valor seja único dentro da coleção.
+
+Por exemplo: imagine que temos uma lista de nomes como Mariana, Christian e Denize em uma estrutura 'Set':
+
+```JavaScript
+const meuSet = new Set(["Mariana", "Christian", "Denize"]);`
+```
+
+Se tentarmos adicionar o nome “João”, o Set será atualizado:
+
+```JavaScript
+const meuSet = new Set(["Mariana", "Christian", "Denize", “João”]);`
+```
+
+Se tentarmos adicionar um item repetido (uma duplicata) como “Denize”, o Set não irá repeti-lo:
+
+```JavaScript
+const meuSet = new Set(["Mariana", "Christian", "Denize", “João”]);`
+```
+
+Agora, vamos conhecer as principais características de um Set!
+
+2. Principais características do Set
+
+- Valores únicos: um Set não permite valores duplicados, como vimos no exemplo;
+- Ordem de inserção: os valores são armazenados na ordem em que são inseridos;
+- Iterabilidade: um Set pode ser iterado, permitindo acessar seus valores na ordem em que foram adicionados.
+
+Você também precisa conhecer os principais métodos e propriedades de um Set. Vamos lá?
+
+3. Métodos e propriedades do Set
+
+São os métodos e propriedades do Set:
+
+3.1. Adição de valor  
+O método add(value) adiciona um valor ao Set. Se o valor já existir, ele não será adicionado novamente. Por exemplo:
+
+```JavaScript
+  const meuSet = new Set();
+  meuSet.add(1);
+  meuSet.add(2);
+  meuSet.add(1); // Não adiciona o valor 1 novamente
+  console.log(meuSet); // Output: Set { 1, 2 }
+```
+
+3.2. Exclusão de valor  
+O método delete(value) remove um valor específico do Set; retorna true se o valor foi removido com sucesso e false se o valor não estava presente. Por exemplo:
+
+```JavaScript
+  meuSet.delete(1);
+  console.log(meuSet); // Output: Set { 2 }
+```
+
+3.3. Verificação de valor
+O método has(value) verifica se um valor está presente no Set; retorna true se o valor estiver presente e false em caso contrário. Veja um exemplo:
+
+```JavaScript
+  console.log(meuSet.has(2)); // Output: true
+  console.log(meuSet.has(1)); // Output: false
+```
+
+3.4. Remoção de valores  
+O método clear() remove todos os valores do Set, como no exemplo abaixo:
+
+```JavaScript
+  meuSet.clear();
+  console.log(meuSet); // Output: Set {}
+```
+
+3.5. Propriedade de tamanho
+A propriedade size retorna o número de elementos no Set. Exemplo:
+
+```JavaScript
+console.log(meuSet.size); // Output: 0 (ou outro número dependendo dos elementos no Set)
+```
+
+3.6. Execução de função callback  
+A propriedade forEach(callback) executa uma função callback para cada valor presente no Set, em ordem de inserção. Veja um exemplo:
+
+```JavaScript
+meuSet.add(1).add(2).add(3);
+meuSet.forEach(value => console.log(value));
+// Output:
+// 1
+// 2
+// 3
+```
+
+4. Iteradores  
+O Set possui iteradores que percorrem os valores. Por exemplo, o for...of e o entries().
+
+```JavaScript
+for (let value of meuSet) {
+  console.log(value);
+}
+// Output:
+// 1
+// 2
+// 3
+```
+
+```JavaScript
+for (let [key, value] of meuSet.entries()) {
+  console.log(key, value);
+}
+// Output:
+// 1 1
+// 2 2
+// 3 3
+```
+
+Agora que você conheceu alguns métodos e propriedades, vamos ver alguns exemplos e casos práticos de uso do Set.
+
+5. Exemplos de uso
+
+5.1. Armazenamento de valores únicos  
+Caso você precise armazenar um valor que não pode se repetir, é uma boa ideia utilizar um Set, tal qual o exemplo abaixo:
+
+```JavaScript
+  const numeros = [1, 2, 2, 3, 4, 4, 5];
+  const setNumeros = new Set(numeros);
+  console.log(setNumeros); // Output: Set { 1, 2, 3, 4, 5 }
+```
+
+5.2. Eliminação de duplicatas em arrays  
+Em alguns casos, um array pode conter elementos repetidos, pois é um comportamento que pode ocorrer com um array. O Set, que aceita valores únicos somente, auxilia você a eliminar essas duplicatas! Por exemplo:
+
+```JavaScript
+const frutas = ['maçã', 'banana', 'maçã', 'laranja'];
+const setFrutas = new Set(frutas);
+console.log([...setFrutas]); // Output: [ 'maçã', 'banana', 'laranja' ]
+```
+
+Para mais detalhes sobre os métodos e o uso de Set, consulte a [documentação MDN sobre Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set).
+
+### Aula 6 - Implementando o controle de pensamentos duplicados - Vídeo 2
+
+Transcrição  
+No vídeo anterior, apresentamos a estrutura de dados Set, que não permite a duplicação de valores. Para implementar a lógica de evitar a adição de pensamentos duplicados na aplicação Memoteca, realizamos os seguintes passos:
+
+Primeiramente, criamos um novo Set no arquivo main.js e definimos uma chave para identificar cada pensamento, baseada no conteúdo e na autoria do mesmo. Essa concatenação foi atribuída à constante chaveNovoPensamento. Em seguida, verificamos se o novo Set contém a chaveNovoPensamento e, caso positivo, alertamos a pessoa usuária.
+
+```JavaScript
+const pensamentosSet = new Set()
+// código omitido
+  const chaveNovoPensamento = 
+  `${conteudo.trim().toLowerCase()}-${autoria.trim().toLowerCase()}`
+
+  if(pensamentosSet.has(chaveNovoPensamento)) {
+    alert('Esse pensamento já existe')
+    return
+  }
+```
+
+No entanto, até o momento, apenas criamos o Set sem adicionar nenhuma chave a ele, o que impede seu funcionamento. É isso que faremos agora!
+
+Implementando a função adicionarChaveAoPensamento()  
+Abaixo da criação do Set, vamos inserir alguns espaços e criar uma nova função responsável por adicionar a chave a cada pensamento. Essa função será assíncrona e chamada adicionarChaveAoPensamento().
+
+Em seguida, utilizaremos a estrutura try...catch. Nosso objetivo é buscar todos os pensamentos existentes na aplicação, criar uma chave para cada um deles e adicionar essas chaves ao Set.
+
+Em try, criaremos uma constante chamada pensamentos e atribuiremos a ela o valor retornado pelo método api.buscarPensamentos() utilizando await.
+
+```JavaScript
+async function adicionarChaveAoPensamento() {
+  try {
+    const pensamentos = await api.buscarPensamentos()
+  } catch (error) {
+}
+```
+
+O próximo passo é adicionar uma nova chave para cada pensamento presente no array de pensamentos. Para isso, utilizaremos o método .forEach(). Ou seja, aplicaremos pensamentos.forEach(pensamento) para iterar sobre cada elemento do array. A partir disso, criaremos uma arrow function.
+
+```JavaScript
+async function adicionarChaveAoPensamento() {
+  try {
+    const pensamentos = await api.buscarPensamentos()
+    pensamentos.forEach(pensamento =>{
+        
+        })
+  } catch (error) {
+}
+```
+
+Definiremos uma constante, chamada chavePensamento, que representará a chave do pensamento, da mesma forma que fizemos para chaveNovoPensamento no vídeo anterior, com a diferença que adiconaremos pensamento. antes de conteudo e de autoria: ${pensamento.conteudo.trim().toLowerCase()}-${pensamento.autoria.trim().toLowerCase()}.
+
+```JavaScript
+async function adicionarChaveAoPensamento() {
+  try {
+    const pensamentos = await api.buscarPensamentos()
+    pensamentos.forEach(pensamento => {
+      const chavePensamento = 
+      `${pensamento.conteudo.trim().toLowerCase()}-${pensamento.autoria.trim().toLowerCase()}`
+    })
+  } catch (error) {
+
+  }
+}
+```
+
+Assim, chavePensamento será a concatenação do conteúdo e da autoria do pensamento.
+
+Com essa chave em mãos, vamos adicioná-la ao Set. Assim como no console adicionamos os valores 1 e 2, faremos o mesmo com a chave. Para isso, chamaremos pensamentosSet e utilizaremos o método .add(), passando a chavePensamento como argumento.
+
+```JavaScript
+async function adicionarChaveAoPensamento() {
+  try {
+    const pensamentos = await api.buscarPensamentos()
+    pensamentos.forEach(pensamento => {
+      const chavePensamento = 
+      `${pensamento.conteudo.trim().toLowerCase()}-${pensamento.autoria.trim().toLowerCase()}`
+      pensamentosSet.add(chavePensamento)
+    })
+  } catch (error) {
+
+  }
+}
+```
+
+No bloco catch, caso ocorra algum erro, podemos alertar a pessoa usuária com a mensagem "Erro ao adicionar a chave ao pensamento".
+
+```JavaScript
+async function adicionarChaveAoPensamento() {
+  try {
+    const pensamentos = await api.buscarPensamentos()
+    pensamentos.forEach(pensamento => {
+      const chavePensamento = 
+      `${pensamento.conteudo.trim().toLowerCase()}-${pensamento.autoria.trim().toLowerCase()}`
+      pensamentosSet.add(chavePensamento)
+    })
+  } catch (error) {
+    alert('Erro ao adicionar chave ao pensamento')
+  }
+}
+```
+
+Chamando a função ao carregar a página  
+Agora, dentro de document.addEventListener(), onde estamos chamando a função renderizarPensamentos, vamos incluir também a função que acabamos de criar. Para isso, copiamos o nome da função adicionarChaveAoPensamento e colamos.
+
+```JavaScript
+document.addEventListener("DOMContentLoaded", () => {
+  ui.renderizarPensamentos()
+  adicionarChaveAoPensamento()
+```
+
+Recapitulando  
+Recapitulando o que fizemos: criamos uma função para adicionar uma chave a cada pensamento, buscamos todos os pensamentos da API e, para cada um deles, criamos uma nova chave. Depois, adicionamos essas chaves criadas ao Set.
+
+Agora, ao verificarmos se o Set já contém a chave do pensamento, acreditamos que tudo funcionará corretamente.
+
+Testando a implementação  
+Vamos voltar à aplicação para testar! Utilizaremos o mesmo pensamento que já criamos: "Na minha máquina funciona", cuja autoria é "Dev". Em seguida, escolheremos uma data aleatória e clicaremos em salvar. Ao fazer isso, aparecerá o alerta "Esse pensamento já existe", e não será mais possível cadastrar pensamentos com a mesma autoria e conteúdo.
+
+Se modificarmos algo, alterando, por exemplo, para "Na sua máquina funciona", e clicarmos em salvar, perceberemos que será possível salvar. Ou seja, se o conteúdo ou a autoria forem diferentes, ele permite o salvamento; caso contrário, não permite e exibe o alerta.
+
+Conclusão  
+Com essa validação adicional, concluímos a implementação e evolução do projeto Memoteca, explorando e aprendendo sobre diversos recursos interessantes do JavaScript!
+
+### Aula 6 - Gerenciando playlists no Playcatch
+
+Você trabalha na equipe do Playcatch, o serviço de streaming da Alura. Recentemente, você ficou responsável por criar uma funcionalidade que evita a duplicação de músicas nas playlists das pessoas usuárias. Para criá-la, você decidiu usar a estrutura de dados Set do JavaScript, que armazena valores únicos.
+
+Portanto, é necessário implementar uma função adicionarMusica que adiciona uma música a uma playlist e evita duplicatas. O código a seguir já está quase pronto:
+
+```JavaScript
+class Playlist {
+  constructor() {
+    this.musicas = new Set();
+  }
+
+  adicionarMusica(musica) {
+    // Sua implementação aqui
+  }
+}
+```
+
+Como você pode escrever o código de adicionarMusica?
+
+Resposta:
+
+```JavaScript
+adicionarMusica(musica) {
+  if (!this.musicas.has(musica)) {
+    this.musicas.add(musica);
+  }
+}
+```
+
+> Ótimo! Essa implementação verifica se a música já está na playlist usando has e, se não estiver, a adiciona usando add.
+
+### Aula 6 - Faça como eu fiz: evitando duplicação de pensamentos
+
+Nesta aula, abordamos como evitar a duplicação de pensamentos utilizando um conjunto (Set) para garantir que cada pensamento seja único. Aprendemos a implementar uma verificação para impedir o cadastro de pensamentos repetidos com base no conteúdo e autoria.
+
+Se ainda não fez, é importante que você coloque em prática o conhecimento adquirido em aula para que o seu aprendizado seja eficaz! Siga os passos abaixo para implementar o que foi visto na aula:
+
+- Crie um conjunto (Set) para armazenar pensamentos únicos.
+- Verifique a existência de pensamentos repetidos antes do cadastro.
+- O resultado final esperado é que os pensamentos sejam cadastrados apenas uma vez, evitando duplicação.
+
+Vamos lá?
+
+Para implementar o que foi visto na aula, clique abaixo em “ver opinião da instrutora” para seguir o passo a passo.
+
+Opinião do instrutor
+
+Para ver detalhes do código implementado, acesse o repositório no GitHub.
+
+Nesta aula, adicionamos um novo conjunto (Set) para armazenar pensamentos únicos, evitando a duplicação de pensamentos. Além disso, implementamos uma verificação para evitar o cadastro de pensamentos repetidos com base no conteúdo e autoria.
+
+No arquivo "js/main.js":
+
+- Crie um novo conjunto chamado pensamentosSet;
+- Implemente a função removerEspacos para remover espaços em branco de uma string;
+- No evento de submissão do formulário, verifique se o pensamento já existe no conjunto pensamentosSet antes de realizar o cadastro;
+- Se o pensamento já existir, exiba um alerta informando que o pensamento já foi cadastrado e retorne;
+- Caso contrário, continue com o processo de cadastro do pensamento.
+
+Também criamos uma nova função assíncrona chamada "adicionarChaveAoPensamento", que faz três coisas: busca pensamentos da API; gera uma chave para cada pensamento; e adiciona essas chaves a um Set. Além disso, a chamada para essa função foi incluída no evento "DOMContentLoaded" para garantir que as chaves sejam adicionadas ao carregar a página. Abaixo, seguem os passos para você replicar essas alterações em seu código:
+
+No arquivo "js/main.js":
+
+- Crie uma função assíncrona chamada adicionarChaveAoPensamento;
+- Dentro da função, utilize a API para buscar os pensamentos;
+- Para cada pensamento retornado, gere uma chave única combinando o conteúdo e a autoria do pensamento, e adicione essa chave ao Set pensamentosSet;
+- C- aso ocorra algum erro durante o processo, exiba um alerta com a mensagem 'Erro ao adicionar chave ao pensamento';
+- No evento "DOMContentLoaded", chame a função adicionarChaveAoPensamento para adicionar as chaves ao Set ao carregar a página;
+- Certifique-se de que a função removerEspacos continua funcionando corretamente para remover espaços em branco de uma string;
+- Verifique se a função validarAutoria ainda está válida para validar a autoria de um pensamento;
+- Garanta que a renderização dos pensamentos seja feita corretamente ao carregar a página;
+- Confira se o formulário de pensamento e o botão de cancelar estão sendo selecionados corretamente.
+
+### Aula 6 - Projeto final do curso
+
+Caso queira revisar o código do projeto final do curso, você pode [fazer o donwload](https://github.com/alura-cursos/3782-javascript/archive/refs/heads/aula-6.zip) ou acessar nosso [repositório do Github](https://github.com/alura-cursos/3782-javascript/tree/aula-6).
+
+### Aula 6 - Lista de exercícios
+
+Vamos finalizar nossa lista de filmes com essa lista de exercícios?
+
+1. Evitando filmes repetidos
+
+A última funcionalidade que vamos implementar no projeto é a de verificar se o filme já faz parte da lista e evitar que seja adicionado novamente. Para fazer isso, você pode usar o Set que foi apresentado ao longo das aulas. Crie uma variável e atribua a ela um novo Set.
+
+Vamos lá?
+
+2. Criando uma chave única para cada filme
+
+Agora, escreva uma função que adiciona uma chave a cada um dos filmes que já fazem parte da lista. Busque os filmes na API e, para cada um deles, crie uma chave única baseada no nome dos filmes. Por fim, adicione essa chave à lista de filmes. Caso obtenha erros, emita um alerta.
+
+Dicas:
+
+Lembre-se de usar try e catch para capturar erros;
+
+Também é importante adicionar a função dentro do evento de DOMContentLoaded.
+
+Bons estudos!
+
+3. Comparando os filmes da lista com o novo filme adicionado
+
+Vamos comparar a chave dos filmes que fazem parte da lista com a chave dos filmes que está sendo adicionado para verificar se o filme já existe na lista e impedir que ele seja adicionado novamente.
+
+Para fazer essas coisas, crie uma constante que vai gerar uma chave para o filme que será adicionado e usar uma condicional para comparar as chaves. Caso o filme já exista na lista, exiba um alerta na tela da pessoa usuária.
+
+Dicas:
+
+Você pode usar o método has do Set para realizar essa verificação.  
+Vamos para a última?
+
+Opinião do instrutor
+
+1. Evitando filmes repetidos
+
+Abra o arquivo "main.js";
+
+Crie uma constante e atribua um novo Set da seguinte maneira:
+
+```JavaScript
+const filmesSet = new Set()
+```
+
+Até aqui tudo bem, certo? Neste exercício apenas criamos uma nova estrutura Set que será utilizada nos exercícios seguintes.
+
+2. Criando uma chave única para cada filme
+
+Abra o arquivo "main.js";
+
+Crie a função que adiciona uma chave aos filmes da lista da seguinte maneira:
+
+```JavaScript
+async function adicionarChave() {
+  try {
+    const filmes = await api.buscarFilmes()
+    filmes.forEach(filme => {
+      const chaveFilme = 
+      `${filme.nome.trim().toLowerCase()}`
+      filmesSet.add(chaveFilme)
+    })
+  } catch (error) {
+    alert('Erro ao adicionar uma chave única')
+  }
+}
+```
+
+Adicione a função abaixo da função ui.renderizarFilmes() dentro do evento de DOMContentLoaded:
+
+```JavaScript
+document.addEventListener("DOMContentLoaded", () => {
+  ui.renderizarFilmes()
+  adicionarChave()
+
+  const formularioFilme = document.getElementById("filme-form")
+  const botaoCancelar = document.getElementById("botao-cancelar")
+  const inputBusca = document.getElementById("campo-busca")
+
+  formularioFilme.addEventListener("submit", manipularSubmissaoFormulario)
+  botaoCancelar.addEventListener("click", manipularCancelamento)
+  inputBusca.addEventListener("input", manipularBusca)
+})
+```
+
+3. Comparando os filmes da lista com o novo filme adicionado
+
+Abra o arquivo "main.js";
+
+Dentro da função manipularSubmissaoFormulario, crie uma constante para adicionar uma chave ao novo filme.
+
+```JavaScript
+const chaveNovoFilme = 
+  `${nome.trim().toLowerCase()}`
+```
+
+Use o if para comparar a chave do novo filme com as chaves dos filmes que fazem parte da lista:
+
+```JavaScript
+if(filmesSet.has(chaveNovoFilme)) {
+  alert('Esse filme já existe')
+  return
+}
+```
+
+Você concluiu mais uma lista de exercícios! Muito bem!
+
+Procure-nos no fórum ou Discord se precisar de ajuda!
+
+### Aula 6 - Para ir mais fundo
+
+1. [Manipulando strings com Regex no JavaScript](https://www.alura.com.br/artigos/javascript-replace-manipulando-strings-e-regex) (gratuito, português, artigo)
+
+> Este artigo oferece uma introdução prática sobre como utilizar expressões regulares (Regex) para manipular strings no JavaScript. Ele explora o método replace e demonstra como aplicar Regex para realizar substituições dinâmicas em textos, muito útil para validações e transformações de dados.
+
+2. [Formatando CPF com expressões regulares](https://www.alura.com.br/artigos/formatando-cpf-com-ajuda-das-expressoes-regulares) (gratuito, português, artigo)
+
+> Aprenda como utilizar expressões regulares para formatar e validar um CPF no formato brasileiro. O artigo detalha como criar uma Regex específica para o CPF, auxiliando no entendimento de como essa ferramenta pode ser aplicada em situações do mundo real.
+
+3. [Guia de expressões regulares no MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions) (gratuito, inglês, documentação)
+
+> O guia do MDN sobre expressões regulares é uma referência completa sobre Regex no JavaScript. Desde conceitos básicos até as funções avançadas, esta documentação oferece uma compreensão das possibilidades que as expressões regulares proporcionam.
+
+4. [Expressões regulares: buscas, validações e substituições em textos](https://cursos.alura.com.br/course/expressoes-regulares-buscas-validacoes-substituicoes-textos) (português, vídeo)
+
+> Neste curso, você mergulhará nas expressões regulares, aprendendo a utilizá-las para buscar, validar e substituir padrões em textos. O conteúdo é ideal para quem deseja aprimorar suas habilidades de manipulação de strings, com foco em aplicações práticas.
+
+5. [Manipulação de datas, horas e moedas no JavaScript](https://www.alura.com.br/artigos/formatar-datas-horas-moedas-javascript) (gratuito, português, artigo)
+
+> Entenda como trabalhar com datas, horas e moedas no JavaScript de maneira eficiente. Este artigo explora as principais técnicas e APIs disponíveis, ajudando a formatar e manipular essas informações em diferentes cenários, com exemplos práticos que facilitam o aprendizado.
+
+6. [Entenda a diferença entre var, let e const no JavaScript](https://www.alura.com.br/artigos/entenda-diferenca-entre-var-let-e-const-no-javascript) (gratuito, português, artigo)
+
+> Este artigo explica as diferenças fundamentais entre var, let, e const no JavaScript, detalhando os escopos e comportamentos específicos de cada um. Compreender essas diferenças é importante para escrever um código mais seguro e eficiente.
+
+7. [A evolução do JavaScript - Podcast Hipsters #79](https://open.spotify.com/episode/7Kq4wVHcDddbVbvmQAGUAj?go=1&sp_cid=d2809588c1f64de8efea3d5183ec5c8b&utm_source=embed_player_p&utm_medium=desktop&nd=1&dlsi=4453454e18154eba) (gratuito, português, podcast)
+
+> Neste episódio do podcast Hipsters.tech, você vai acompanhar uma discussão sobre a evolução do JavaScript ao longo dos anos, desde suas primeiras versões até as atualizações mais recentes. O podcast é uma ótima maneira de entender como a linguagem cresceu e se adaptou às necessidades modernas.
+
+8. [Documentação MDN sobre Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set) (gratuito, inglês, documentação)
+
+> A documentação do MDN sobre o objeto Set explica como trabalhar com conjuntos em JavaScript. Set é uma estrutura de dados que permite armazenar valores únicos, facilitando operações como verificação de duplicatas e união de conjuntos. A documentação inclui exemplos práticos e detalhes sobre métodos úteis para manipular conjuntos.
+
+### Aula 6 - O que aprendemos?
+
+Nesta aula, você aprendeu como:
+
+- Adicionar um conjunto (Set) para armazenar pensamentos únicos e evitar duplicação;
+- Implementar verificações para impedir o cadastro de pensamentos repetidos com base no conteúdo e autoria;
+- Criar funções assíncronas para buscar dados da API e gerar chaves únicas para cada pensamento;
+- Integrar a função de verificação ao carregamento da página (DOMContentLoaded) para garantir que os pensamentos sejam devidamente processados ao iniciar a aplicação;
+- Assegurar que a interface seja atualizada corretamente ao carregar e renderizar os pensamentos.
+
+Parabéns por chegar até aqui!
+
+### Aula 6 - Conclusão - Vídeo 3
+
+Transcrição  
+Parabéns pela conclusão deste curso!
+
+Iniciamos com uma aplicação simples, apenas com operações CRUD, e finalizamos com uma aplicação mais robusta e repleta de funcionalidades! Vamos recapitular o que fizemos?
+
+Adicionamos um campo de busca para realizar uma busca dinâmica (typeahead), que exibe os resultados correspondentes à medida que a pessoa usuária digita. Para isso, criamos uma nova função no arquivo api.js, utilizando os métodos .filter() e .includes().
+
+Também aprendemos a manipular datas, explorando diversos métodos e formatos, como .UTC(), .toISOString() e .toLocaleDateString(). Passamos diferentes opções para esses métodos a fim de customizar a data e apresentá-la de forma amigável na interface.
+
+Além disso, implementamos a funcionalidade de favoritar. No arquivo api.js, utilizamos o método HTTP .patch() e continuamos a usar template strings para passar informações para a API. Utilizamos a estrutura de dados do JavaScript chamada Set(), adicionando chaves específicas para cada pensamento. Verificamos, com o método has(), se a chave já estava presente, evitando a adição de pensamentos duplicados.
+
+Também implementamos validações no formulário utilizando expressões regulares (regex). Utilizamos métodos como .test() e .match() para verificar a ocorrência, e também o método .replaceAll() em conjunto com essas estruturas.
+
+Fizemos bastante coisa! Queremos que você compartilhe o seu aprendizado. Portanto, marque-nos nas redes sociais e utilize a hashtag #AprendiNaAlura, mostre o que aprendeu e o que fez de diferente. Participe também da nossa comunidade no Discord, onde temos eventos semanalmente em que você pode se conectar com outras pessoas. É super interessante!
+
+Desejamos muito sucesso a você. Um grande abraço e até o próximo curso!
