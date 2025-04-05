@@ -1105,4 +1105,737 @@ Nessa aula, você aprendeu a:
 - --save-dev ou -D: instala um pacote como dependência de desenvolvimento;
 - --save-exact ou -E: documenta que o pacote deve ser instalado por outras pessoas exatamente na versão que nós utilizamos.
 
-### Aula 2 -  - Vídeo 7
+## Aula 3 - Explorando script, pacotes locais e globais
+
+### Aula 3 - Identificando os pacotes locais e globais - Vídeo 1
+
+Transcrição  
+Agora que sabemos um pouco melhor sobre o NPM e também sobre o package.json, que estão bem relacionados, talvez você tenha se perguntado o seguinte: como utilizamos o json-server no projeto, se ele não está especificado no package.json?
+
+Identificando os pacotes locais e globais  
+Até agora, aprendemos a utilizar algumas dependências e as listamos todas. Porém, a nossa API local está sendo servida também por um pacote do Node: o json-server.
+
+Vamos abrir o terminal integrado do VS Code, o qual está sendo executado agora, e vamos interromper por um momento. Relembrando uma atividade que deixamos para você sobre a instalação do json-server. O comando usado foi o seguinte:
+
+```JavaScript
+npm install -g json-server@0.17.4
+```
+
+Com isso, você consegue utilizar o comando json-server --watch.
+
+```JavaScript
+json-server --watch
+```
+
+Perceba que conseguimos utilizar o json-server diretamente no terminal, sem colocar npm ou npx no início do comando. Isso é possível porque nós instalamos o json-server de forma global no terminal. É exatamente isso que significa a opção -g. Ela é o mesmo que escrever --global. É basicamente um atalho, como o -v de --version.
+
+Qual a diferença entre um pacote local e um pacote global? A diferença é que, no global, não precisamos instalar localmente em um projeto. Conseguimos utilizar o json-server em qualquer projeto do nosso computador.
+
+A vantagem é que, se tivermos muitos projetos no computador e vários deles utilizarem o json-server, não precisaremos baixar o json-server para cada um deles, o que pode economizar espaço. Por outro lado, existe uma desvantagem em ter um pacote global. O projeto não vai conseguir, por exemplo, especificar a versão mais adequada do json-server para aquele projeto.
+
+É isso que estamos aprendendo até agora. O package.json lista exatamente as versões que devemos usar em um projeto, evitando problemas de compatibilidade e até quando outras pessoas forem baixar nosso projeto.
+
+No nosso caso, seria inclusive uma boa prática instalar o json-server localmente no computador. Portanto, vamos modificar o comando removendo o -g. Depois, vamos alterar a versão para 0.16.0 para você observar a diferença entre o json-server que vai ser instalado agora e o global instalado anteriormente. Vamos colocar essa versão apenas para teste.
+
+Além disso, vamos adicionar a opção --save-dev, que pode ser abreviada para -D. Vamos instalar o json-server como uma dependência de desenvolvimento, já que ele não é necessário em produção, em um site de verdade.
+
+```JavaScript
+npm install json-server@0.16.0 -D
+```
+
+Após executar o comando, esperamos o json-server ser instalado localmente. Com o json-server baixado no projeto, podemos usar "Ctrl + L" para limpar o terminal. Agora, sabemos que temos o json-server local e o global.
+
+O que acontece se digitarmos no terminal, por exemplo, json-server -v para verificar a versão?
+
+```JavaScript
+json-server -v
+```
+
+A versão retornada foi 0.17.4, que não é a que instalamos localmente. Isso mostra que, quando usamos o json-server diretamente, sem npx no início do comando, pegamos a versão global. Se quisermos usar a versão local, precisamos colocar npx json-server -v.
+
+```JavaScript
+npx json-server -v
+```
+
+Quando usamos os comandos do NPM, ele dá prioridade para os pacotes listados no package.json. Então, qual será a versão retornada com o comando acima? 0.16.0, exatamente o que queríamos. Agora você aprendeu a diferença entre um pacote local e global, e as diferenças entre executar usando o npx, que dá prioridade para o local.
+
+Sabendo disso, podemos remover o json-server global, porque não fará mais diferença para nós. Temos um local para trabalhar com ele. Para remover o global, executaremos o seguinte comando:
+
+```JavaScript
+npm uninstall -g json-server
+```
+
+É retornado que foram removidos 116 pacotes. Se tentarmos usar o json-server -v de novo, o termo não será reconhecido. Não temos mais ele global. Porém, se usarmos com npx, continuará funcionando e retornará 0.16.0.
+
+Para finalizar o vídeo, instalamos a versão 0.16 só para mostrar a diferença entre versões. Mas, como trabalhamos com a versão 0.17.4 até agora, vamos atualizar no arquivo package.json a versão que queremos utilizar. Podemos fazer isso simplesmente modificando o número da versão para 0.17.4 e salvando o package.json.
+
+package.json:
+
+```JavaScript
+"json-server": "^0.17.4"
+```
+
+Feito isso, voltamos para o terminal com o comando abaixo:
+
+```JavaScript
+npm install
+```
+
+Assim, atualizamos as dependências do projeto conforme as novas modificações do package.json. Para ter certeza que realmente atualizou a versão, usamos o comando npx json-server -v. Se retornar 0.17.4, deu certo.
+
+```JavaScript
+npx json-server -v
+```
+
+Com sucesso, removemos o json-server global e deixamos apenas o local na nossa máquina.
+
+Como dissemos anteriormente, isso fornece vantagens, como usar o package.json para controlar exatamente a versão que queremos no nosso projeto, o que é bem importante. Além disso, se não precisarmos mais do projeto no computador, o json-server vai embora com ele.
+
+Conclusão  
+Agora que você sabe um pouco mais sobre a diferença de pacotes locais e globais, falta entender melhor como funciona a sintaxe de versão, o que são os números e até mesmo o circunflexo no código. É o que vamos aprender em seguida!
+
+### Aula 3 - Entendendo a sintaxe de versionamento - Vídeo 2
+
+Transcrição  
+Nós já entendemos as diferenças entre pacotes locais e globais, utilizando o json-server como exemplo. Se quisermos executar o projeto novamente, teremos que ir ao terminal e usar o comando abaixo:
+
+> npx json-server --watch backend/videos.json
+
+Após executar, vamos conferir que continua funcionando corretamente. Se acessarmos o navegador, onde já rodamos o Live Server no VS Code, e atualizarmos a página, continua funcionando perfeitamente. Mas agora que sabemos disso, é hora de entender um pouco melhor como funciona a sintaxe de números separados por pontos.
+
+Entendendo a sintaxe de versionamento  
+Para explicar melhor, vamos acessar o site do npm. Esse é o site onde os pacotes ficam hospedados, e podemos buscar por informações sobre eles.
+
+Para tomar como exemplo, vamos pesquisar pelo pacote ESLint. Digitando exatamente o nome do pacote, aparecerá a sugestão da versão mais recente, que no momento da gravação é a 8.52.0. Clicaremos no link dessa versão, lembrando que a sua mais recente pode ser uma versão maior.
+
+Na página do ESLint, podemos conferir algumas instruções, mas o que queremos mostrar é a aba de versões, que possui 341 versões por enquanto. Ao clicar nela, visualizamos todo um histórico de versões do ESLint que foram lançadas.
+
+Essa é uma boa oportunidade para explicar o que são os números. Vamos descer até a versão 7.0.0, que é um pouco mais fácil de explicar. O que significam cada um desses números?
+
+O número mais à direita, na versão 7.0.0, por exemplo, representa uma atualização de correção. Isso significa que, quando esse número da direita muda, a equipe provavelmente lançou uma nova atualização da ferramenta corrigindo algum bug, chamada em inglês de patch version.
+
+O número do meio é a versão menor. Geralmente, ela traz novos recursos quando atualizada, além de poder corrigir bugs, mas sempre trazendo novidades.
+
+O número da esquerda é a versão maior do projeto. Quando esse número muda, a equipe do pacote pode descontinuar recursos antigos ou modificar recursos existentes. Então, uma mudança nesse número maior requer atenção, pois talvez seja necessário consultar um guia de migração, que normalmente é disponibilizado pela equipe, indicando mudanças necessárias na sintaxe ou em outros códigos, ou algum comando pode não existir mais na nova versão.
+
+Observando como funcionam essas atualizações, quando o número do meio muda, ele sempre reseta o número da direita para 0. Por exemplo, observe a versão 7.3.1. Quando foi para 7.4.0, a versão de correção que estava 1 volta a ser 0. É uma regra que devemos seguir.
+
+Da mesma forma, ao mudar da versão 7 para 8, todos os números à direita voltam a ser 0. Podemos conferir isso no histórico. Da versão 7.32.0 para a versão 8.0.0, resetou para 0. Isso é o que chamamos de versionamento semântico, uma convenção muito utilizada no mundo do desenvolvimento web, seja no front-end ou no back-end.
+
+### Aula 3 - Versonando com NPM - Vídeo 3
+
+Transcrição  
+Agora que você sabe como funciona o versionamento semântico no Node, vamos usar o VS Code.
+
+Versionando com NPM  
+Falta explicar mais uma coisa que o NPM utiliza no arquivo package.json. Em eslint, note que há um circunflexo logo antes do número da versão 8.52.0. Isso quer dizer que o nosso projeto é compatível com qualquer versão maior ou igual a 8.52.0, mas que não aumente o número da versão maior. Ou seja, que seja menor do que 9.
+
+Basicamente, se forem lançadas novas versões, 8.53.0, 8.54.0, e assim por diante, documentamos no package.json que o nosso projeto também será compatível com essas outras versões.
+
+package.json:
+
+> "eslint": "^8.52.0"
+
+Para demonstrar isso na prática, podemos simular a situação de um amigo vindo baixar o nosso projeto do GitHub, por exemplo. Vamos tomar como exemplo uma versão de número diferente. Em vez de usar 8.52.0, vamos usar 7.10.0, mantendo o circunflexo. Feito isso, vamos salvar o arquivo.
+
+> "eslint": "^7.10.0"
+
+Se alguém for baixar o nosso projeto, essa estrutura toda, a estrutura não virá com a pasta "node_modules", pois pedimos para o Git ignorá-la com o arquivo .gitignore. Então, para simular esse amigo baixando o projeto, vamos apagar a pasta.
+
+Sem a pasta "node_modules", a pessoa quer utilizar o nosso projeto e agora terá que usar o NPM, isto é, o Node do computador dela, para instalar essas dependências de desenvolvimento. Para isso, a pessoa deverá abrir o terminal integrado e usar o comando npm install.
+
+> npm install
+
+Após executar o comando, podemos conferir quais são as versões que realmente foram baixadas de cada um desses pacotes. Vamos conferir, no caso, o do ESLint. Para isso, executamos o comando abaixo:
+
+> npx eslint -v
+
+A versão retornada foi v7.32.0. É uma versão diferente da 7.10.0, mas devido ao circunflexo. Por mais que isso não seja um problema na maioria dos casos, isso pode vir a ser um problema, porque o número do meio, a versão menor, adiciona novos recursos e talvez corrija alguns bugs. Mas, ainda assim, podem haver incompatibilidades se houver diferenças de projeto.
+
+Se o projeto no seu computador usa a versão 7.10.0, talvez ele funcione de forma diferente da versão 7.32.0 no computador do seu amigo. Por esse motivo, é uma boa prática, na verdade, não utilizar o circunflexo no package.json. Se removermos ele, tanto do eslint quanto do json-server, documentamos que queremos que todos utilizem exatamente essas versões, eliminando qualquer possibilidade de erro quando o projeto for rodado em outros computadores.
+
+package.json:
+
+> "eslint": "7.10.0",
+> "json-server": "0.17.4"
+
+Feito isso, vamos retornar ao terminal e executar o comando npm install novamente.
+
+> npm install
+
+Em seguida, podemos limpar o terminal e executar npx eslint -v mais uma vez.
+
+> npx eslint -v
+
+Agora, como retorno, temos a versão v7.10.0. Dessa forma, com a sintaxe sem circunflexo, pedimos para fixar exatamente a versão 7.10.0 nos computadores de todos que forem utilizar esse projeto.
+
+Para evitar qualquer problema no nosso projeto, vamos mudar o número de 7.10.0 de volta para 8.52.0, porque é a versão que utilizamos até agora.
+
+> "eslint": "8.52.0"
+
+Após salvar o arquivo, executamos npm install novamente. Ao terminar de executar o comando, apenas para garantir, podemos executar npx eslint -v e verificar se a versão do projeto realmente é 8.52.0. Assim, garantimos a compatibilidade do nosso projeto com toda a equipe!
+
+### Aula 3 - Para saber mais: conteúdos sobre o SemVer
+
+No último vídeo, conferimos sobre o Versionamento Semântico (em inglês: Semantic Versioning ou SemVer). Você pode ler mais sobre esse tema nesses links:
+
+Artigo: [Versionamento Semântico (SemVer)](https://www.alura.com.br/artigos/versionamento-semantico-breve-introducao): uma breve introdução
+Documentação: [About semantic versioning](https://docs.npmjs.com/about-semantic-versioning)
+
+### Aula 3 - Facilitando comandos com scripts - Vídeo 4
+
+Transcrição  
+Já entendemos melhor como o NPM trabalha com as versões dos pacotes que utilizamos, e talvez você tenha notado um problema: sempre que vamos rodar nossa aplicação com a API, precisamos ir ao terminal e digitar npx json-server --watch backend/videos.json. É um comando um pouco grande; ele funciona, mas pode ser um pouco cansativo ter que digitá-lo toda vez que queremos executar a API local.
+
+Além disso, podemos não lembrar de uma parte desse comando e precisar consultar na documentação. Essa é uma situação comum quando trabalhamos com pacotes de linha de comando. É comum não lembrarmos de uma parte do comando ou mesmo digitar algo errado.
+
+Pensando nisso, o NPM traz para nós um recurso interessante que ajuda a não precisar lembrar ou digitar esses comandos longos o tempo inteiro: os scripts.
+
+Facilitando comandos com scripts  
+Para usar esse recurso, vamos interromper a execução do servidor no terminal e teclar "Seta para cima" para copiar o último comando. Queremos copiar ele quase todo. Para isso, vamos segurar "Ctrl + Shift" e teclar "Seta para a esquerda" para selecionar até json-server. Feito isso, vamos usar o atalho "Ctrl + X" para recortar json-server --watch backend/videos.json.
+
+. json-server --watch backend/videos.json
+
+Não vamos usar mais o npx ao início do comando, então podemos ignorá-lo. Agora vamos ao arquivo package.json. Na parte de scripts, vamos criar um script novo, que será o seguinte: abrimos aspas duplas, confirme exigido pela sintaxe do JSON, e adicionamos o nome que quisermos, nesse caso, api-local. Depois das aspas, colocamos dois pontos e abrimos de novo aspas duplas. Vamos usar "Ctrl + V" para colar json-server --watch backend/videos.json.
+
+package.json:
+
+> "api-local": "json-server --watch backend/videos.json"
+
+Após salvar o arquivo, queremos pedir para o NPM executar esse comando para nós, em vez de digitar npx e o comando inteiro. Então, de volta ao terminal, para executar o script api-local, vamos escrever um novo comando:
+
+> npm run api-local
+
+Vamos verificar o que aparece após executar. Logo abaixo do comando npm run api-local, temos uma parte dizendo justamente o conteúdo do script, que é json-server --watch backend/videos.json. Agora vamos conferir se funciona? De volta ao navegador, ao atualizar a página do VidFlow, parece estar funcionando perfeitamente.
+
+Essa é uma prática muito interessante que pode ajudar na nossa produtividade. Note que, analisando o arquivo package.json, não precisamos colocar npx, por exemplo, no início do script api-local, porque o NPM já entende que queremos executar esse comando. Então, não é necessário colocar o npx. Senão, ele precisaria ficar no início de todo script.
+
+Podemos ir além e criar um script para o ESLint. Após api-local, criaremos um script chamado checar-codigo, cujo conteúdo será eslint ., para fazer uma verificação em todos os arquivos JavaScript do projeto.
+
+package.json:
+
+> "checar-codigo": "eslint ."
+
+Uma vez salvo o arquivo, podemos abrir um novo terminal clicando em + e escrever de novo npm run. Porém, agora será o script checar-codigo.
+
+> npm run checar-codigo
+
+Após teclar "Enter", verificamos que o comando eslint . foi executado. Não tivemos nenhum retorno, porque não temos nenhum problema com os arquivos JavaScript. Isso é bem legal. Percebemos que podemos até tornar os comandos com um nome semântico, que fica mais evidente para nós e facilita o entendimento do que os comandos fazem.
+
+Para finalizar o script checar-codigo, na verdade, quando temos um comando em script que se refere ao ESLint, é muito comum encontrar a convenção de chamá-lo de lint. Então vamos fazer essa alteração e salvar o arquivo.
+
+> "lint": "eslint ."
+
+Nesse caso, poderíamos rodar o comando npm run lint e funcionaria da mesma forma.
+
+Conclusão  
+Esse é um recurso bem interessante disponibilizado pelo NPM para ajudar na nossa produtividade. Na próxima aula, vamos conhecer um novo pacote que vai nos ajudar a melhorar ainda mais o projeto. Te esperamos lá!
+
+### Aula 3 - Instalando globalmente
+
+Você está trabalhando em vários projetos pessoais diferentes no seu computador e todos eles precisam do JSON Server.
+
+Para não baixar o JSON Server em cada um dos projetos e, assim, economizar espaço no seu computador, você decide instalar o JSON Server de forma global no seu computador.
+
+Para isso, o que você deve fazer?
+
+Resposta:  
+Abrir o terminal em qualquer local do computador e executar npm install -g json-server.
+
+> A opção -g (ou --global) indica para o NPM que queremos instalar o pacote globalmente. Além disso, ao instalar globalmente, não faz diferença em qual pasta vamos executar o comando.
+
+### Aula 3 - Faça como eu fiz: aplicando melhorias!
+
+Chegou a hora de você colocar a mão na massa, caso ainda não tenha feito!
+
+Segue a listinha de tarefas:
+
+- Desinstale o json-server globalmente e instale-o localmente no projeto do VidFlow. Isso permitirá um gerenciamento de pacotes mais controlado;
+- Atualize o package.json para que outras pessoas que forem baixar seu projeto utilizem exatamente as mesmas versões de dependências que você utilizou;
+- Crie scripts para facilitar a execução de comandos no terminal.
+
+Opinião do instrutor
+
+1. Desinstale o json-server global:
+
+```JavaScript
+    npm uninstall -g json-server
+```
+
+Em seguida, instale-o localmente na pasta do projeto:
+
+```JavaScript
+    npm install json-server@0.17.4
+```
+
+Especificamos a versão 0.17.4 para você utilizar a mesma versão que o instrutor e não haver nenhuma diferença de funcionalidades ao longo do curso, mas sinta-se livre para instalar versões mais recentes em seus projetos pessoais executando npm install json-server. Nesse caso, consulte a documentação da ferramenta para conferir quaisquer mudanças.
+
+2. No package.json, remova os circunflexos dos números das versões.
+
+A propriedade "devDependecies" ficará assim:
+
+```JavaScript
+    "devDependencies": {
+      "eslint": "8.52.0",
+      "json-server": "0.17.4",
+      "prettier": "3.0.3"
+    }
+```
+
+Você pode executar npm install para atualizar as versões dos pacotes do seu projeto de acordo com o package.json. Para conferi-las, execute npx <nome-do-pacote> -v.
+
+3. Crie dois novos scripts na propriedade "scripts" do package.json:
+
+```JavaScript
+    "api-local": "json-server --watch backend/videos.json",
+    "lint": "eslint ."
+```
+
+Agora você pode executar esses scripts com npm run api-local e npm run lint.
+
+Com isso, você aplicou com sucesso as melhorias no seu projeto :)
+
+### Aula 3 - O que aprendemos?
+
+Nessa aula, você aprendeu a:
+
+- Diferenciar pacotes locais e globais:
+- Ao instalar e desinstalar pacotes, podemos utilizar a opção -g (ou --global) para indicar que queremos realizar a operação de forma global;
+- Para executar um pacote local, é necessário escrever npx no início do comando. Para executar um pacote global, não é necessário.
+- Versionar as dependências do seu projeto:
+- Você aprendeu sobre o versionamento semântico e que os números se referem a Major Version, Minor Version e Patch Version (versões maiores, menores e de correção);
+- O NPM utiliza alguns caracteres especiais para indicar faixas de versões compatíveis.
+- O circunflexo (^) indica que queremos uma versão igual ou maior à especificada da dependência, mas sem aumentar o número da major version. Exemplo: ^1.5.0 é compatível com 1.5.0, 1.5.2 e 1.6.0, mas não é compatível com 2.0.0 ou maiores.
+- Facilitar a execução de comandos com scripts:
+- Você pode definir seus próprios scripts na seção "scripts" do package.json;
+- Para executar um script, basta executar npm run `<nome-do-script>`.
+
+## Aula 4 - Usando uma biblioteca externa
+
+### Aula 4 - Usando CDN do Axios - Vídeo 1
+
+Transcrição  
+Nós já praticamos um pouco o uso do Node e do NPM com alguns pacotes, como S-Linux, Printer e até JSON Server. Agora, vamos praticar com mais um pacote chamado Axios.
+
+Imagine que estamos trabalhando com uma equipe no VidFlow que decidiu utilizar esse pacote. Se formos ao projeto, no arquivo script.js estamos utilizando, na linha 5, o método fetch() para realizar uma requisição HTTP para a API local:
+
+```JavaScript
+const busca = await fetch("http://localhost:3000/videos");
+```
+
+O pacote Axios também é uma forma de realizar requisições HTTP, por isso a equipe decidiu trocar de Fetch API para Axios, muito utilizado em empresas.
+
+Para explorar esse pacote, vamos acessar o site npmjs.com, no navegador. No campo de busca, pesquisaremos por "axios" e clicaremos em sua correspondência, que deve aparecer assim:
+
+axios
+
+Promise based HTTP client for the browser and node.js 1.6.0
+
+Ao clicá-la, note que há um pacote Axios com a versão 1.6.0. Neste momento, é possível que você encontre uma versão diferente e é por isso que, ao usar o NPM para instalar o Axios, recomendamos que você use a mesma versão da pessoa instrutora.
+
+Descendo um pouco a página, encontraremos a seção "Table of Contents" (Tabela de conteúdos). Nela, clicaremos na opção "Installing".
+
+Em "Installing", temos acesso a algumas formas de instalar este pacote. Porém, ao invés de usar o primeiro comando, $ npm install axios, veremos uma forma mais fácil de utilizar o Axios, já que o NPM tem algumas particularidades.
+
+Mais abaixo, na seção "CDN", temos o seguinte script:
+
+```JavaScript
+<script src="https://cdn.jsdelivr.net/npm/axios@1.1.2/dist/axios.min.js"></script>
+```
+
+Vamos copiá-lo, voltar ao VS Code e abrir o arquivo index.html.
+
+Podemos colocar esse script no `<head>` da aplicação, pois realmente não precisamos esperar o DOM carregar. Então, após as outras tags, damos um espaço, colamos o script e salvamos o arquivo:
+
+```JavaScript
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+        href="https://fonts.googleapis.com/css?family=Roboto:wght@400;500;700&display=swap" 
+        rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./css/reset.css" />
+    <link rel="stylesheet" href="./css/estilos.css" />
+    <link rel="stylesheet" href="./css/flexbox.css" />
+    <title>VidFlow</title>
+    <link rel="shortcut icon" href="./img/Favicon.png" type="image/x-icon" /> Follow link (ctrl + click)
+
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.1.2/dist/axios.min.js"></script> 
+</head>
+```
+
+O CDN vai disponibilizar uma variável global chamada Axios. Para vê-la disponibilizada, podemos ir ao script.js e, no início do arquivo, escrever console.log(axios);:
+
+```JavaScript
+console.log(axios);
+```
+
+Em seguida, salvamos o arquivo, voltamos ao navegador, abrimos o VidFlow e atualizamos a página. No console, vemos que o Axios está disponível.
+
+Mas como usamos o Axios no nosso projeto ao invés da Fetch API? No script.js, em vez de await fetch(), usamos await axios.get(). Já em const videos, ao invés de await busca.json(), colocaremos apenas busca.data, que é a propriedade do objeto retornado pelo axios.get, o que pode ser conferido na documentação. Inclusive, podemos um console.log(busca) para visualizar melhor esse objeto.
+
+```JavaScript
+const busca = await axios.get("http://localhost:3000/videos");
+
+console.log(busca);
+
+const videos = busca.data;
+```
+
+Vamos salvar o arquivo e voltar ao navegador. No DevTools, já temos esse objeto com várias propriedades, como config, data e headers. A propriedade data retorna exatamente a lista com as informações dos vídeos, uma lista com 13 itens. Continua funcionando perfeitamente.
+
+De volta ao arquivo script.js, note que está sendo mostrado um erro em console.log(axios). Isso ocorre porque estamos utilizando CDN e não temos como informar ao VS Code de onde está vindo. Por isso, ao invés de usar CDN, podemos utilizar o NPM. Assim conseguimos informar no nosso código de onde estamos tirando as variáveis e fazendo as importações.
+
+O Axios faz o mesmo que a Fetch API, mas isso vai depender do contexto de cada empresa e do que ela preferir utilizar. Em projetos maiores, por exemplo, o Axios consegue oferecer padrões de projetos que ajudam a organizar melhor as requisições. Mas em um projeto pequeno talvez não vejamos muita diferença, então dependendo da empresa e do projeto em que você trabalha, poderá ver o Axios em ação.
+
+### Aula 4 - Usando NPM para instalar o Axios - Vídeo 2
+
+Transcrição  
+Nós já utilizamos a CDN do Axios e o vimos funcionando corretamente no nosso projeto. Mas, com o script.js aberto no VS Code vemos que é indicado um erro na variável, porque não se sabe de onde ela está vindo. Isso é um comportamento que acontece quando utilizamos a CDN de um pacote.
+
+Nós também vimos que o NPM é ótimo para gerenciar dependências, inclusive informar as versões exatas que vamos utilizar. Então, agora usaremos o NPM para tentar utilizar o Axios.
+
+No arquivo index.html, vamos remover a CDN, ou seja, o script que havíamos colado no `<head>`:
+
+```JavaScript
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+        href="https://fonts.googleapis.com/css?family=Roboto:wght@400;500;700&display=swap" 
+        rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./css/reset.css" />
+    <link rel="stylesheet" href="./css/estilos.css" />
+    <link rel="stylesheet" href="./css/flexbox.css" />
+    <title>VidFlow</title>
+    <link rel="shortcut icon" href="./img/Favicon.png" type="image/x-icon" /> Follow link (ctrl + click)
+</head>
+```
+
+Em seguida, salvamos o arquivo e voltamos para script.js. Nele, vamos retirar console.log(axios) e console.log(busca), mas manteremos axios.get(). Fazendo isso, deixará de funcionar. Se salvarmos o arquivo e voltarmos ao navegador VidFlow, teremos um informativo dizendo que Axios não está definido. Então, vamos tentar definir essa variável ao instalar o Axios pelo NPM. Para isso, na página do Axios, vamos até a seção "Installing" e copiamos o comando $ npm install axios.
+
+Agora, vamos abrir o terminal e criar um novo. Em seguida, colamos o comando copiado anteriormente. Para que você use a mesma versão do instrutor basta acrescentar @1.6.0. Além do mais, podemos colocar --save-exact ou -E para colocar essa versão 1.6.0 no package.json sem aquele caractere circunflexo (^), sobre o qual falamos na aula passada. Dessa forma, todos que utilizarem o seu pacote, usarão exatamente essa mesma versão utilizada no projeto.
+
+```JavaScript
+npm install axios@1.6.0 -E
+```
+
+Após teclar "Enter" basta esperar o Axios ser instalado localmente no nosso projeto.
+
+Finalizado o processo, fecharemos o terminal integrado e vamos conferir se ele foi documentado no package.json.
+
+Note que ele foi adicionado na parte de dependencies e não na parte de devDependencies. Isso porque nós precisamos do código do Axios realmente em produção. Ou seja, se nós quisermos fazer o deploy do nosso projeto para um site de verdade, para que qualquer pessoa possa acessar.
+
+Mas como podemos identificar que uma dependência é de desenvolvimento ou de produção? Veja que o ESLint, o JsonServer e o Prettier fazem sentido apenas em ambiente de desenvolvimento e nem utilizamos eles no código do projeto. Por outro lado, no script.js, estamos, sim, utilizando uma variável disponibilizada pelo pacote. Ou pelo menos tentando utilizá-la, e sabemos que esse arquivo vai para o frontend. Então, é dessa forma que identificamos mais facilmente, digamos assim, uma dependência de produção: realmente precisamos do código desse pacote atuando nos arquivos JavaScript do frontend.
+
+Agora que sabemos que precisamos utilizar essa variável do Axios diretamente no nosso código que vai para a produção, precisemos importá-la de alguma forma no arquivo script.js. E até poderíamos tentar fazer isso importando esse Axios lá da pasta node_modules, porque sabemos que ele foi baixado e está lá. Porém, existe um grande problema em tentar fazer isso, já que a pasta node_modules não vai para a produção. Ela nem mesmo vai para o GitHub, pois pedimos para ela ser ignorada pelo arquivo .gitignore.
+
+Sendo assim, precisamos importar esse pacote de alguma outra forma. Ou pelo menos fazer algumas configurações de forma que funcione tanto de forma local quanto em produção. Isso porque se deixarmos o código do jeito que está agora e voltarmos para o VidFlow, continuaremos com aquele erro do Axios. Mesmo que tenhamos baixado no nosso projeto, não informamos ao NPM de onde pegaremos essa variável, por isso aparece um erro dizendo que ele não está definido.
+
+Na sequência, veremos um pacote que ajuda a realizar configurações de como importar mais facilmente essa dependência de produção.
+
+### Aula 4 - Para saber mais: aprofundando no Axios
+
+Se você quiser conhecer mais sobre o Axios e mais casos de uso, confira o [artigo Requisições HTTP utilizando o AXIOS!](https://www.alura.com.br/artigos/requisicoes-http-utilizando-axios)
+
+### Aula 4 - Criando um projeto Vite - Vídeo 3
+
+Transcrição
+Atualmente, estamos enfrentando um problema ao tentar usar o Axios utilizando o NPM. No VidFlow, estamos com um erro indicando que o Axios não está definido. Se formos para o código do script.js, verificamos que não estamos informando ao NPM de onde estamos buscando essa variável e já vimos o motivo de não podermos pegar diretamente do node_modules.
+
+Vamos utilizar um pacote que vai facilitar bastante para lidarmos com essas dependências de produção, o Vite. Esse pacote lida com o problema de utilizar dependências, mas existem outros, como Parcel e Webpack. Utilizaremos o Vite como exemplo porque ele fornece uma configuração facilitada para trabalharmos em um primeiro momento. Além disso, ele também é utilizado em alguns ambientes como React, por exemplo. Vamos acessar sua documentação no navegador através do [link](https://vitejs.dev/).
+
+Precisamos criar um novo projeto utilizando o Vite e depois fazer uma migração do VidFlow para esse novo projeto. No site do Vite, clicaremos no botão "Get Started". Em seguida, descemos um pouco a página até encontrar o tópico Scaffolding Your First Vite Project (Criando o seu primeiro projeto Vite), que mostra como fazer isso com alguns gerenciadores, inclusive o NPM. Vamos copiar o comando que corresponde a ele: $ npm create vite@latest.
+
+Como vamos criar um novo projeto, abriremos o PowerShell do computador. Ao abrir esse terminal, colaremos o comando copiado. Criaremos realmente uma nova pasta, mas no lugar de @latest colocaremos @4.4.1, assim usaremos a mesma versão.
+
+```JavaScript
+npm create vite@4.4.1
+```
+
+Agora, basta teclar "Enter" para executar o comando. Ele fará praticamente o mesmo que o npm init, então executará um pacote da web que vai tornar o terminal interativo e instalará um pacote do Vite.
+
+Como retorno, obtemos uma primeira pergunta do terminal que é o nome do projeto. Optaremos por nodejs-vidflow-vite. Ao teclar "Enter", recebemos a próxima pergunta, que é sobre o framework que utilizaremos. Existem várias opções e é possível utilizar o Vite integrado com vários desses frameworks. Mas vamos selecionar a primeira opção, que é Vanilla, basicamente o JavaScript puro. Em seguida, entre TypeScript e JavaScript, selecionaremos JavaScript. Pronto! É uma configuração simples.
+
+Agora vamos seguir as próximas instruções do terminal, que é copiar o primeiro comando cd nodejs-vidflow-vite. Lembrando que cd serve para entrar na pasta.
+
+Antes de rodar os próximos comandos, digitaremos code . e teclamos "Enter" para abrir esse projeto no VS Code antes de instalar as dependências.
+
+Note que o Vite já traz uma estrutura de pastas pronta para nós. É exatamente o que o pacote executou e instalou automaticamente. Entre as pastas, temos public e .gitignore, além de alguns arquivos HTML e JS que vêm apenas como exemplo. Aqui, vamos focar no package.json.
+
+Ao abri-lo, temos a pasta de devDependencies, uma dependência de desenvolvimento que é o Vite na versão que pedimos para instalar.
+
+Então, vamos seguir as instruções do terminal. Para isso, abriremos o terminal integrado no próprio projeto. Nele, executamos npm install para instalar essa dependência do Vite e aguardamos o carregamento.
+
+Após finalizado, as dependências já foram instaladas. Podemos até conferir que temos uma pasta node_modules na raiz do projeto. Ao voltar para o outro terminal, ele nos informa que o próximo comando é npm run dev, que podemos executar no terminal integrado. Este comando, como já conferimos em um vídeo anterior, executa um script chamado dev. Se olharmos no package.json, conseguimos ver esse script na linha 7. Tudo o que ele vai fazer, na verdade, é executar um comando chamado vite. Então, seria o mesmo que escrever npx vite.
+
+Vamos executá-lo para ver o que acontece.
+
+```JavaScript
+npm run dev
+```
+
+Após executar, ele disponibiliza um link: http://localhost:5173/. Vamos segurar a teclar "Ctrl" e clicar nesse link para abri-lo no navegador. Note que abriu uma página web dizendo "Hello Vite!", que se trata de um projeto Vite padrão.
+
+Mas qual a diferença dele para o projeto que estávamos trabalhando até agora? A diferença é que ele está rodando diretamente através de um servidor Node.js. Ou seja, não precisamos configurar e/ou criar um servidor utilizando o JavaScript manualmente, pois ele já fez isso automaticamente, o que economiza tempo e poupa trabalho. Além disso, ele também fornece algumas capacidades que nos ajudarão a lidar melhor com dependências de produção, incluindo o Axios.
+
+O próximo passo é pegar o nosso código antigo, do VidFlow, e migrar para esse novo projeto do Vite, para finalmente conseguirmos utilizar o Axios como uma dependência de produção.
+
+### Aula 4 - Para saber mais: sobre a instalação do Vite
+
+No vídeo anterior, executamos o seguinte comando para criar o projeto Vite:
+
+```JavaScript
+npm create vite@4.4.1
+```
+
+No entanto, depois de gerar o projeto, encontramos o seguinte no package.json:
+
+```JavaScript
+"devDependencies": {
+  "vite": "^4.4.5"
+}
+```
+
+Note a diferença entre os números 4.4.1 e 4.4.5. Será que houve algum erro na instalação para acontecer essa divergência de versões?
+
+O que acontece é que, na verdade, esses números se referem a pacotes diferentes. Vamos entender melhor?
+
+Entendendo a diferença  
+Vamos retornar ao primeiro comando:
+
+```JavaScript
+npm create vite@4.4.1
+```
+
+Esse comando tornou o terminal interativo, fazendo perguntas sobre a configuração do projeto a ser criado. Isso é bastante semelhante a quando configuramos o ESLint no nosso projeto.
+
+Na verdade, o npm create é um alias (apelido) do npm init, então o comando acima é o mesmo que executar npm init vite@4.4.1.
+
+Esse comando, por sua vez, é o equivalente a executar o seguinte:
+
+```JavaScript
+npx create-vite@4.4.1
+```
+
+Ou seja, pedimos para o NPM executar o pacote create-vite na versão 4.4.1. Você pode conferir esse pacote no site do NPM.
+
+Então percebemos que o create-vite, de forma semelhante ao @eslint/create-config, também é um pacote que torna o terminal interativo e gera a estrutura do projeto de acordo com as respostas que fornecemos.
+
+Ao terminar de interagir com o terminal, temos uma estrutura de projeto gerada para nós. No package.json gerado, podemos conferir o vite dependência de desenvolvimento:
+
+```JavaScript
+"vite": "^4.4.5",
+```
+
+Note que o create-vite e o vite são pacotes diferentes. Enquanto o create-vite é apenas o pacote que gera a estrutura inicial do projeto, o vite é o Vite em si, que disponibiliza o servidor Node.js.
+
+Sabendo dessas diferenças, entendemos melhor as ferramentas com as quais estamos trabalhando, assim evitando confusões e resultados inesperados.
+
+### Aula 4 - Migrando o Vidflow para o Vite - Vídeo 4
+
+Transcrição  
+Criamos com sucesso o nosso projeto Vite, utilizando o NPM. Agora, nosso próximo passo é justamente migrar o nosso antigo projeto, o próprio Vidflow, para esse novo servidor do Vite.
+
+Para isso, vamos abri-los em duas abas do navegador: uma no endereço localhost:5173, onde está o servidor do Vite e, outra no antigo VidFlow antigo, que está sendo disponibilizado pelo Live Server, ainda com aquele erro do Axios, que vamos tentar resolver após migrar o projeto.
+
+Para fazer essa migração, vamos até o VS Code, especificamente no projeto novo do Vite, para excluir alguns arquivos e pastas que não precisamos mais. Começaremos selecionando a pasta public e, segurando tecla "Ctrl", selecionamos as pastas counter.js, index.html, javascript.svg, main.js e style.css. Feito isso, basta teclar "Delete" e confirmar a ação para apagá-las. Manteremos a pasta node_modules e os arquivos .gitignore, package.json e package-lock.json.
+
+Agora, arrastaremos o VS Code para o lado direito da tela, de forma que tenhamos duas janelas, lado a lado. Na janela à esquerda, abriremos o VS Code com o projeto antigo, que estávamos trabalhando até pouco tempo. Nele, selecionamos a pasta backend e, segurando o "Ctrl" no teclado, selecionamos as pastas css, img, e os arquivos .eslintrc.json, index.html e script.js. Em seguida, teclamos "Ctrl + C", clicamos no explorador do VS Code da janela à direita e teclamos "Ctrl + V". Assim, traremos todos os arquivos que precisamos.
+
+Não copiaremos o node_modules porque a melhor forma de interagir com ele no novo projeto é pegando as dependências antigas, inclusive por isso não selecionamos o package.json. Então, quando passarmos as dependências para o novo projeto, pediremos ao NPM que instale no novo node_modules. É o que faremos agora.
+
+Vamos abrir o package.json do projeto antigo e do projeto novo. Na janela à esquerda, onde está o antigo, copiamos as dependências de desenvolvimento dentro de devDependencies, comoeslint, json e prettier:
+
+```JavaScript
+"eslint": "8.52.0",
+"json-server": "0.17.4",
+"prettier": "3.0.3"
+```
+
+No projeto novo, vamos em devDependencies, acrescentamos uma vírgula e um enter após vite e teclamos "Ctrl + V" para colar o que copiamos:
+
+```JavaScript
+"devDependencies": {
+    "vite": "^4.4.5",
+    "eslint": "8.52.0",
+    "json-server": "0.17.4",
+    "prettier": "3.0.3"
+}
+```
+
+Está é a dependência de desenvolvimento. Agora, falta a dependência do Axios. No projeto antigo, copiaremos toda a parte de dependencies e, no novo projeto, acrescentamos uma vírgula e um enter após o fechamento das chaves de devDependencies e colamos:
+
+```JavaScript
+"devDependencies": {
+    "vite": "^4.4.5",
+    "eslint": "8.52.0",
+    "json-server": "0.17.4",
+    "prettier": "3.0.3"
+},
+"dependencies": {
+    "axios": "1.6.0"
+}
+```
+
+Feito isso, salvamos o package.json do novo projeto.
+
+Agora, faltam apenas os scripts que criamos no projeto antigo. Então, vamos copiar api-local e lint, que estão nas chaves de scripts, no projeto antigo:
+
+```JavaScript
+"api-local": "json-server --watch backend/ videos.json",
+"lint": "eslint ."
+```
+
+Em seguida, em colamos em scripts, novo projeto novo, após preview:
+
+```JavaScript
+"scripts":{
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "api-local": "json-server --watch backend/ videos.json",
+    "lint": "eslint ."
+}
+```
+
+Feito isso, salvamos o package.json do novo projeto e fechamos o projeto antigo.
+
+Agora, vamos maximizar o VS Code com o novo projeto. Como modificamos o package.json, vamos ao terminal. Vale ressaltar que já temos um terminal rodando o servidor do Vite, então abriremos um novo. Nele, executamos o comando npm install para instalar essas novas dependências que listamos no package.json e aguardamos o carregamento.
+
+Concluído o processo, as dependências já foram instaladas no novo projeto, então podemos até testar no front-end se o projeto foi pelo menos migrado com sucesso. No navegador, fecharemos a aba do Live Server, porque é do projeto antigo e não estamos mais utilizando, e atualizamos a aba com o endereço localhost:5173, que é do Vite. Ao fazer isso, vemos que o projeto já foi migrado com sucesso, pelo menos visualmente, mas ainda está com aquele mesmo erro, indicando que o Axios não está definido. Vamos resolvê-lo agora.
+
+Para isso, voltamos ao VS Code, fechamos o terminal, abrimos o arquivo script.js e fechamos o explorador. Neste arquivo, a dependência do axios continua com o indicativo de erro. Vamos entender uma nova sintaxe.
+
+No início do arquivo, escrevemos import axios. Conforme escrevemos, o VS Code nos mostra uma sugestão de importar esse axios de um pacote chamado Axios. Quando selecionamos essa sugestão, ele completa o comando, ficando import axios from "axios";. Essa sintaxe de import já é nativa do ECMAScript e funciona tanto no back-end quanto no front-end. Porém, essa sintaxe de colocar exatamente o nome de um pacote entre aspas é algo que funciona apenas em ambientes Node.
+
+```JavaScript
+import axios from "axios";
+```
+
+Se você tentasse fazer essa sintaxe em um projeto front-end puro, receberia uma reclamação dizendo que é necessário utilizar um caminho relativo ou absoluto, o que não é o caso, porque essa sintaxe funciona dentro do servidor Node.js, que é o servidor do Vite. Assim, conseguimos utilizar todos os métodos que o Axios disponibiliza. Inclusive, o próprio Vite irá converter essa sintaxe para uma que seja compatível no front-end e que os navegadores consigam entender.
+
+Vamos salvar esse arquivo e ver se funciona. Ao voltar para o navegador e atualizá-lo, encontramos um erro de network. Isso porque Axios agora está definido, mas falta rodarmos a API do JSON Server nesse novo projeto, já que interrompemos a do projeto antigo. Para isso, abrimos o terminal na aba já existente e executamos o comando npm run api-local, que é o nome do script que já tínhamos criado. Feito isso, a API é disponibilizada.
+
+```JavaScript
+npm run api-local
+```
+
+Agora, voltamos ao navegador e atualizamos novamente. Note que os vídeos finalmente foram carregados! Podemos até teclar F12 para abrir o DevTools do Chrome e verificar que não há nenhum erro acontecendo.
+
+Conseguimos migrar o nosso projeto do VidFlow para o servidor do Vite com sucesso e utilizar a dependência de produção do Axios!
+
+### Aula 4 - Para saber mais: importando arquivos como módulos
+
+Ao trabalhar em um projeto Vite, é possível que você se depare com o seguinte erro no console do navegador:
+
+```JavaScript
+Uncaught SyntaxError: Cannot use import statement outside a module
+```
+
+Esse erro não aconteceu com a gente porque, no index.html, a importação do script.js já estava sendo feita com o atributo type="module":
+
+```JavaScript
+<script src="script.js" type="module"></script>
+```
+
+Por padrão, o Vite trabalha com os [ECMAScript Modules (ESM)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules), tanto em arquivos JavaScript do front-end quanto do Node.
+
+Dessa forma, caso você se depare com esse erro no futuro, basta adicionar esse atributo na importação do arquivo JavaScript e ele será utilizado como um módulo.
+
+### Aula 4 - Para saber mais: conteúdos sobre Vite
+
+Além de o [Vite](https://vitejs.dev/guide/why.html) poder ser utilizado em projetos Front-end Vanilla (HTML, CSS e JS “puros”), atualmente, ele é muito utilizado com o React e o Vue.
+
+Separamos os conteúdos abaixo para você explorar o uso do Vite com o React. Mesmo que você decida não trabalhar com React, ainda é possível conferir detalhes bem bacanas em relação ao Vite e outras ferramentas:
+
+- Artigo: [Utilizando o Vite para criar uma aplicação React com TypeScript](https://www.alura.com.br/artigos/vite-criar-aplicacao-react-typescript);
+Artigo: [A evolução do desenvolvimento React](https://www.alura.com.br/artigos/evolucao-desenvolvimento-react): porque outras ferramentas estão ganhando espaço sobre o create-react-app.
+
+E não se preocupe se você ainda achar o conteúdo muito avançado, você sempre pode salvá-los para ler no futuro. :)
+
+### Aula 4 - Migração de projeto
+
+Você está em uma equipe que trabalha em um projeto Front-end Vanilla, chamado Bytebank, e o time decide migrar esse projeto para o Vite.
+
+Para iniciar a tarefa, você já criou um novo projeto Vite com o comando npm create vite@latest, respondeu as perguntas do terminal e executou npm install dentro do projeto para instalar as dependências. Assim, a pasta node_modules do Vite foi criada.
+
+Agora você deve migrar o Bytebank para o novo projeto Vite. Quais ações você deve realizar?
+
+Respostas:
+
+1. Copiar as dependências do Bytebank para o package.json do projeto Vite e executar npm install novamente.
+
+> Essa é a forma correta de levar as dependências para o novo projeto. Em vez de manipular a pasta node_modules manualmente, você deve utilizar os comandos do NPM para criar ou atualizar essa pasta.
+
+2. Substituir o arquivo index.html do projeto Vite pelo arquivo HTML principal do Bytebank, que também deve se chamar index.html.
+
+> O projeto Vite precisa de um arquivo index.html na raiz do projeto para funcionar. Além disso, você também deve remover os arquivos CSS e JS que vêm por padrão e migrar os arquivos CSS e JS do Bytebank para o novo projeto.
+
+### Aula 4 - Faça como eu fiz: migrando o projeto e usando o Axios
+
+Chegou a hora de você colocar a mão na massa, caso ainda não tenha feito!
+
+Realize a migração do Vidflow para um novo projeto Vite;
+Utilize o Axios como uma dependência de produção, através do NPM.
+Ver opinião do instrutor
+Opinião do instrutor
+
+Crie o projeto Vite:
+
+```JavaScript
+npm create vite@4.4.1
+```
+
+Responda as perguntas do terminal e siga as instruções para instalar as dependências.
+
+Agora, vamos realizar a migração do Vidflow para o novo projeto:
+
+- Apague os arquivos HTML, CSS e JS do novo projeto;
+- Migre os arquivos HTML, CSS e JS do VidFlow para o projeto Vite;
+- Copie as dependências do VidFlow para o package.json do novo projeto e execute npm install para instalá-las no node_modules;
+- Copie os scripts do Vidflow para o package.json do projeto Vite.
+
+Agora, falta utilizarmos o Axios:
+
+- Execute npm install axios@1.6.0 -E no projeto Vite, se ele já não estiver especificado nas devDependecies. Se ele estiver, o npm install já irá instalá-lo;
+- Agora você pode escrever import axios from "axios" no script.js;
+- Utilize o seguinte código para obter os vídeos da API local utilizando o Axios:
+
+```JavaScript
+    const busca = await axios.get("http://localhost:3000/videos");
+    
+    const videos = busca.data;
+```
+
+Ou, para deixar o código mais sucinto, utilize o recurso de desestruturação do JS:
+
+```JavaScript
+    const { data: videos } = await axios.get("http://localhost:3000/videos");
+```
+
+Com isso, você migrou com sucesso o VidFlow para o Vite, permitindo utilizar o Axios junto com o NPM, como uma dependência de produção!
+
+### Aula 4 - O que aprendemos?
+
+Nessa aula, você aprendeu a:
+
+- Utilizar a CDN do Axios:
+- É a forma mais simples de utilizar seu código-fonte;
+- Porém, não temos um controle de versionamento que o NPM nos fornece;
+- Também não temos o IntelliSense (auto-completamento) do VSCode para o Axios.
+- Migrar um projeto para o Vite:
+- Criamos um projeto Vite com npm create vite@4.4.1;
+- Migramos os arquivos, dependências e scripts necessários;
+- Utilizar o Axios junto com o NPM, como uma dependência de produção:
+- Em um projeto Vite, conseguimos usar a sintaxe import axios from "axios" para utilizar o Axios diretamente em um arquivo JS;
+- Colocar o nome de um pacote NPM diretamente dentro do caminho da importação é uma sintaxe que funciona apenas em um ambiente Node.js;
+- Ou seja, essa sintaxe funcionou porque o Vite nos disponibiliza um servidor Node que, além de entender a sintaxe, transforma ela para um código que os navegadores consigam entender;
+- Normalmente, o caminho de importação no front-end sempre inicia com um caminho relativo ou absoluto. Exemplos: "./caminho", "../caminho", "/caminho".
+- Diferenciar uma dependência de desenvolvimento de uma dependência de produção:
+- Uma dependência de desenvolvimento vai atuar apenas em ambiente de desenvolvimento, como o ESLint, Prettier, JSON Server e o próprio Vite; elas não serão utilizadas no ambiente de produção, quando o nosso site estiver no ar em um endereço da web;
+- Já uma dependência de produção precisa ter seu código-fonte importado mesmo quando nosos site for para produção, que é o caso do Axios. Isso porque utilizamos diretamente os métodos do Axios para realizar requisições HTTP nos arquivos JS que irão para produção.
+
+### Aula 4 -  - Vídeo 8
