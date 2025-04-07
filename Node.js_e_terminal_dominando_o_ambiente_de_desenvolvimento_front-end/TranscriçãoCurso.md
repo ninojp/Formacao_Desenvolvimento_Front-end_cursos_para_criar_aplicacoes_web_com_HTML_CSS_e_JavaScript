@@ -1838,4 +1838,381 @@ Nessa aula, você aprendeu a:
 - Uma dependência de desenvolvimento vai atuar apenas em ambiente de desenvolvimento, como o ESLint, Prettier, JSON Server e o próprio Vite; elas não serão utilizadas no ambiente de produção, quando o nosso site estiver no ar em um endereço da web;
 - Já uma dependência de produção precisa ter seu código-fonte importado mesmo quando nosos site for para produção, que é o caso do Axios. Isso porque utilizamos diretamente os métodos do Axios para realizar requisições HTTP nos arquivos JS que irão para produção.
 
-### Aula 4 -  - Vídeo 8
+## Aula 5 - Deploy do Projeto
+
+### Aula 5 - Projeto da aula anterior
+
+Você pode ir acompanhando o passo a passo do desenvolvimento do nosso projeto. Seguem os links do projeto da aula anterior:
+
+Vidflow sem o Vite: [baixar o projeto](https://github.com/alura-cursos/3519-nodejs-vidflow/archive/refs/heads/aula-4.zip) ou acessar os [arquivos do GitHub](https://github.com/alura-cursos/3519-nodejs-vidflow/tree/aula-4)
+Vidflow com o Vite: [baixar o projeto](https://github.com/alura-cursos/3519-nodejs-vidflow-vite/archive/refs/heads/aula-4.zip) ou acessar os [arquivos do GitHub](https://github.com/alura-cursos/3519-nodejs-vidflow-vite/tree/aula-4)
+
+Bons estudos!
+
+### Aula 5 - Preparando o ambiente: link do Gist do GitHub
+
+No próximo vídeo, precisaremos obter algumas informações dos vídeos do Vidflow, e para isso precisaremos do link abaixo:
+
+https://gist.githubusercontent.com/antonio-evaldo/e8a63621b51c883931eb3fa3a3eca990/raw/12f5c46ee6dd00d03c051adadaf341e06452cea0/videos.txt
+
+### Aula 5 - Criando uma prévia de produção - Vídeo 1
+
+Transcrição  
+Já conseguimos, com sucesso, migrar o VidFlow para o servidor do Vite. Estamos com ele aberto no navegador, no endereço "localhost:5173". Note que, para fazer o projeto funcionar atualmente, precisamos tanto do servidor do Vite quanto do JSON Server. Se abrirmos o VS Code e acessarmos o terminal, temos no primeiro terminal o servidor do Vite e no segundo o servidor do JSON Server, então é interessante recapitular essa parte.
+
+Agora, como vamos preparar nosso projeto para a produção? Queremos fazer um deploy (implantar), ou seja, disponibilizar o projeto em um endereço da web, uma URL, que qualquer pessoa do mundo pode acessar. Mas, pensando nesse contexto, precisamos adaptar nosso projeto primeiro.
+
+Criando uma prévia de produção  
+Vamos fechar o terminal integrado do VS Code e abrir o arquivo script.js. Nele, fazemos uma requisição com axios para a URL da API local, que é "localhost:3000/videos". Essa requisição não vai funcionar quando nosso site estiver em produção, porque essa API local funciona apenas em ambiente de desenvolvimento.
+
+Tanto é que, se interrompermos o servidor do JSON Server no terminal com "Ctrl + C", digitando "s" e teclando "Enter" para confirmar, ao voltar para o navegador e atualizar a página, os vídeos não carregam, porque a API não está disponível. Se fizermos o deploy do projeto como está agora, esse erro ocorrerá em produção também.
+
+O que podemos fazer nesse caso? De volta ao VS Code, no arquivo script.js, podemos fazer uma requisição para uma URL que funcionará em produção, ou seja, uma URL disponível em um endereço da web. Já preparamos uma e vamos colar no lugar da URL do "localhost".
+
+script.js:
+
+```JavaScript
+const busca = await axios.get("https://gist.githubusercontent.com/antonio-evaldo/e8a63621b51c883931eb3fa3a3eca990/raw/12f5c46ee6dd00d03c051adadaf341e06452cea0/videos.txt");
+```
+
+Essa URL é um gist do GitHub criado pelo instrutor, mas você também pode criar o seu próprio. Deixaremos uma atividade para você com as instruções necessárias, caso queira fazer isso.
+
+Se acessarmos o link em uma nova aba no navegador, visualizamos uma lista de objetos. O gist do GitHub atua como uma simulação de uma API em produção. Ele não serve para requisições POST, apenas GET, mas para nosso caso é suficiente. Se fecharmos essa aba e voltarmos ao VidFlow, verificamos que funciona perfeitamente. Temos mais um problema resolvido.
+
+Outra boa prática é fazer uma prévia local antes de ir para o deploy. No VS Code, temos um comando no package.json que podemos conferir, um script chamado build ("construir" em português). Vamos abrir o terminal integrado e digitar npm run build para executar o script.
+
+```JavaScript
+npm run build
+```
+
+O terminal responde que está construindo para produção. Ao final, ele transformou 49 módulos e criou alguns arquivos na pasta "dist", que fica na raiz do projeto. Essa pasta tem um arquivo index.html parecido com o nosso, mas com adições que o build faz, e uma pasta "assets" com dois arquivos, um CSS (.css) e um JavaScript (.js), ambos minificados.
+
+O processo de minificação consiste em comprimir os arquivos para melhorar a performance. Isso é especialmente útil para conexões lentas. É como uma simulação de deploy local.
+
+Para verificar o resultado da pasta "dist" diretamente no navegador, precisamos executar outro script, o preview ("prévia" em português), também no arquivo package.json. Para isso, abrimos o terminal novamente e digitamos o seguinte comando:
+
+```JavaScript
+npm run preview
+```
+
+É fornecido um novo link: "localhost:4173". Ao clicar nele, o site abre automaticamente no navegador nesse endereço. Aparentemente, está tudo correto. Conseguimos visualizar o site, os vídeos, e não há problemas no console do DevTools.
+
+Lembrando que esse endereço é diferente do servidor de desenvolvimento, e é importante verificar se está tudo certo nessa versão prévia antes de fazer o deploy de fato.
+
+Conclusão  
+Antes de fazer realmente o deploy do projeto, ainda queremos abordar mais um ponto de atenção em relação à manutenção do nosso código.
+
+É isso que veremos a seguir!
+
+### Aula 5 - Para saber mais: Gists do GitHub
+
+A URL que utilizamos para obter as informações dos vídeos foi disponibilizada a partir de um Gist do GitHub.
+
+Um Gist é basicamente um ou mais blocos de códigos, escritos em qualquer linguagem, que você pode criar no site [GitHub Gist](https://gist.github.com/). Basta ter uma conta no GitHub, acessar o site e você poderá criar seus próprios Gists.
+
+Para compartilhar um Gist com quem você quiser, antes de criá-lo, altere a opção “Create secret gist” para “Create public gist”, assim ele se tornará público. Depois de criá-lo, você terá um link como o seguinte:
+
+- https://gist.github.com/antonio-evaldo/e8a63621b51c883931eb3fa3a3eca990
+
+Cada bloco de código do Gist possui um botão chamado “Raw”, que levará a uma URL para aquele bloco de código específico, que mostra na tela seu código-fonte. O bloco de código do meu gist acima possui a seguinte URL, que usamos no curso:
+
+- https://gist.githubusercontent.com/antonio-evaldo/e8a63621b51c883931eb3fa3a3eca990/raw/4e15600ab0fd072f2d59601c19899a1bc5d3b9a0/videos.json
+
+Bacana, não é? Essa é uma forma muito simples de criar URLs e praticar requisições GET nos seus projetos!
+
+### Aula 5 - Dinamizando o código para diferentes ambientes - Vídeo 2
+
+Transcrição  
+Nós já preparamos mais o nosso projeto para produção, isto é, para deploy. Atualmente, estamos com dois servidores rodando: o de desenvolvimento e o de prévia de produção, que, visualmente, não têm nenhuma diferença.
+
+Para não nos confundirmos, vamos abrir o VS Code, acessar o terminal integrado e excluir o terminal que está rodando o ambiente de desenvolvimento, o do Vite. Deixaremos apenas o ambiente de prévia de produção.
+
+Agora, queremos chamar atenção para um ponto importante. No arquivo script.js, utilizamos um link que pode ser acessado de qualquer local da web, inclusive quando nosso site efetivamente for para produção. Imagine que, após o deploy do seu projeto, você deseje retomar o código para aplicar alguma nova funcionalidade.
+
+Nesse contexto, quando for realizar testes locais, como adicionar ou remover vídeos, não é ideal utilizar o link de produção, pois esse link se comunica com uma API em produção que interage com o banco de dados da empresa. Ao testar localmente, poderíamos excluir acidentalmente vídeos do banco de dados.
+
+Portanto, quando estivermos trabalhando localmente em ambiente de desenvolvimento, o ideal é trocar o link do GitHub por "http://localhost:3000/". Assim, podemos realizar nossos testes locais de maneira segura, sem o risco de interagir com os serviços de produção.
+
+script.js:
+
+```JavaScript
+const busca = await axios.get(
+  "http://localhost:3000/"
+);
+```
+
+Depender da nossa memória para alternar manualmente essa URL não é confiável. O ideal é encontrar uma forma de dinamizar essa informação. Precisamos instruir o Vite a utilizar a URL correta, conforme o ambiente em que o código será executado, seja ele de desenvolvimento ou de produção. Felizmente, o Vite nos oferece uma solução.
+
+Dinamizando o código para diferentes ambientes
+Primeiro, vamos desfazer a última ação no VS Code com "Ctrl + Z". Em seguida, vamos recortar ("Ctrl + X") a URL de produção do GitHub. No lugar da URL, como parâmetro de get(), colocaremos uma variável que ainda vamos criar, chamada urlVideos.
+
+```JavaScript
+const busca = await axios.get(urlVideos);
+```
+
+Dentro da função buscarEMostrarVideos(), antes do bloco try, criaremos essa variável. Ela receberá um condicional ternário, no qual escrevemos primeiro import.meta.env.PROD ?. Essa é uma sintaxe específica do Vite que chamamos de variável de ambiente, pois é uma variável que realmente pode variar seu valor a depender do ambiente onde será utilizada.
+
+A PROD, especificamente, irá retornar true ou false, dizendo se estamos ou não em um ambiente de produção. Se estivermos em um ambiente de produção, ou seja, se a variável for true, vamos retornar a URL de produção.
+
+Na linha abaixo, vamos adicionar dois pontos (:) para utilizar uma URL diferente se não estivermos em ambiente de produção, que será "http://localhost:3000/videos".
+
+```JavaScript
+const urlVideos = import.meta.env.PROD 
+? "https://gist.githubusercontent.com/antonio-evaldo/e8a63621b51c883931eb3fa3a3eca990/raw/12f5c46ee6dd00d03c051adadaf341e06452cea0/videos.txt"
+: "http://localhost:3000/videos";
+```
+
+Para confirmar que o código funciona, vamos inserir console.log(urlVideos) logo abaixo.
+
+```JavaScript
+console.log(urlVideos);
+```
+
+Também podemos fazer um console.log() em import.meta.env.PROD para verificar se a variável é true ou false.
+
+```JavaScript
+console.log(import.meta.env.PROD);
+```
+
+Agora, no navegador, ao atualizar o servidor de prévia, precisamos verificar se os console.log() imprimem as informações corretas. Lembre-se de que, ao modificar o código, é necessário realizar um novo build. Para isso, no terminal integrado do VS Code, executaremos um novo script que será criado agora no package.json:
+
+```JavaScript
+"build-preview": "vite build --watch"
+```
+
+Após executar npm run build-preview, qualquer nova modificação acionará um build automático, mantendo o servidor de prévia em sincronia com nosso código.
+
+```JavaScript
+npm run build-preview
+```
+
+No navegador, atualizamos o servidor de prévia e verificamos o console. Conseguimos imprimir a variável de ambiente PROD, cujo valor realmente é true. Além disso, imprimimos a variável urlVideos, que nesse caso está com a URL do GitHub. Isso acontece porque utilizamos o servidor de prévia de produção, isto é, o servidor de build.
+
+Para testar no ambiente de desenvolvimento, abrimos um novo terminal e executamos npm run dev.
+
+```JavaScript
+npm run dev
+```
+
+Se houver algum erro, certifique-se de que a API local está em execução. Caso contrário, execute npm run api-local.
+
+```JavaScript
+npm run api-local
+```
+
+De volta ao navegador, confirmamos que tudo funciona como esperado. Para verificar a diferença entre o servidor de desenvolvimento e o de prévia de produção, vamos atualizar a página e conferir no console o valor da variável como false e a URL utilizada "http://localhost:3000/videos".
+
+De forma local, conseguimos verificar a eficiência do código utilizando uma variável de ambiente disponibilizada pelo Vite, que resolve o nosso problema de não precisar mais trocar manualmente a URL utilizada, a depender se desenvolvemos de forma local ou se nosso projeto estará em produção. Assim, eliminamos o que seria um problema de manutenção futuro.
+
+Ao final, podemos remover os console.log(), pois o código já funcionou corretamente. Uma vez salvo o arquivo, em seguida, procederemos com o deploy do projeto!
+
+### Aula 5 - Para saber mais: escalando as variáveis de ambiente
+
+Conseguimos dinamizar com sucesso a URL de requisição dos vídeos com o seguinte código:
+
+```JavaScript
+const urlVideos = import.meta.env.PROD ?
+  "https://gist.githubusercontent.com/antonio-evaldo/e8a63621b51c883931eb3fa3a3eca990/raw/12f5c46ee6dd00d03c051adadaf341e06452cea0/videos.txt" :
+  "http://localhost:3000/videos";
+```
+
+Essa abordagem funcionou tranquilamente para nosso projeto, contudo, ela não é tão escalável. Isso quer dizer que essa abordagem é difícil de manter se o projeto começar a crescer muito.
+
+Imagine que precisamos utilizar essa informação dinâmica em vários arquivos diferentes do projeto. Seria necessário sempre escrevermos essa condição ternária para obter a URL correta, o que geraria bastante repetição de código, não é mesmo?
+
+Resolvendo o problema  
+Com isso, podemos imaginar que seria bom centralizar essa informação em um arquivo separado. É possível fazer isso com nossos conhecimentos de JavaScript, mas o Vite fornece um recurso nativo muito bacana para esse tipo de situação: [os arquivos .env](https://vitejs.dev/guide/env-and-mode.html#env-files), que são arquivos de variáveis de ambiente.
+
+Vamos utilizar esse recurso?
+
+1. Primeiro, crie um arquivo chamado .env.development (o nome deve ser exatamente assim) na raiz do projeto com o seguinte conteúdo:
+
+```JavaScript
+    VITE_URL_VIDEOS=http://localhost:3000/videos
+```
+
+O development do nome do arquivo informa que queremos definir variáveis para o ambiente de desenvolvimento. Nesse caso, definimos uma variável chamada VITE_URL_VIDEOS com o valor http://localhost:3000/videos.
+
+Para esses arquivos do Vite, devemos seguir a sintaxe VITE_VARIAVEL=valor. Os nomes das variáveis devem ser iniciados com VITE_.
+
+2. Segundo, crie mais um arquivo chamado .env.production na raiz do projeto com o seguinte conteúdo:
+
+```JavaScript
+    VITE_URL_VIDEOS=https://gist.githubusercontent.com/antonio-evaldo/e8a63621b51c883931eb3fa3a3eca990/raw/12f5c46ee6dd00d03c051adadaf341e06452cea0/videos.txt
+```
+
+O production no nome do arquivo informa que queremos definir variáveis para o ambiente de produção. Nesse caso, definimos mais uma vez uma variável VITE_URL_VIDEOS, mas agora o valor que será usado em produção é a URL do GitHub.
+
+3. Por fim, vamos retornar ao arquivo script.js e modificar a atribuição da variável urlVideos para receber o valor da variável de ambiente VITE_URL_VIDEOS em vez de utilizar o operador ternário:
+
+```JavaScript
+    const urlVideos = import.meta.env.VITE_URL_VIDEOS;
+```
+
+Com isso, o nosso código funcionará igual a antes! Você pode testar nos servidores de desenvolvimento e de prévia de produção.
+
+A grande vantagem dessa abordagem é que agora só precisaremos escrever import.meta.env.VITE_URL_VIDEOS em vez de realizar uma condição ternária no código sempre que quisermos uma informação dinâmica, assim evitando repetição e reduzindo o código.
+
+Mas além disso, outra vantagem que ganhamos é a centralização das informações das variáveis de ambiente. Conforme aumentamos a quantidade de informações dinâmicas no nosso código, basta irmos adicionando novas variáveis nos arquivos .env.development e .env.production:
+
+```JavaScript
+VITE_URL_VIDEOS=url...
+VITE_VARIAVEL_2=valor2
+VITE_VARIAVEL_3=valor3
+VITE_VARIAVEL_4=valor4
+```
+
+Dessa forma, se um dia precisarmos alterar qualquer informação de desenvolvimento ou de produção, já saberemos onde procurar.
+
+Bons estudos!
+
+### Aula 5 - Preparando o ambiente: GitHub e Vercel
+
+GitHub  
+Para realizar deploy do projeto no próximo vídeo, é necessário que você já tenha uma conta no GitHub.
+
+Agora você precisa subir o seu projeto para um repositório na sua conta. Caso você não tenha familiaridade com Git e GitHub ou não saiba como fazer isso, você pode seguir esses artigos:
+
+- Artigo: [Iniciando um repositório com Git](https://www.alura.com.br/artigos/iniciando-repositorio-git);
+- Artigo: [Criando um repositório remoto em GitHub](https://www.alura.com.br/artigos/criando-repositorio-remoto-github).
+
+Extra:
+
+- Artigo: [Criando um repositório remoto em GitHub](https://www.alura.com.br/artigos/clonando-repositorio-git-github);
+- AluraMais: [GitHub: diferentes maneiras de compartilhar seu projeto](https://cursos.alura.com.br/extra/alura-mais/github-diferentes-maneiras-de-compartilhar-seu-projeto-c2002).
+
+E para se aprofundar em Git e o GitHub, recomendamos o curso:
+
+- Git e GitHub: [compartilhando e colaborando em projetos](https://cursos.alura.com.br/course/git-github-compartilhando-colaborando-projetos).
+
+Vercel
+
+Agora você precisa criar uma conta na [Vercel](https://vercel.com/) utilizando sua conta do GitHub como meio de autenticação. No próximo vídeo utilizaremos essa conta para realizar deploy do nosso projeto.
+
+Você pode ler mais sobre a Vercel no [artigo Heroku](https://www.alura.com.br/artigos/heroku-vercel-outras-opcoes-cloud-plataforma), Vercel e outras opções de cloud como plataforma.
+
+### Aula 5 - Realizando deploy do projeto - Vídeo 3
+
+Transcrição  
+Já preparamos completamente o nosso projeto para deploy (implantação). Até abordamos algumas boas práticas para tornar o nosso código mais dinâmico, a depender do ambiente em que será executado.
+
+Realizando o deploy do projeto
+
+Você pode se lembrar de uma ferramenta de deploy que talvez já tenha utilizado: a GitHub Pages. Ela disponibiliza arquivos estáticos, ou seja, arquivos HTML, CSS e JavaScript puros. Até seria possível fazer isso com o nosso projeto. Poderíamos utilizar os arquivos gerados na pasta "dist" do projeto.
+
+No entanto, vamos utilizar outra ferramenta que se integra melhor com o Git, e não precisaríamos fazer algumas configurações que seriam necessárias com o GitHub Pages. Essa ferramenta é a Vercel.
+
+No navegador, vamos acessar a página da Vercel. Disponibilizamos uma atividade para você criar uma conta na Vercel e também no GitHub, caso ainda não tenha, e fazer o upload do seu repositório. Tudo isso precisa estar preparado para conseguirmos fazer o deploy do nosso projeto na Vercel.
+
+Uma vez aberto o site, vamos clicar no botão de login, no canto superior direito. Feito isso, vamos selecionar a opção de continuar com o GitHub ("Continue with GitHub"). Clicando nesse botão, o instrutor irá entrar automaticamente, porque já foi feito o login no GitHub nesse navegador.
+
+Após acessar a página pessoal da Vercel, vamos fazer um novo deploy clicando no botão "Add New…", botão preto localizado no canto superior direito. Clicando nele, aparece um menu dropdown com algumas opções. Vamos selecionar "Project".
+
+Após clicar nessa opção, somos redirecionados para uma nova página. No centro da tela, mais ou menos do lado esquerdo, temos algumas opções de repositórios do GitHub da nossa conta, que podemos escolher para fazer deploy. Vamos escolher o projeto nodejs-vidflow-vite. No seu caso, você vai escolher o projeto que fez o upload no GitHub.
+
+Clicando no botão "Import" ao lado do nome do projeto, vamos para uma nova página, que diz que estamos quase prontos para fazer deploy. Existem algumas configurações que podemos fazer. Podemos dar o nome que quisermos para o projeto. Nesse caso, vamos manter o nome nodejs-vidflow-vite.
+
+A Vercel já identifica que utilizamos o framework Vite. Também tem a pasta de diretório raiz, que é ./. Vamos manter isso. Também há outras configurações de build. Lembre-se que build é o processo que transforma o nosso site, otimiza, faz uma minificação. O deploy também consiste em fazer o build, porém, em um computador de outro lugar do mundo, um computador que vai disponibilizar o nosso projeto em um site da web para qualquer pessoa acessar.
+
+Se expandirmos a seção "Build and Output Settings", encontraremos uma parte de comando de build. Observe que interessante: o comando que a Vercel vai executar é npm run build. Isso é ótimo, porque se voltarmos ao VS Code e olharmos o arquivo package.json, notaremos que o computador remoto que fará o build para nós, vai executar exatamente os scripts do package.json. Então, é muito importante que tenhamos eles configurados corretamente.
+
+É importante que você tenha um script chamado build e com o conteúdo correto, que no caso é vite build. Também por isso, quando estivermos desenvolvendo localmente e quisermos utilizar, por exemplo, vite build com a opção --watch, é importante que essa opção seja um script separado.
+
+De volta ao navegador, existem mais algumas opções de configuração, mas não vamos entrar em detalhes sobre elas. Agora podemos clicar no botão "Deploy", logo abaixo das opções. Clicando nesse botão, será exibido em tempo real alguns processos de build que acontecem. Podemos inclusive expandir as seções e verificar o que acontece em cada etapa.
+
+Conclusão  
+Uma vez concluído com sucesso o processo de deploy, vamos para uma nova página nos dá parabéns por fazer o deploy do projeto. Tem também uma captura de tela com uma prévia do projeto. Clicando nessa imagem, abre-se uma nova aba no navegador com o projeto disponibilizado.
+
+No caso do instrutor, o link será "nodejs-vidflow-vite.vercel.app". Para você será um link diferente. Porém, o mais incrível é que realmente conseguimos fazer o deploy do nosso projeto! Podemos mandar esse link para quem quisermos mostrar o projeto.
+
+Finalmente, conseguimos levar o nosso projeto para a produção!
+
+### Aula 5 - Testando o projeto para produção
+
+Elcy está trabalhando em um projeto Vite e quer realizar seu deploy. Ela sabe que é uma boa prática realizar um prévia de produção local antes de realmente fazer o deploy, inclusive para testar se as variáveis de ambiente estão funcionando da forma correta.
+
+Para isso, o que Elcy pode fazer?
+
+Respostas:
+
+1. Rodar npx vite build e, em seguida, rodar npx vite preview.
+
+> Esses comandos são os equivalentes aos scripts definidos pelo Vite. O primeiro realiza o build e cria uma pasta dist, enquanto o segundo cria um servidor de prévia de produção para visualizarmos os novos arquivos gerados.
+
+2. Rodar npm run build e, em seguida, rodar npm run preview.
+
+> Os scripts build e preview são pré-definidos em um projeto Vite. O primeiro realiza o build e cria uma pasta dist, enquanto o segundo cria um servidor de prévia de produção para visualizarmos os novos arquivos gerados.
+
+### Aula 5 - Faça como eu fiz: práticas para deploy
+
+Chegou a hora de você colocar a mão na massa, caso ainda não tenha feito!
+
+Deixei a URL da requisição HTTP dinâmica, de forma que se adeque a diferentes ambientes de projeto;
+
+Realize o deploy do projeto!
+
+Opinião do instrutor
+
+1. No script.js, crie uma variável urlVideos:
+
+```JavaScript
+    const urlVideos = import.meta.env.PROD ?
+      "https://gist.githubusercontent.com/antonio-evaldo/e8a63621b51c883931eb3fa3a3eca990/raw/12f5c46ee6dd00d03c051adadaf341e06452cea0/videos.txt" :
+      "http://localhost:3000/videos";
+```
+
+E utilize essa variável na requisição do Axios:
+
+```JavaScript
+    const busca = await axios.get(urlVideos);
+```
+
+Você pode comparar as requisições ao testar o projeto localmente em ambiente de desenvolvimento e em ambiente de produção.
+
+2. Agora você pode realizar o deploy do projeto:
+
+a) Crie um repositório do projeto na sua conta do GitHub;
+b) Faça login na sua conta da Vercel e selecione o repositório criado;
+c) Confira se todas as informações estão corretas e clique no botão “Deploy”;
+d) Espere a operação finalizar e você terá uma URL de produção para compartilhar com seus amigos.
+Com isso, você aprendeu boas práticas de deploy e compartilhou seu projeto com o mundo!
+
+### Aula 5 - Projeto final
+
+Você pode [baixar](https://github.com/alura-cursos/3519-nodejs-vidflow-vite/archive/refs/heads/aula-5.zip) ou [acessar o código-fonte](https://github.com/alura-cursos/3519-nodejs-vidflow-vite/tree/aula-5) do projeto final.
+
+Aproveite para explorá-lo e revisar pontos importantes do curso.
+
+Bons estudos!
+
+### Aula 5 - Recados finais
+
+Parabéns, você chegou ao fim do nosso curso. Tenho certeza que esse mergulho foi de muito aprendizado.
+
+Após os créditos finais do curso, você será redirecionado para uma tela na qual poderá deixar seu feedback e avaliação do curso. Sua opinião é muito importante para nós.
+
+Aproveite para conhecer a nossa comunidade no [Discord](https://discord.com/invite/QeBdgAjXnn) da Alura e se conectar com outras pessoas com quem pode conversar, aprender e aumentar seu networking.
+
+Continue mergulhando com a gente.
+
+### Aula 5 -  - Vídeo 4
+
+Transcrição
+Parabéns por finalizar este curso de Node aqui na Alura!
+
+O que aprendemos?
+Estamos com o projeto aberto no navegador, que inclusive já é a versão em deploy (implantação). Nós sabemos que tem um servidor Node rodando internamente, sendo operado por algum computador da Vercel.
+
+Recapitulando o que aprendemos durante este curso, vamos retornar ao VS Code. Nós entendemos para que serve o arquivo package.json. Compreendemos a relação do Node e do NPM com esse arquivo, e como podemos criá-lo de forma automatizada, usando a linha de comando.
+
+Nós vimos também como instalar dependências no node_module. Aprendemos a diferença entre pacotes locais e globais, além da diferença entre dependências de desenvolvimento e de produção. Utilizamos várias ferramentas, como o pacote ESLint, o JSON Server e o Prettier.
+
+Nós também exploramos a parte de scripts, que é muito útil para automatizar algumas de nossas tarefas, evitando ter que lembrar de comandos complexos. Abordamos uma parte bem interessante que é o Vite. Ele fornece algumas funcionalidades que melhoram muito o nosso desenvolvimento e a forma de lidar com dependências de produção.
+
+No nosso caso, utilizamos o Axios. Se abrismos o arquivo script.js, usamos a sintaxe import axios from "axios". Essa parte de importar o pacote do Node é específica de um ambiente Node.
+
+Também vimos uma especificidade do Vite, que é usar variáveis de ambiente. A depender da ferramenta que você for utilizar, pode mudar um pouco a sintaxe, mas esse conceito é geral para qualquer ferramenta. Assim, dinamizamos a informação conforme o ambiente em que o código é executado.
+
+Se você teve qualquer dificuldade ao longo deste curso, lembre-se que pode utilizar o [fórum](https://cursos.alura.com.br/forum/categoria-front-end/todos) para tirar dúvidas conosco. Faça também as atividades; elas contêm bastante conteúdo interessante. Além disso, utilize o [Discord da Alura](https://discord.gg/SK9bj7hEYD) para interagir com outras pessoas estudantes e compartilhar o seu projeto. Você pode marcar a Alura, o instrutor, e mostrar para todo mundo o projeto interessante que conseguiu construir com seus novos conhecimentos.
+
+Parabéns mais uma vez e esperamos você em um próximo curso!

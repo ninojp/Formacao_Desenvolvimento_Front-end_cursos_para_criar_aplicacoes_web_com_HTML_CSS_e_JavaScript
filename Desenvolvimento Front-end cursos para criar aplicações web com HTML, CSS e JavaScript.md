@@ -51,11 +51,11 @@ Neste passo, você transformará suas páginas web em experiências interativas 
 
 Site: Front-end | Tech Guide: guias do Profissional em T
 
-0% - Curso - JavaScript: construindo páginas dinâmicas
+Curso - JavaScript: construindo páginas dinâmicas
 
-51% - Curso - JavaScript: entendendo promises e async/await
+Curso - JavaScript: entendendo promises e async/await
 
-Concluído - Curso JavaScript: métodos de array
+Curso JavaScript: métodos de array
 
 2. Manipulação do DOM e as integrações com o backend
 
@@ -63,11 +63,11 @@ Neste segundo passo, você explorará mais a fundo a manipulação do DOM e as i
 
 Você também aprenderá a usar a API Fetch para fazer requisições HTTP, trabalhando com métodos como GET e POST. Exploraremos o formato JSON para troca de dados e praticaremos o tratamento de respostas assíncronas.
 
-Concluído - Curso - JavaScript: manipulando elementos no DOM
+Curso - JavaScript: manipulando elementos no DOM
 
-Concluído - Curso - JavaScript: explorando a manipulação de elementos e da localStorage
+Curso - JavaScript: explorando a manipulação de elementos e da localStorage
 
-69% - Curso - JavaScript: implementando CRUD com requisições HTTP
+Curso - JavaScript: implementando CRUD com requisições HTTP
 
 Artigo - Guia para manipular eventos no DOM com JavaScript: técnicas e exemplos práticos | Alura
 
@@ -79,8 +79,12 @@ Você também vai compreender como usar o Node.js e o terminal para configurar s
 
 Por fim, aprenderá a utilizar ferramentas como Webpack, Vite e Babel para otimizar seu código e garantir a compatibilidade entre navegadores, preparando suas aplicações para o futuro.
 
-0% - Curso - JavaScript: evoluindo a sua aplicação com ES6+
+Curso - JavaScript: evoluindo a sua aplicação com ES6+
 
-0% - Curso - Node.js e terminal: dominando o ambiente de desenvolvimento front-end
+Curso - Node.js e terminal: dominando o ambiente de desenvolvimento front-end
 
 Artigo - Entendendo Webpack, Vite e Babel: ferramentas essenciais no mundo do front-end | Alura
+
+![alt text](step-generic-1.svg)
+Site  
+O FUTURO do ESTUDO em Tecnologia | Alura - AO VIVO - YouTube
